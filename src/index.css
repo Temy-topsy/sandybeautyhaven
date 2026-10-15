@@ -1,0 +1,411 @@
+/* ==========================================================================
+   SANDY BEAUTY HAVEN - EDITORIAL BEAUTY DESIGN SYSTEM
+   Standard: Quiet luxury, generous whitespace, minimalist editorial elegance.
+   ========================================================================== */
+
+:root {
+  /* Brand Color Palette */
+  --color-ivory: #FAF7F2;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F6F1EC;
+  --color-surface-warm: #EFE8E1;
+  --color-blush: #E6D2CE;
+  --color-blush-light: #F8F1EE;
+  --color-rose: #A36F72;
+  --color-rose-dark: #825457;
+  --color-espresso: #221B1A;
+  --color-espresso-light: #3D3332;
+  --color-taupe: #70645F;
+  --color-taupe-light: #9E918B;
+  --color-border: #E8E0D7;
+  --color-border-subtle: #F0EAE3;
+  --color-border-focus: #A36F72;
+
+  /* Status Tokens */
+  --color-success: #3B664B;
+  --color-success-bg: #EEF5F1;
+  --color-warning: #945E26;
+  --color-warning-bg: #FDF6ED;
+  --color-error: #A33737;
+  --color-error-bg: #FDF0F0;
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', 'Didot', 'Bodoni MT', 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Spacing Scale - Generous & Airy */
+  --spacing-xs: 0.35rem;
+  --spacing-sm: 0.65rem;
+  --spacing-md: 1.25rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
+  --spacing-2xl: 4.5rem;
+  --spacing-3xl: 6.5rem;
+  --spacing-4xl: 9rem;
+
+  /* Radii */
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-full: 9999px;
+
+  /* Delicate Shadows */
+  --shadow-subtle: 0 2px 8px rgba(34, 27, 26, 0.03);
+  --shadow-card: 0 6px 24px rgba(34, 27, 26, 0.04);
+  --shadow-hover: 0 12px 36px rgba(34, 27, 26, 0.07);
+  --shadow-modal: 0 24px 60px rgba(34, 27, 26, 0.14);
+
+  /* Transitions */
+  --transition-fast: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 280ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 450ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Container */
+  --max-width: 1200px;
+  --header-height: 84px;
+}
+
+/* Base Styles */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  background-color: var(--color-ivory);
+  color: var(--color-espresso);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.75;
+  background-color: var(--color-ivory);
+  color: var(--color-espresso);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Typography Scale */
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.18;
+  color: var(--color-espresso);
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5.5vw, 4.25rem);
+  font-weight: 400;
+}
+
+h2 {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 400;
+}
+
+h3 {
+  font-size: clamp(1.35rem, 2.2vw, 1.85rem);
+  font-weight: 500;
+}
+
+h4 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+p {
+  color: var(--color-taupe);
+  line-height: 1.75;
+  font-size: 1rem;
+}
+
+p.lead {
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  color: var(--color-espresso-light);
+  line-height: 1.7;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Containers with Generous Padding on Mobile and Desktop */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.5rem, 4vw, 2.5rem);
+  padding-right: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* Section Spacing - Lots of White Space */
+.section {
+  padding-top: clamp(4.5rem, 8vw, 7.5rem);
+  padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+}
+
+.section-sm {
+  padding-top: clamp(3rem, 5vw, 4.5rem);
+  padding-bottom: clamp(3rem, 5vw, 4.5rem);
+}
+
+.section-subtle {
+  background-color: var(--color-surface-subtle);
+}
+
+.section-warm {
+  background-color: var(--color-surface-warm);
+}
+
+.section-white {
+  background-color: var(--color-surface);
+}
+
+/* Buttons - Editorial, Spacious Touch Targets */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.825rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1rem 2rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--color-espresso);
+  color: var(--color-ivory);
+  border-color: var(--color-espresso);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-espresso-light);
+  border-color: var(--color-espresso-light);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-espresso);
+  border-color: var(--color-espresso);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-espresso);
+  color: var(--color-ivory);
+  transform: translateY(-1px);
+}
+
+.btn-rose {
+  background-color: var(--color-rose);
+  color: #FFFFFF;
+  border-color: var(--color-rose);
+}
+
+.btn-rose:hover {
+  background-color: var(--color-rose-dark);
+  border-color: var(--color-rose-dark);
+  transform: translateY(-1px);
+}
+
+.btn-subtle {
+  background-color: var(--color-surface);
+  color: var(--color-espresso);
+  border-color: var(--color-border);
+}
+
+.btn-subtle:hover {
+  background-color: var(--color-surface-subtle);
+  border-color: var(--color-taupe-light);
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--color-espresso);
+  border-bottom: 1px solid var(--color-espresso);
+  padding-bottom: 3px;
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-link:hover {
+  color: var(--color-rose);
+  border-color: var(--color-rose);
+}
+
+/* Editorial Card - Spacious & Clean */
+.editorial-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+}
+
+.editorial-card:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-3px);
+}
+
+/* Form Controls - Comfortable Padding */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  font-size: 0.775rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-espresso-light);
+}
+
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0.95rem 1.15rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-espresso);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(163, 111, 114, 0.12);
+}
+
+.form-error {
+  font-size: 0.8rem;
+  color: var(--color-error);
+  margin-top: 0.35rem;
+}
+
+/* Editorial Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-espresso);
+  border: 1px solid var(--color-border);
+}
+
+.badge-rose {
+  background-color: var(--color-blush-light);
+  color: var(--color-rose-dark);
+  border-color: var(--color-blush);
+}
+
+/* Section Header - Generous Breathing Space */
+.section-header {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto clamp(3rem, 6vw, 4.5rem);
+}
+
+.section-header.text-left {
+  text-align: left;
+  margin-left: 0;
+}
+
+.section-eyebrow {
+  font-size: 0.775rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-rose);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+}
+
+.section-description {
+  font-size: 1.05rem;
+  color: var(--color-taupe);
+  line-height: 1.7;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background-color: var(--color-border-subtle);
+  width: 100%;
+  border: none;
+}
+
+/* Accessibility */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-rose);
+  outline-offset: 3px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
