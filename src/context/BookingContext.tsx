@@ -23,6 +23,8 @@ export interface ConfirmedBooking {
   depositPaid: number;
   remainingBalance: number;
   totalDuration: number;
+  paymentChoice?: 'full' | 'deposit';
+  tip?: number;
   bookedAt: string;
 }
 
@@ -47,7 +49,12 @@ interface BookingContextType {
   clientDetails: ClientDetails;
   setClientDetails: React.Dispatch<React.SetStateAction<ClientDetails>>;
   confirmedBooking: ConfirmedBooking | null;
-  completeBooking: (paymentId?: string) => ConfirmedBooking;
+  completeBooking: (params?: {
+    paymentChoice?: 'full' | 'deposit';
+    amountPaid?: number;
+    remainingBalance?: number;
+    tip?: number;
+  }) => ConfirmedBooking;
   resetBooking: () => void;
 }
 
@@ -148,12 +155,23 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return selectedServices.reduce((sum, s) => sum + s.duration, 0);
   }, [selectedServices]);
 
-  const completeBooking = (_paymentId?: string): ConfirmedBooking => {
+  const completeBooking = (params?: {
+    paymentChoice?: 'full' | 'deposit';
+    amountPaid?: number;
+    remainingBalance?: number;
+    tip?: number;
+  }): ConfirmedBooking => {
     const primaryService = selectedServices[0] || SERVICES[0];
     const randNum = Math.floor(1000 + Math.random() * 9000);
     const reference = `SBH-${new Date().getFullYear()}-${randNum}`;
-    const depositPaid = totalDeposit;
-    const remainingBalance = Math.max(0, totalPrice - depositPaid);
+
+    const choice = params?.paymentChoice || 'deposit';
+    const depositPaid = params?.amountPaid !== undefined
+      ? params.amountPaid
+      : (choice === 'full' ? totalPrice : totalDeposit);
+    const remainingBalance = params?.remainingBalance !== undefined
+      ? params.remainingBalance
+      : (choice === 'full' ? 0 : Math.max(0, totalPrice - totalDeposit));
 
     const booking: ConfirmedBooking = {
       reference,
@@ -163,10 +181,12 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       date: selectedDate,
       time: selectedTime,
       client: { ...clientDetails },
-      totalPrice,
+      totalPrice: params?.tip ? totalPrice + params.tip : totalPrice,
       depositPaid,
       remainingBalance,
       totalDuration,
+      paymentChoice: choice,
+      tip: params?.tip || 0,
       bookedAt: new Date().toISOString()
     };
 

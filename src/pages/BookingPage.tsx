@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Calendar as CalendarIcon,
@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Info,
   Plus,
   Check,
   Trash2,
@@ -17,6 +16,78 @@ import {
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { useBooking } from '../context/BookingContext';
+
+// Crisp SVG Card Brand Badges matching Acuity
+const VisaIcon: React.FC = () => (
+  <svg width="34" height="20" viewBox="0 0 36 22" fill="none" style={{ borderRadius: '2px', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+    <rect width="36" height="22" rx="2" fill="#FFFFFF" />
+    <text x="18" y="15" fill="#1434CB" fontSize="10" fontWeight="900" textAnchor="middle" fontFamily="sans-serif" fontStyle="italic">VISA</text>
+  </svg>
+);
+
+const AmexIcon: React.FC = () => (
+  <svg width="34" height="20" viewBox="0 0 36 22" fill="none" style={{ borderRadius: '2px', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+    <rect width="36" height="22" rx="2" fill="#006FCF" />
+    <text x="18" y="14" fill="#FFFFFF" fontSize="8" fontWeight="800" textAnchor="middle" fontFamily="sans-serif">AMEX</text>
+  </svg>
+);
+
+const DiscoverIcon: React.FC = () => (
+  <svg width="34" height="20" viewBox="0 0 36 22" fill="none" style={{ borderRadius: '2px', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+    <rect width="36" height="22" rx="2" fill="#FFFFFF" />
+    <rect x="2" y="2" width="32" height="18" rx="2" fill="#FF6000" />
+    <text x="18" y="14" fill="#FFFFFF" fontSize="7" fontWeight="800" textAnchor="middle" fontFamily="sans-serif">DISCOVER</text>
+  </svg>
+);
+
+const MastercardIcon: React.FC = () => (
+  <svg width="34" height="20" viewBox="0 0 36 22" fill="none" style={{ borderRadius: '2px', border: '1px solid #E5E7EB', flexShrink: 0 }}>
+    <rect width="36" height="22" rx="2" fill="#FFFFFF" />
+    <circle cx="14" cy="11" r="6" fill="#EB001B" />
+    <circle cx="22" cy="11" r="6" fill="#F79E1B" fillOpacity="0.85" />
+  </svg>
+);
+
+const COUNTRIES = [
+  'Nigeria',
+  'United Kingdom',
+  'United States',
+  'Canada',
+  'Ireland',
+  'Ghana',
+  'Kenya',
+  'South Africa',
+  'Germany',
+  'France',
+  'Other'
+];
+
+// Helper to format date & time identically to Acuity (e.g. October 16th, 2026 at 10:00 AM BST)
+const formatAcuityDateTime = (dateStr: string, timeStr: string) => {
+  if (!dateStr) return 'October 16th, 2026 at 10:00 AM BST';
+  try {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const month = months[dateObj.getMonth()];
+    const day = dateObj.getDate();
+    const nth = (num: number) => {
+      if (num > 3 && num < 21) return 'th';
+      switch (num % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    };
+    return `${month} ${day}${nth(day)}, ${y} at ${timeStr || '10:00 AM'} BST`;
+  } catch {
+    return `${dateStr} at ${timeStr} BST`;
+  }
+};
 
 export const BookingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +116,32 @@ export const BookingPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [showTermsModal, setShowTermsModal] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'apple_google' | 'klarna'>('card');
+
+  // Step 4 State matching Acuity Scheduling exactly
+  const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>('full');
+  const [activeTipOption, setActiveTipOption] = useState<number | 'custom'>(18);
+  const [customTipInput, setCustomTipInput] = useState<string>('');
+  const [showCouponInput, setShowCouponInput] = useState<boolean>(false);
+  const [couponCode, setCouponCode] = useState<string>('');
+  const [couponDiscount, setCouponDiscount] = useState<number>(0);
+  const [couponError, setCouponError] = useState<string>('');
+
+  const [cardFirstName, setCardFirstName] = useState<string>('Sanusi');
+  const [cardLastName, setCardLastName] = useState<string>('Odunayo');
+  const [cardSubMethod, setCardSubMethod] = useState<'card' | 'gpay'>('card');
+  const [cardNumber, setCardNumber] = useState<string>('1234 1234 1234 1234');
+  const [cardExpiry, setCardExpiry] = useState<string>('MM / YY');
+  const [cardCvc, setCardCvc] = useState<string>('CVC');
+  const [cardCountry, setCardCountry] = useState<string>('Nigeria');
+
+  // Synchronize cardholder name when client details update
+  useEffect(() => {
+    if (clientDetails.fullName.trim()) {
+      const parts = clientDetails.fullName.trim().split(' ');
+      setCardFirstName(parts[0] || '');
+      setCardLastName(parts.slice(1).join(' ') || '');
+    }
+  }, [clientDetails.fullName]);
 
   // Available staff members
   const staffMembers = [
@@ -154,11 +250,58 @@ export const BookingPage: React.FC = () => {
     window.scrollTo({ top: 80, behavior: 'smooth' });
   };
 
+  // Financial computations matching Acuity breakdown
+  const subtotalAfterDiscount = Math.max(0, totalPrice - couponDiscount);
+
+  const tipAmount = useMemo(() => {
+    if (activeTipOption === 0) return 0;
+    if (activeTipOption === 15) return subtotalAfterDiscount * 0.15;
+    if (activeTipOption === 18) return subtotalAfterDiscount * 0.18;
+    if (activeTipOption === 20) return subtotalAfterDiscount * 0.20;
+    if (activeTipOption === 'custom') {
+      const val = parseFloat(customTipInput);
+      return isNaN(val) || val < 0 ? 0 : val;
+    }
+    return 0;
+  }, [activeTipOption, customTipInput, subtotalAfterDiscount]);
+
+  const orderTotal = subtotalAfterDiscount + tipAmount;
+  const depositBase = Math.min(totalDeposit, subtotalAfterDiscount);
+  const remainingLaterDisplay = Math.max(0, subtotalAfterDiscount - depositBase);
+  const depositNowDisplay = depositBase;
+
+  const handleApplyCoupon = () => {
+    setCouponError('');
+    const code = couponCode.trim().toUpperCase();
+    if (!code) return;
+    if (code === 'WELCOME10' || code === 'SANDY10') {
+      setCouponDiscount(10);
+    } else if (code === 'LASH20') {
+      setCouponDiscount(20);
+    } else {
+      setCouponError('Invalid or expired coupon code.');
+    }
+  };
+
   const handleCompletePayment = (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
+
     setTimeout(() => {
-      completeBooking();
+      const amountPaid = paymentChoice === 'full'
+        ? orderTotal
+        : (depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0));
+      const remainingBalance = paymentChoice === 'full'
+        ? 0
+        : remainingLaterDisplay;
+
+      completeBooking({
+        paymentChoice,
+        amountPaid,
+        remainingBalance,
+        tip: tipAmount
+      });
+
       setIsProcessing(false);
       navigate('/booking-confirmed');
     }, 1200);
@@ -277,10 +420,10 @@ export const BookingPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="container" style={{ maxWidth: '1000px', paddingTop: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+      <div className="container" style={{ maxWidth: step === 4 ? '560px' : '1000px', paddingTop: 'clamp(1.5rem, 3vw, 2.5rem)', transition: 'max-width 0.3s ease' }}>
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+          display: step === 4 ? 'block' : 'grid',
+          gridTemplateColumns: step === 4 ? 'none' : 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
           gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
           alignItems: 'start'
         }}>
@@ -893,317 +1036,702 @@ export const BookingPage: React.FC = () => {
             )}
 
             {/* ============================================================== */}
-            {/* STEP 4: PAYMENT OPTIONS & SECURE DEPOSIT */}
+            {/* STEP 4: ACUITY PAYMENT & ORDER SUMMARY EXPERIENCE */}
             {/* ============================================================== */}
             {step === 4 && (
               <div>
-                <h2 style={{ fontSize: '1.35rem', marginBottom: '0.35rem' }}>4. Review & Secure Deposit</h2>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', marginBottom: '1.5rem' }}>
-                  Your appointment slot is locked immediately upon paying the required online deposit of <strong>£{totalDeposit}</strong>.
-                </p>
-
-                {/* Payment Options Selector */}
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
-                    Select Payment Method
-                  </label>
+                {/* Brand Logo & Title (as seen in Acuity screenshot) */}
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                  <img
+                    src="/sandy logo.png"
+                    alt="Sandy Beauty Haven"
+                    style={{
+                      width: '84px',
+                      height: '84px',
+                      objectFit: 'contain',
+                      margin: '0 auto 0.65rem',
+                      display: 'block'
+                    }}
+                  />
                   <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-                    gap: '0.5rem'
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.25rem',
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    color: '#111827',
+                    fontWeight: 600
                   }}>
-                    {[
-                      { id: 'card', label: 'Credit / Debit Card' },
-                      { id: 'apple_google', label: 'Apple / Google Pay' },
-                      { id: 'klarna', label: 'Klarna / ClearPay' }
-                    ].map((opt) => (
-                      <button
-                        key={opt.id}
-                        type="button"
-                        onClick={() => setPaymentMethod(opt.id as any)}
-                        style={{
-                          padding: '0.75rem 0.5rem',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: '0.775rem',
-                          fontWeight: 600,
-                          textAlign: 'center',
-                          border: '1px solid',
-                          borderColor: paymentMethod === opt.id ? 'var(--color-rose)' : 'var(--color-border)',
-                          backgroundColor: paymentMethod === opt.id ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                          color: 'var(--color-espresso)',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
+                    SANDY BEAUTY HAVEN
                   </div>
                 </div>
 
                 <form onSubmit={handleCompletePayment}>
-                  {paymentMethod === 'card' && (
+                  {/* Section 1: Payment information Card */}
+                  <div style={{ marginBottom: '1.75rem' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.75rem' }}>
+                      Payment information
+                    </h3>
+
                     <div style={{
-                      backgroundColor: 'var(--color-surface-subtle)',
-                      padding: 'clamp(1rem, 3vw, 1.5rem)',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--color-border)',
-                      marginBottom: '1.5rem',
-                      width: '100%',
-                      boxSizing: 'border-box'
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '4px',
+                      padding: 'clamp(1rem, 3.5vw, 1.25rem)',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <CreditCard size={16} style={{ color: 'var(--color-rose)' }} />
-                          Card Information
-                        </span>
-                        <span style={{ fontSize: '0.725rem', color: 'var(--color-taupe)' }}>
-                          256-Bit SSL Encrypted
-                        </span>
-                      </div>
-
-                      <div className="form-group" style={{ marginBottom: '1rem' }}>
-                        <label className="form-label">Name on Card</label>
-                        <input
-                          type="text"
-                          className="form-input"
-                          placeholder="e.g. A. Adeleke"
-                          defaultValue={clientDetails.fullName || 'Ayishat Adeleke'}
-                          required
-                          style={{ width: '100%', boxSizing: 'border-box' }}
-                        />
-                      </div>
-
-                      <div className="form-group" style={{ marginBottom: '1rem' }}>
-                        <label className="form-label">Card Number</label>
-                        <input
-                          type="text"
-                          className="form-input"
-                          placeholder="•••• •••• •••• 4242"
-                          defaultValue="4242 •••• •••• 4242"
-                          required
-                          style={{ width: '100%', boxSizing: 'border-box' }}
-                        />
-                      </div>
-
-                      {/* Expiry & CVC: Flex wrap so on mobile it never overflows */}
+                      {/* Top Row: Credit or debit card + Card Logos */}
                       <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))',
-                        gap: '0.75rem'
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '1.25rem',
+                        flexWrap: 'wrap',
+                        gap: '0.5rem'
                       }}>
-                        <div className="form-group">
-                          <label className="form-label">MM / YY</label>
-                          <input
-                            type="text"
-                            className="form-input"
-                            placeholder="10/28"
-                            defaultValue="10/28"
-                            required
-                            style={{ width: '100%', boxSizing: 'border-box' }}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label className="form-label">CVC / CVV</label>
-                          <input
-                            type="text"
-                            className="form-input"
-                            placeholder="123"
-                            defaultValue="789"
-                            required
-                            style={{ width: '100%', boxSizing: 'border-box' }}
-                          />
+                        <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1F2937' }}>
+                          Credit or debit card
+                        </span>
+                        <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                          <VisaIcon />
+                          <AmexIcon />
+                          <DiscoverIcon />
+                          <MastercardIcon />
                         </div>
                       </div>
-                    </div>
-                  )}
 
-                  {paymentMethod === 'apple_google' && (
-                    <div style={{
-                      backgroundColor: 'var(--color-surface-subtle)',
-                      padding: '1.5rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--color-border)',
-                      textAlign: 'center',
-                      marginBottom: '1.5rem'
-                    }}>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--color-taupe)', marginBottom: '1rem' }}>
-                        Instant 1-Touch Checkout using your device's biometric wallet.
-                      </p>
-                      <button
-                        type="submit"
-                        className="btn btn-primary"
-                        style={{ width: '100%', padding: '0.9rem', backgroundColor: '#000000', borderColor: '#000000' }}
-                      >
-                         Pay Deposit £{totalDeposit}
-                      </button>
-                    </div>
-                  )}
+                      {/* First name */}
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                          First name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={cardFirstName}
+                          onChange={(e) => setCardFirstName(e.target.value)}
+                          style={{
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            padding: '0.75rem 0.85rem',
+                            border: '1px solid #D1D5DB',
+                            borderRadius: '4px',
+                            backgroundColor: '#F9FAFB',
+                            fontSize: '0.9rem',
+                            color: '#111827',
+                            outline: 'none'
+                          }}
+                        />
+                      </div>
 
-                  {paymentMethod === 'klarna' && (
-                    <div style={{
-                      backgroundColor: 'var(--color-surface-subtle)',
-                      padding: '1.25rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--color-border)',
-                      marginBottom: '1.5rem',
-                      fontSize: '0.85rem'
-                    }}>
-                      <strong style={{ color: 'var(--color-espresso)', display: 'block', marginBottom: '0.4rem' }}>
-                        Pay in 3 with Klarna
-                      </strong>
-                      <p style={{ color: 'var(--color-taupe)', margin: 0, lineHeight: 1.5 }}>
-                        Pay your £{totalDeposit} deposit interest-free in 3 instalments of £{(totalDeposit / 3).toFixed(2)}.
-                      </p>
-                    </div>
-                  )}
+                      {/* Last name */}
+                      <div style={{ marginBottom: '1.25rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                          Last name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={cardLastName}
+                          onChange={(e) => setCardLastName(e.target.value)}
+                          style={{
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            padding: '0.75rem 0.85rem',
+                            border: '1px solid #D1D5DB',
+                            borderRadius: '4px',
+                            backgroundColor: '#F9FAFB',
+                            fontSize: '0.9rem',
+                            color: '#111827',
+                            outline: 'none'
+                          }}
+                        />
+                      </div>
 
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '0.5rem',
-                    fontSize: '0.8rem',
-                    color: 'var(--color-taupe)',
-                    marginBottom: '1.5rem',
-                    lineHeight: 1.5
-                  }}>
-                    <Info size={16} style={{ color: 'var(--color-rose)', flexShrink: 0, marginTop: '2px' }} />
-                    <span>
-                      Deposit due now: <strong>£{totalDeposit}</strong>. Remaining balance of <strong>£{Math.max(0, totalPrice - totalDeposit)}</strong> is paid on appointment day at 101 Easter Road.
-                    </span>
+                      {/* Card details */}
+                      <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.45rem' }}>
+                          Card details *
+                        </label>
+
+                        {/* Segmented method toggle: Card / Google Pay */}
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => setCardSubMethod('card')}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.45rem',
+                              padding: '0.65rem 1.1rem',
+                              borderRadius: '4px',
+                              border: '1px solid #D1D5DB',
+                              backgroundColor: cardSubMethod === 'card' ? '#E5E7EB' : '#FFFFFF',
+                              color: '#111827',
+                              fontWeight: 600,
+                              fontSize: '0.825rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <CreditCard size={14} />
+                            Card
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCardSubMethod('gpay')}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.45rem',
+                              padding: '0.65rem 1.1rem',
+                              borderRadius: '4px',
+                              border: '1px solid #D1D5DB',
+                              backgroundColor: cardSubMethod === 'gpay' ? '#E5E7EB' : '#FFFFFF',
+                              color: '#111827',
+                              fontWeight: 600,
+                              fontSize: '0.825rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <span style={{ fontWeight: 800, color: '#4285F4' }}>G</span>
+                            <span>Pay</span>
+                            <span style={{ color: '#6B7280', fontWeight: 500 }}>Google Pay</span>
+                          </button>
+                        </div>
+
+                        {cardSubMethod === 'card' ? (
+                          <>
+                            {/* Card number input with brand icon */}
+                            <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
+                              <input
+                                type="text"
+                                required
+                                value={cardNumber}
+                                onChange={(e) => setCardNumber(e.target.value)}
+                                placeholder="1234 1234 1234 1234"
+                                style={{
+                                  width: '100%',
+                                  boxSizing: 'border-box',
+                                  padding: '0.75rem 3.5rem 0.75rem 0.85rem',
+                                  border: '1px solid #D1D5DB',
+                                  borderRadius: '4px',
+                                  backgroundColor: '#FFFFFF',
+                                  fontSize: '0.9rem',
+                                  color: '#111827',
+                                  outline: 'none'
+                                }}
+                              />
+                              <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
+                                <DiscoverIcon />
+                              </div>
+                            </div>
+
+                            {/* Expiry & CVC row */}
+                            <div style={{
+                              display: 'grid',
+                              gridTemplateColumns: '1fr 1fr',
+                              gap: '0.75rem',
+                              marginBottom: '0.75rem'
+                            }}>
+                              <div>
+                                <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                                  Expiration date
+                                </label>
+                                <input
+                                  type="text"
+                                  required
+                                  value={cardExpiry}
+                                  onChange={(e) => setCardExpiry(e.target.value)}
+                                  placeholder="MM / YY"
+                                  style={{
+                                    width: '100%',
+                                    boxSizing: 'border-box',
+                                    padding: '0.75rem 0.85rem',
+                                    border: '1px solid #D1D5DB',
+                                    borderRadius: '4px',
+                                    backgroundColor: '#FFFFFF',
+                                    fontSize: '0.9rem',
+                                    color: '#111827',
+                                    outline: 'none'
+                                  }}
+                                />
+                              </div>
+                              <div>
+                                <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                                  Security code
+                                </label>
+                                <div style={{ position: 'relative' }}>
+                                  <input
+                                    type="text"
+                                    required
+                                    value={cardCvc}
+                                    onChange={(e) => setCardCvc(e.target.value)}
+                                    placeholder="CVC"
+                                    style={{
+                                      width: '100%',
+                                      boxSizing: 'border-box',
+                                      padding: '0.75rem 2.5rem 0.75rem 0.85rem',
+                                      border: '1px solid #D1D5DB',
+                                      borderRadius: '4px',
+                                      backgroundColor: '#FFFFFF',
+                                      fontSize: '0.9rem',
+                                      color: '#111827',
+                                      outline: 'none'
+                                    }}
+                                  />
+                                  <CreditCard size={15} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Country dropdown */}
+                            <div>
+                              <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                                Country
+                              </label>
+                              <select
+                                value={cardCountry}
+                                onChange={(e) => setCardCountry(e.target.value)}
+                                style={{
+                                  width: '100%',
+                                  boxSizing: 'border-box',
+                                  padding: '0.75rem 0.85rem',
+                                  border: '1px solid #D1D5DB',
+                                  borderRadius: '4px',
+                                  backgroundColor: '#FFFFFF',
+                                  fontSize: '0.9rem',
+                                  color: '#111827',
+                                  outline: 'none',
+                                  cursor: 'pointer'
+                                }}
+                              >
+                                {COUNTRIES.map((c) => (
+                                  <option key={c} value={c}>{c}</option>
+                                ))}
+                              </select>
+                            </div>
+                          </>
+                        ) : (
+                          <div style={{
+                            padding: '1.25rem',
+                            backgroundColor: '#F9FAFB',
+                            borderRadius: '4px',
+                            border: '1px dashed #D1D5DB',
+                            textAlign: 'center',
+                            fontSize: '0.85rem',
+                            color: '#4B5563'
+                          }}>
+                            Google Pay biometric authentication will be prompted when you click <strong>Pay & Confirm</strong>.
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: '1rem',
-                    flexWrap: 'wrap'
-                  }}>
-                    <button type="button" onClick={handlePrevStep} className="btn btn-secondary" style={{ flex: '1 1 120px' }}>
-                      ← Back
-                    </button>
+                  {/* Section 2: Choose what to pay (Exact match of Acuity screenshot) */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.75rem' }}>
+                      Choose what to pay
+                    </h3>
+
+                    <div style={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E5E7EB',
+                      borderRadius: '4px',
+                      overflow: 'hidden'
+                    }}>
+                      {/* Option 1: Pay Full */}
+                      <label
+                        onClick={() => setPaymentChoice('full')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.85rem',
+                          padding: '1.15rem 1rem',
+                          cursor: 'pointer',
+                          backgroundColor: paymentChoice === 'full' ? '#FAF5F7' : '#FFFFFF',
+                          transition: 'background-color 0.15s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: paymentChoice === 'full' ? '6px solid #4B5563' : '2px solid #D1D5DB',
+                          backgroundColor: '#FFFFFF',
+                          flexShrink: 0
+                        }} />
+                        <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
+                          Pay £{orderTotal.toFixed(2)} now
+                        </span>
+                      </label>
+
+                      <div style={{ height: '1px', backgroundColor: '#E5E7EB' }} />
+
+                      {/* Option 2: Pay Deposit */}
+                      <label
+                        onClick={() => setPaymentChoice('deposit')}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.85rem',
+                          padding: '1.15rem 1rem',
+                          cursor: 'pointer',
+                          backgroundColor: paymentChoice === 'deposit' ? '#FAF5F7' : '#FFFFFF',
+                          transition: 'background-color 0.15s ease'
+                        }}
+                      >
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          border: paymentChoice === 'deposit' ? '6px solid #4B5563' : '2px solid #D1D5DB',
+                          backgroundColor: '#FFFFFF',
+                          flexShrink: 0
+                        }} />
+                        <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#374151' }}>
+                          Pay £{depositNowDisplay.toFixed(2)} now, £{remainingLaterDisplay.toFixed(2)} later
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Order summary (Exact match of Acuity screenshot) */}
+                  <div style={{ marginBottom: '2rem' }}>
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.85rem' }}>
+                      Order summary
+                    </h3>
+
+                    {/* Service Line Items */}
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      {selectedServices.map((svc) => (
+                        <div key={svc.id} style={{ marginBottom: '0.85rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827' }}>
+                              {svc.name}
+                            </span>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827' }}>
+                              £{svc.price.toFixed(2)}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: '0.85rem', color: '#6B7280', marginTop: '0.2rem' }}>
+                            {formatAcuityDateTime(selectedDate, selectedTime)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
+
+                    {/* Package, gift, or coupon code */}
+                    <div style={{ marginBottom: '1.25rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowCouponInput(!showCouponInput)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#374151' }}>
+                          Package, gift, or coupon code
+                        </span>
+                        <span style={{ fontSize: '1.2rem', color: '#374151', fontWeight: 600 }}>
+                          {showCouponInput ? '−' : '+'}
+                        </span>
+                      </button>
+
+                      {showCouponInput && (
+                        <div style={{ marginTop: '0.75rem' }}>
+                          <div style={{ display: 'flex', gap: '0.5rem' }}>
+                            <input
+                              type="text"
+                              placeholder="e.g. WELCOME10"
+                              value={couponCode}
+                              onChange={(e) => setCouponCode(e.target.value)}
+                              style={{
+                                flex: 1,
+                                padding: '0.65rem 0.85rem',
+                                border: '1px solid #D1D5DB',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem'
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={handleApplyCoupon}
+                              style={{
+                                padding: '0.65rem 1.15rem',
+                                backgroundColor: '#374151',
+                                color: '#FFFFFF',
+                                border: 'none',
+                                borderRadius: '4px',
+                                fontSize: '0.85rem',
+                                fontWeight: 600,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                          {couponError && (
+                            <p style={{ fontSize: '0.8rem', color: 'var(--color-error)', marginTop: '0.35rem' }}>
+                              {couponError}
+                            </p>
+                          )}
+                          {couponDiscount > 0 && (
+                            <p style={{ fontSize: '0.8rem', color: 'var(--color-success)', marginTop: '0.35rem', fontWeight: 600 }}>
+                              ✓ Code applied! £{couponDiscount.toFixed(2)} discount deducted.
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
+
+                    {/* Subtotal & Tip */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
+                        <span>Subtotal</span>
+                        <span>£{subtotalAfterDiscount.toFixed(2)}</span>
+                      </div>
+
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
+                        <span>Tip</span>
+                        <span>£{tipAmount.toFixed(2)}</span>
+                      </div>
+
+                      {/* Tip Buttons Row */}
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(5, 1fr)',
+                        gap: '0.35rem',
+                        marginTop: '0.25rem'
+                      }}>
+                        {[
+                          { id: 0, label: '0%' },
+                          { id: 15, label: '15%' },
+                          { id: 18, label: '18%' },
+                          { id: 20, label: '20%' },
+                          { id: 'custom', label: 'CUSTOM' }
+                        ].map((tipOpt) => {
+                          const isActive = activeTipOption === tipOpt.id;
+                          return (
+                            <button
+                              key={tipOpt.label}
+                              type="button"
+                              onClick={() => {
+                                setActiveTipOption(tipOpt.id as any);
+                                if (tipOpt.id !== 'custom') setCustomTipInput('');
+                              }}
+                              style={{
+                                padding: '0.7rem 0.2rem',
+                                borderRadius: '4px',
+                                border: isActive ? '1px solid #D85A87' : '1px solid #E5E7EB',
+                                backgroundColor: isActive ? '#D85A87' : '#FFFFFF',
+                                color: isActive ? '#FFFFFF' : '#374151',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'all 0.15s ease'
+                              }}
+                            >
+                              {tipOpt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {activeTipOption === 'custom' && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>£</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="Custom tip amount"
+                            value={customTipInput}
+                            onChange={(e) => setCustomTipInput(e.target.value)}
+                            style={{
+                              padding: '0.5rem 0.75rem',
+                              borderRadius: '4px',
+                              border: '1px solid #D1D5DB',
+                              fontSize: '0.85rem',
+                              width: '140px'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
+
+                    {/* Total */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 800, color: '#111827', marginBottom: '1.75rem' }}>
+                      <span>Total</span>
+                      <span>£{orderTotal.toFixed(2)}</span>
+                    </div>
+
+                    {/* PAY & CONFIRM Button (Acuity Hot Pink) */}
                     <button
                       type="submit"
                       disabled={isProcessing}
-                      className="btn btn-primary"
                       style={{
-                        flex: '2 1 200px',
-                        padding: '1rem 1.5rem',
-                        fontSize: '0.85rem'
+                        width: '100%',
+                        padding: '1.15rem 1rem',
+                        backgroundColor: '#D85A87',
+                        color: '#FFFFFF',
+                        border: 'none',
+                        borderRadius: '4px',
+                        fontSize: '1rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.06em',
+                        textTransform: 'uppercase',
+                        cursor: isProcessing ? 'not-allowed' : 'pointer',
+                        boxShadow: '0 4px 14px rgba(216, 90, 135, 0.32)',
+                        transition: 'all 0.2s ease'
                       }}
                     >
-                      {isProcessing ? 'Confirming Appointment...' : `Pay Deposit £${totalDeposit} & Confirm`}
+                      {isProcessing ? 'Processing Payment...' : 'PAY & CONFIRM'}
                     </button>
+
+                    <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                      <button
+                        type="button"
+                        onClick={handlePrevStep}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#6B7280',
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          textDecoration: 'underline'
+                        }}
+                      >
+                        ← Edit appointment details
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
             )}
           </div>
 
-          {/* Right Column: Live Booking Summary Tray / Sidebar */}
-          <div style={{
-            backgroundColor: 'var(--color-surface)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'clamp(1.25rem, 3vw, 1.75rem)',
-            boxShadow: 'var(--shadow-subtle)',
-            position: 'sticky',
-            top: '90px',
-            width: '100%',
-            boxSizing: 'border-box'
-          }}>
-            <h3 style={{
-              fontSize: '1.15rem',
-              marginBottom: '1rem',
-              borderBottom: '1px solid var(--color-border)',
-              paddingBottom: '0.65rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
+          {/* Right Column: Live Booking Summary Tray / Sidebar (Shown on Steps 1, 2, 3 only) */}
+          {step !== 4 && (
+            <div style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 'var(--radius-md)',
+              padding: 'clamp(1.25rem, 3vw, 1.75rem)',
+              boxShadow: 'var(--shadow-subtle)',
+              position: 'sticky',
+              top: '90px',
+              width: '100%',
+              boxSizing: 'border-box'
             }}>
-              <span>Booking Summary</span>
-              <span className="badge badge-rose">{selectedServices.length} items</span>
-            </h3>
+              <h3 style={{
+                fontSize: '1.15rem',
+                marginBottom: '1rem',
+                borderBottom: '1px solid var(--color-border)',
+                paddingBottom: '0.65rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span>Booking Summary</span>
+                <span className="badge badge-rose">{selectedServices.length} items</span>
+              </h3>
 
-            {/* Selected Services in Cart */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
-              {selectedServices.map((svc) => (
-                <div key={svc.id} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                  <img
-                    src={svc.image}
-                    alt={svc.name}
-                    style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
-                  />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <h4 style={{ margin: 0, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {svc.name}
-                    </h4>
-                    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
-                      {svc.duration} mins • £{svc.price}
-                    </p>
+              {/* Selected Services in Cart */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
+                {selectedServices.map((svc) => (
+                  <div key={svc.id} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <img
+                      src={svc.image}
+                      alt={svc.name}
+                      style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <h4 style={{ margin: 0, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {svc.name}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
+                        {svc.duration} mins • £{svc.price}
+                      </p>
+                    </div>
                   </div>
+                ))}
+              </div>
+
+              {/* Date, Time, Staff */}
+              <div style={{
+                padding: '0.85rem',
+                backgroundColor: 'var(--color-surface-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                marginBottom: '1.25rem',
+                fontSize: '0.8rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <CalendarIcon size={14} style={{ color: 'var(--color-rose)' }} />
+                  <span>
+                    <strong>Date:</strong> {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
                 </div>
-              ))}
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Clock size={14} style={{ color: 'var(--color-rose)' }} />
+                  <span>
+                    <strong>Time:</strong> {selectedTime} ({totalDuration} mins total)
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <ShieldCheck size={14} style={{ color: 'var(--color-rose)' }} />
+                  <span>
+                    <strong>Artist:</strong> {selectedStaff}
+                  </span>
+                </div>
+              </div>
 
-            {/* Date, Time, Staff */}
-            <div style={{
-              padding: '0.85rem',
-              backgroundColor: 'var(--color-surface-subtle)',
-              borderRadius: 'var(--radius-sm)',
-              marginBottom: '1.25rem',
-              fontSize: '0.8rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.35rem'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <CalendarIcon size={14} style={{ color: 'var(--color-rose)' }} />
-                <span>
-                  <strong>Date:</strong> {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
+              {/* Location */}
+              <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginBottom: '1.25rem' }}>
+                <strong>Studio Location:</strong> 101 Easter Road, Edinburgh, EH7 5PP
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <Clock size={14} style={{ color: 'var(--color-rose)' }} />
-                <span>
-                  <strong>Time:</strong> {selectedTime} ({totalDuration} mins total)
-                </span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                <ShieldCheck size={14} style={{ color: 'var(--color-rose)' }} />
-                <span>
-                  <strong>Artist:</strong> {selectedStaff}
-                </span>
-              </div>
-            </div>
 
-            {/* Location */}
-            <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginBottom: '1.25rem' }}>
-              <strong>Studio Location:</strong> 101 Easter Road, Edinburgh, EH7 5PP
-            </div>
-
-            {/* Financial Breakdown */}
-            <div style={{
-              borderTop: '1px solid var(--color-border)',
-              paddingTop: '0.85rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.45rem',
-              fontSize: '0.85rem'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Total Treatment Value:</span>
-                <span style={{ fontWeight: 600 }}>£{totalPrice}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-rose)', fontWeight: 600 }}>
-                <span>Deposit Due Online:</span>
-                <span>£{totalDeposit}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-taupe)' }}>
-                <span>Remaining on Arrival:</span>
-                <span>£{Math.max(0, totalPrice - totalDeposit)}</span>
+              {/* Financial Breakdown */}
+              <div style={{
+                borderTop: '1px solid var(--color-border)',
+                paddingTop: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.45rem',
+                fontSize: '0.85rem'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>Total Treatment Value:</span>
+                  <span style={{ fontWeight: 600 }}>£{totalPrice}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-rose)', fontWeight: 600 }}>
+                  <span>Deposit Due Online:</span>
+                  <span>£{totalDeposit}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-taupe)' }}>
+                  <span>Remaining on Arrival:</span>
+                  <span>£{Math.max(0, totalPrice - totalDeposit)}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

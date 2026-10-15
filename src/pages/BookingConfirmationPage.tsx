@@ -50,6 +50,8 @@ export const BookingConfirmationPage: React.FC = () => {
     depositPaid: 15,
     remainingBalance: 45,
     totalDuration: 115,
+    paymentChoice: 'deposit' as const,
+    tip: 0,
     bookedAt: new Date().toISOString()
   };
 
@@ -115,7 +117,7 @@ END:VCALENDAR`;
           </div>
 
           <span className="badge badge-rose" style={{ marginBottom: '0.75rem', fontSize: '0.75rem' }}>
-            Deposit Confirmed
+            {booking.paymentChoice === 'full' ? 'Paid in Full Confirmed' : 'Deposit Confirmed'}
           </span>
 
           <h1 style={{ fontSize: 'clamp(1.85rem, 4vw, 2.5rem)', marginBottom: '0.75rem' }}>
@@ -205,15 +207,21 @@ END:VCALENDAR`;
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
               <span>Total Service Value:</span>
-              <span style={{ fontWeight: 600 }}>£{booking.totalPrice}</span>
+              <span style={{ fontWeight: 600 }}>£{booking.totalPrice.toFixed(2)}</span>
             </div>
+            {booking.tip && booking.tip > 0 ? (
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--color-taupe)' }}>
+                <span>Tip Included:</span>
+                <span style={{ fontWeight: 600 }}>+£{booking.tip.toFixed(2)}</span>
+              </div>
+            ) : null}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--color-success)' }}>
-              <span>Deposit Paid Online (256-bit SSL):</span>
-              <span style={{ fontWeight: 600 }}>-£{booking.depositPaid}</span>
+              <span>{booking.paymentChoice === 'full' ? 'Paid in Full Online (256-bit SSL):' : 'Deposit Paid Online (256-bit SSL):'}</span>
+              <span style={{ fontWeight: 600 }}>-£{booking.depositPaid.toFixed(2)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '0.5rem', fontWeight: 600, fontSize: '0.95rem' }}>
               <span>Remaining Balance Due on Arrival:</span>
-              <span>£{booking.remainingBalance}</span>
+              <span>{booking.remainingBalance <= 0 ? '£0.00 (Fully Settled)' : `£${booking.remainingBalance.toFixed(2)}`}</span>
             </div>
           </div>
 
