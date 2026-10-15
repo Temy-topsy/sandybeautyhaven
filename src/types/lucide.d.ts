@@ -52,4 +52,6 @@ declare module 'lucide-react' {
   export const Send: LucideIcon;
   export const Eye: LucideIcon;
   export const Smartphone: LucideIcon;
+  export const Trash2: LucideIcon;
+  export const Plus: LucideIcon;
 }

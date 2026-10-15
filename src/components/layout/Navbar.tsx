@@ -245,9 +245,9 @@ export const Navbar: React.FC = () => {
                 flexDirection: 'column',
                 gap: '0.4rem'
               }}>
-                <p style={{ margin: 0 }}>📍 101 Easter Road, Edinburgh</p>
-                <p style={{ margin: 0 }}>📞 +44 07733777956</p>
-                <p style={{ margin: 0 }}>🕒 Mon–Sat: 9am – 5pm</p>
+                <p style={{ margin: 0 }}>101 Easter Road, Edinburgh</p>
+                <p style={{ margin: 0 }}>+44 07733777956</p>
+                <p style={{ margin: 0 }}>Mon–Sat: 9am – 5pm</p>
               </div>
             </div>
           </div>

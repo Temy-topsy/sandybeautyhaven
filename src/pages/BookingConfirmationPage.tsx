@@ -5,8 +5,6 @@ import {
   Calendar,
   Clock,
   MapPin,
-  Mail,
-  Smartphone,
   Download,
   Home
 } from 'lucide-react';
@@ -26,6 +24,16 @@ export const BookingConfirmationPage: React.FC = () => {
       deposit: 15,
       image: '/appointments/hybrid-lashes.jpg'
     },
+    services: [
+      {
+        name: 'Hybrid Lash Extensions',
+        category: 'Lash Extensions',
+        price: 60,
+        duration: 115,
+        deposit: 15,
+        image: '/appointments/hybrid-lashes.jpg'
+      }
+    ],
     staff: 'Sandy Beauty',
     date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     time: '11:00 AM',
@@ -35,13 +43,17 @@ export const BookingConfirmationPage: React.FC = () => {
       phone: '+44 07733777956',
       notes: '',
       agreeToPolicies: true,
+      marketingConsent: 'yes',
       smsReminders: true
     },
     totalPrice: 60,
     depositPaid: 15,
     remainingBalance: 45,
+    totalDuration: 115,
     bookedAt: new Date().toISOString()
   };
+
+  const servicesList = booking.services && booking.services.length > 0 ? booking.services : [booking.service];
 
   const formattedDate = new Date(booking.date + 'T00:00:00').toLocaleDateString('en-GB', {
     weekday: 'long',
@@ -51,12 +63,13 @@ export const BookingConfirmationPage: React.FC = () => {
   });
 
   const downloadIcsCalendar = () => {
+    const serviceNames = servicesList.map((s) => s.name).join(' + ');
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Sandy Beauty Haven//Appointment//EN
 BEGIN:VEVENT
-SUMMARY:${booking.service.name} - Sandy Beauty Haven
-DESCRIPTION:Appointment for ${booking.service.name} with ${booking.staff}. Ref: ${booking.reference}. Location: 101 Easter Road, Edinburgh.
+SUMMARY:${serviceNames} - Sandy Beauty Haven
+DESCRIPTION:Appointment for ${serviceNames} with ${booking.staff}. Ref: ${booking.reference}. Location: 101 Easter Road, Edinburgh.
 LOCATION:101 Easter Road, Edinburgh, EH7 5PP
 DTSTART:${booking.date.replace(/-/g, '')}T100000Z
 DTEND:${booking.date.replace(/-/g, '')}T120000Z
@@ -79,105 +92,104 @@ END:VCALENDAR`;
       <div className="container" style={{ maxWidth: '720px' }}>
         <div style={{
           backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-md)',
-          padding: 'clamp(2rem, 4vw, 3rem)',
+          border: '1px solid var(--color-border)',
+          padding: 'clamp(2rem, 5vw, 3.5rem)',
           boxShadow: 'var(--shadow-card)',
           textAlign: 'center'
         }}>
-          {/* Success Check Icon */}
+          {/* Success Checkmark Badge */}
           <div style={{
             width: '64px',
             height: '64px',
             borderRadius: '50%',
-            backgroundColor: 'var(--color-success-bg)',
-            color: 'var(--color-success)',
+            backgroundColor: 'var(--color-blush-light)',
+            color: 'var(--color-rose)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 1.5rem'
+            margin: '0 auto 1.5rem',
+            border: '2px solid var(--color-rose)'
           }}>
             <CheckCircle2 size={36} />
           </div>
 
-          <span className="badge badge-rose" style={{ marginBottom: '0.75rem' }}>
-            Confirmed Appointment
+          <span className="badge badge-rose" style={{ marginBottom: '0.75rem', fontSize: '0.75rem' }}>
+            Deposit Confirmed
           </span>
-          <h1 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.5rem)', marginBottom: '0.5rem' }}>
-            We look forward to seeing you, {booking.client.fullName}!
+
+          <h1 style={{ fontSize: 'clamp(1.85rem, 4vw, 2.5rem)', marginBottom: '0.75rem' }}>
+            We Look Forward To Welcoming You!
           </h1>
-          <p style={{ color: 'var(--color-taupe)', marginBottom: '1.75rem' }}>
-            Your booking reference is <strong style={{ color: 'var(--color-espresso)' }}>{booking.reference}</strong>.
+
+          <p style={{ color: 'var(--color-taupe)', fontSize: '0.95rem', marginBottom: '2rem', lineHeight: 1.6 }}>
+            Your booking reference is <strong style={{ color: 'var(--color-espresso)', letterSpacing: '0.05em' }}>{booking.reference}</strong>.
+            A confirmation receipt has been sent to <strong>{booking.client.email}</strong>.
           </p>
 
-          {/* Automated Notification Confirmation Alerts */}
+          {/* Appointment Schedule & Venue Card */}
           <div style={{
             backgroundColor: 'var(--color-surface-subtle)',
             border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-sm)',
-            padding: '1rem',
-            textAlign: 'left',
-            marginBottom: '2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-            fontSize: '0.85rem',
-            color: 'var(--color-taupe)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Mail size={16} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-              <span>Confirmation receipt sent to: <strong>{booking.client.email}</strong></span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Smartphone size={16} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-              <span>SMS confirmation and 24h reminder sent to: <strong>{booking.client.phone}</strong></span>
-            </div>
-          </div>
-
-          {/* Appointment Specs Card */}
-          <div style={{
-            backgroundColor: '#FFFFFF',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
             padding: '1.5rem',
             textAlign: 'left',
-            marginBottom: '2rem'
+            marginBottom: '1.75rem'
           }}>
-            <h3 style={{ fontSize: '1.15rem', marginBottom: '1.25rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>
-              Appointment Schedule & Venue
+            <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>
+              Booked Treatments & Schedule
             </h3>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
-                  Service
-                </span>
-                <strong style={{ fontSize: '1rem' }}>{booking.service.name}</strong>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
-                  {booking.service.duration} mins with {booking.staff}
-                </p>
-              </div>
+            {/* List all booked services */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.25rem' }}>
+              {servicesList.map((svc, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <strong style={{ fontSize: '0.95rem' }}>{svc.name}</strong>
+                    <span style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginLeft: '0.5rem' }}>
+                      ({svc.duration} mins)
+                    </span>
+                  </div>
+                  <span style={{ fontWeight: 600 }}>£{svc.price}</span>
+                </div>
+              ))}
+            </div>
 
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '1rem',
+              paddingTop: '0.85rem',
+              borderTop: '1px solid var(--color-border-subtle)',
+              marginBottom: '1rem',
+              fontSize: '0.85rem'
+            }}>
               <div>
-                <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
+                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
                   Date & Time
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.95rem', fontWeight: 600 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
                   <Calendar size={14} style={{ color: 'var(--color-rose)' }} />
                   {formattedDate}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.85rem', color: 'var(--color-taupe)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--color-taupe)' }}>
                   <Clock size={14} style={{ color: 'var(--color-rose)' }} />
                   {booking.time}
                 </div>
               </div>
+
+              <div>
+                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
+                  Practitioner
+                </span>
+                <strong style={{ fontSize: '0.9rem' }}>{booking.staff}</strong>
+              </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', paddingTop: '1rem', borderTop: '1px solid var(--color-border-subtle)' }}>
-              <MapPin size={18} style={{ color: 'var(--color-rose)', flexShrink: 0, marginTop: '2px' }} />
-              <div style={{ fontSize: '0.85rem' }}>
-                <strong>Sandy Beauty Haven Studio:</strong><br />
-                101 Easter Road, Edinburgh, EH7 5PP, Scotland
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border-subtle)' }}>
+              <MapPin size={16} style={{ color: 'var(--color-rose)', flexShrink: 0, marginTop: '2px' }} />
+              <div style={{ fontSize: '0.825rem' }}>
+                <strong>Sandy Beauty Haven Studio:</strong> 101 Easter Road, Edinburgh, EH7 5PP
               </div>
             </div>
           </div>
@@ -188,11 +200,11 @@ END:VCALENDAR`;
             borderRadius: 'var(--radius-sm)',
             padding: '1.25rem',
             textAlign: 'left',
-            marginBottom: '2rem',
+            marginBottom: '1.75rem',
             fontSize: '0.875rem'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
-              <span>Total Service Price:</span>
+              <span>Total Service Value:</span>
               <span style={{ fontWeight: 600 }}>£{booking.totalPrice}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--color-success)' }}>
@@ -205,24 +217,23 @@ END:VCALENDAR`;
             </div>
           </div>
 
-          {/* Preparation & Arrival Notes */}
+          {/* Preparation & Arrival Reminders */}
           <div style={{
             textAlign: 'left',
             borderLeft: '3px solid var(--color-rose)',
             paddingLeft: '1rem',
-            marginBottom: '2.5rem',
-            fontSize: '0.85rem',
+            marginBottom: '2rem',
+            fontSize: '0.825rem',
             color: 'var(--color-taupe)',
             lineHeight: 1.6
           }}>
             <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.25rem' }}>
-              Important Arrival Reminders:
+              Important Reminders:
             </p>
             <p style={{ margin: 0 }}>
-              • Please arrive with clean, makeup-free lashes (no mascara or oily creams).<br />
-              • Remove contact lenses prior to service or bring your lens case.<br />
-              • A 10-minute grace period is provided; a £10 late fee applies after 10 minutes.<br />
-              • Reschedules require 24 hours notice to transfer your deposit.
+              • Please arrive on time with clean, makeup-free lashes (no mascara or oily creams).<br />
+              • A 10-minute grace window applies; past 10 minutes, the appointment may be cancelled and deposit forfeited.<br />
+              • Rescheduling requires at least <strong>48 hours notice</strong> to transfer your deposit.
             </p>
           </div>
 
@@ -232,12 +243,12 @@ END:VCALENDAR`;
               type="button"
               onClick={downloadIcsCalendar}
               className="btn btn-secondary"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
             >
               <Download size={16} />
               Add to Calendar (.ics)
             </button>
-            <Link to="/" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Link to="/" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}>
               <Home size={16} />
               Return Home
             </Link>

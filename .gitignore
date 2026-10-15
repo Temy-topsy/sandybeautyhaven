@@ -14,6 +14,9 @@ build/
 .env.*.local
 *.env
 
+# Project documentation & reference assets
+docs/
+
 # Logs
 logs/
 *.log

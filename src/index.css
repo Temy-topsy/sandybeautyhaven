@@ -400,6 +400,25 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   outline-offset: 3px;
 }
 
+/* Responsive Layout Utilities */
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-stepper {
+    display: block !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .desktop-nav {
+    display: flex !important;
+  }
+  .mobile-stepper {
+    display: none !important;
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -409,3 +428,4 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     scroll-behavior: auto !important;
   }
 }
+
