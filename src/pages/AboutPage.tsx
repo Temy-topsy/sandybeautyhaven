@@ -194,6 +194,103 @@ export const AboutPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Client Love & Social Proof */}
+        <div style={{
+          marginTop: 'clamp(4.5rem, 8vw, 7.5rem)',
+          paddingTop: 'clamp(3rem, 6vw, 4.5rem)',
+          borderTop: '1px solid var(--color-border-subtle)'
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            marginBottom: '2.5rem',
+            flexWrap: 'wrap',
+            gap: '1rem'
+          }}>
+            <div>
+              <span className="section-eyebrow">Client Feedback</span>
+              <h2 style={{ margin: 0, fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)' }}>
+                Trusted by Edinburgh Clients
+              </h2>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <Link to="/reviews" className="btn btn-secondary" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}>
+                Read All Reviews →
+              </Link>
+              <Link to="/gallery" className="btn btn-subtle" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}>
+                View Client Sets →
+              </Link>
+            </div>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '1.5rem'
+          }}>
+            <div style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border-subtle)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '1.5rem',
+              boxShadow: 'var(--shadow-subtle)'
+            }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-rose)', marginBottom: '0.75rem' }}>
+                {'★★★★★'.split('').map((s, i) => (
+                  <span key={i} style={{ fontSize: '0.9rem' }}>{s}</span>
+                ))}
+              </div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-espresso-light)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                "I got my lashes done here yesterday for the first time and I absolutely love how comfortable Sandy made me feel throughout the whole process. My lashes came out gorgeous and flattering!"
+              </p>
+              <div style={{ fontSize: '0.785rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                Ayishat A. • <span style={{ color: 'var(--color-taupe)', fontWeight: 400 }}>Hybrid Lash Set</span>
+              </div>
+            </div>
+
+            <div style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border-subtle)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '1.5rem',
+              boxShadow: 'var(--shadow-subtle)'
+            }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-rose)', marginBottom: '0.75rem' }}>
+                {'★★★★★'.split('').map((s, i) => (
+                  <span key={i} style={{ fontSize: '0.9rem' }}>{s}</span>
+                ))}
+              </div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-espresso-light)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                "Always go back to Sandy’s lashes, she is so good at her craft and the lashes always last so long 💕 so flattering as well! The studio space is lovely and calm."
+              </p>
+              <div style={{ fontSize: '0.785rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                Maggie H. • <span style={{ color: 'var(--color-taupe)', fontWeight: 400 }}>Volume / Russian Lashes</span>
+              </div>
+            </div>
+
+            <div style={{
+              backgroundColor: 'var(--color-surface)',
+              border: '1px solid var(--color-border-subtle)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '1.5rem',
+              boxShadow: 'var(--shadow-subtle)'
+            }}>
+              <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--color-rose)', marginBottom: '0.75rem' }}>
+                {'★★★★★'.split('').map((s, i) => (
+                  <span key={i} style={{ fontSize: '0.9rem' }}>{s}</span>
+                ))}
+              </div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--color-espresso-light)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                "Taking Sandy’s 1-on-1 lash training was the best investment I made this year. She gave practical tips on isolation, adhesive control, and client setup."
+              </p>
+              <div style={{ fontSize: '0.785rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                Chloe T. • <span style={{ color: 'var(--color-taupe)', fontWeight: 400 }}>1-on-1 Academy Student</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
