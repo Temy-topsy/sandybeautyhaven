@@ -50,45 +50,64 @@ export const Navbar: React.FC = () => {
         }}
       >
         <div
-          className="container"
+          className="navbar-container"
           style={{
             height: 'var(--header-height)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
+            width: '100%',
+            maxWidth: '1440px',
+            margin: '0 auto',
+            padding: '0 clamp(1.25rem, 3.5vw, 2.5rem)',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
+            alignItems: 'center'
           }}
         >
-          {/* Brand Logo & Wordmark */}
-          <Link
-            to="/"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.875rem',
-              textDecoration: 'none'
-            }}
-          >
-            <img
-              src="/sandy logo.png"
-              alt="Sandy Beauty Haven Logo"
+          {/* Brand Logo & Wordmark (Shifted Left & Compact) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'start' }}>
+            <Link
+              to="/"
               style={{
-                width: '44px',
-                height: '44px',
-                objectFit: 'contain',
-                borderRadius: '50%'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.65rem',
+                textDecoration: 'none'
               }}
-            />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
+            >
+              <img
+                src="/sandy logo.png"
+                alt="Sandy Beauty Haven Logo"
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  objectFit: 'contain',
+                  borderRadius: '50%'
+                }}
+              />
+              <span
+                className="brand-wordmark"
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(0.95rem, 1.4vw, 1.15rem)',
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-espresso)',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                Sandy Beauty Haven
+              </span>
+            </Link>
+          </div>
 
-            </div>
-          </Link>
-
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links (Mathematically Centered with Generous Pacing) */}
           <nav
             style={{
               display: 'none',
               alignItems: 'center',
-              gap: '1.75rem'
+              justifyContent: 'center',
+              justifySelf: 'center',
+              gap: 'clamp(2rem, 3.2vw, 3.5rem)'
             }}
             className="desktop-nav"
           >
@@ -97,13 +116,14 @@ export const Navbar: React.FC = () => {
                 key={link.path}
                 to={link.path}
                 style={{
-                  fontSize: '0.875rem',
+                  fontSize: '0.9rem',
                   fontWeight: 500,
-                  letterSpacing: '0.02em',
+                  letterSpacing: '0.04em',
                   color: isActive(link.path) ? 'var(--color-espresso)' : 'var(--color-taupe)',
                   borderBottom: isActive(link.path) ? '2px solid var(--color-rose)' : '2px solid transparent',
-                  paddingBottom: '4px',
-                  transition: 'all var(--transition-fast)'
+                  padding: '4px 6px',
+                  transition: 'all var(--transition-fast)',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 {link.name}
@@ -112,7 +132,7 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Right Action: Shopping Bag & Primary Booking CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifySelf: 'end' }}>
             <button
               type="button"
               onClick={openCart}
@@ -122,7 +142,7 @@ export const Navbar: React.FC = () => {
                 background: 'transparent',
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
-                padding: '0.55rem',
+                padding: '0.5rem',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -131,7 +151,7 @@ export const Navbar: React.FC = () => {
                 transition: 'all var(--transition-fast)'
               }}
             >
-              <ShoppingBag size={18} />
+              <ShoppingBag size={17} />
               {totalItemCount > 0 && (
                 <span
                   key={totalItemCount}
@@ -142,7 +162,7 @@ export const Navbar: React.FC = () => {
                     right: '-6px',
                     backgroundColor: 'var(--color-rose)',
                     color: '#FFFFFF',
-                    fontSize: '0.675rem',
+                    fontSize: '0.65rem',
                     fontWeight: 700,
                     borderRadius: '50%',
                     width: '18px',
@@ -162,12 +182,12 @@ export const Navbar: React.FC = () => {
               to="/schedule"
               className="btn btn-primary"
               style={{
-                padding: '0.65rem 1.25rem',
-                fontSize: '0.8rem',
+                padding: '0.55rem 1.15rem',
+                fontSize: '0.785rem',
                 display: 'inline-flex'
               }}
             >
-              <Calendar size={15} />
+              <Calendar size={14} />
               Book Now
             </Link>
 
@@ -184,13 +204,13 @@ export const Navbar: React.FC = () => {
                 background: 'transparent',
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
-                padding: '0.5rem',
+                padding: '0.45rem',
                 cursor: 'pointer',
                 color: 'var(--color-espresso)'
               }}
               className="mobile-menu-btn"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -301,6 +321,12 @@ export const Navbar: React.FC = () => {
 
       {/* Global Responsive CSS rule */}
       <style>{`
+        @media (max-width: 899px) {
+          .navbar-container {
+            display: flex !important;
+            justify-content: space-between !important;
+          }
+        }
         @media (min-width: 900px) {
           .desktop-nav {
             display: flex !important;
@@ -310,6 +336,17 @@ export const Navbar: React.FC = () => {
           }
           .desktop-info {
             display: inline-flex !important;
+          }
+        }
+        @media (max-width: 520px) {
+          .brand-wordmark {
+            font-size: 0.92rem !important;
+          }
+        }
+        @media (max-width: 380px) {
+          .brand-wordmark {
+            font-size: 0.82rem !important;
+            letter-spacing: 0.03em !important;
           }
         }
       `}</style>
