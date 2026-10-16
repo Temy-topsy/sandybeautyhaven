@@ -65,11 +65,11 @@ export const ShopPage: React.FC = () => {
             Ethically sourced virgin hair bundles, bespoke salon-grade press-on nails, plumping peptide lip oils, and clinical extension aftercare. Available for worldwide delivery or pickup at our Easter Road studio.
           </p>
 
-          {/* Category Filter Pills */}
+          {/* Category Filter Buttons */}
           <div style={{
             display: 'flex',
             justifyContent: 'center',
-            gap: '0.5rem',
+            gap: '0.65rem',
             flexWrap: 'wrap'
           }}>
             {categories.map((cat) => {
@@ -80,15 +80,16 @@ export const ShopPage: React.FC = () => {
                   type="button"
                   onClick={() => setSelectedCategory(cat)}
                   style={{
-                    padding: '0.55rem 1.25rem',
-                    borderRadius: 'var(--radius-full)',
+                    padding: '0.65rem 1.35rem',
+                    borderRadius: 'var(--radius-sm)',
                     border: '1px solid',
                     borderColor: isActive ? 'var(--color-espresso)' : 'var(--color-border)',
                     backgroundColor: isActive ? 'var(--color-espresso)' : 'var(--color-surface)',
                     color: isActive ? 'var(--color-ivory)' : 'var(--color-espresso)',
-                    fontSize: '0.825rem',
+                    fontSize: '0.8rem',
                     fontWeight: 600,
                     cursor: 'pointer',
+                    userSelect: 'none',
                     transition: 'all var(--transition-fast)'
                   }}
                 >

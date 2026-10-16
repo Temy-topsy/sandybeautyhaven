@@ -322,6 +322,9 @@ export const Navbar: React.FC = () => {
       {/* Global Responsive CSS rule */}
       <style>{`
         @media (max-width: 899px) {
+          .brand-wordmark {
+            display: none !important;
+          }
           .navbar-container {
             display: flex !important;
             justify-content: space-between !important;
@@ -336,17 +339,6 @@ export const Navbar: React.FC = () => {
           }
           .desktop-info {
             display: inline-flex !important;
-          }
-        }
-        @media (max-width: 520px) {
-          .brand-wordmark {
-            font-size: 0.92rem !important;
-          }
-        }
-        @media (max-width: 380px) {
-          .brand-wordmark {
-            font-size: 0.82rem !important;
-            letter-spacing: 0.03em !important;
           }
         }
       `}</style>

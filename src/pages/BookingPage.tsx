@@ -355,7 +355,7 @@ export const BookingPage: React.FC = () => {
               gap: '0.65rem',
               backgroundColor: 'var(--color-surface-subtle)',
               padding: '0.65rem 1.15rem',
-              borderRadius: 'var(--radius-full)',
+              borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--color-border)',
               fontSize: '0.85rem',
               boxShadow: 'var(--shadow-subtle)',
