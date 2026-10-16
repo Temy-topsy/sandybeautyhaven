@@ -26,9 +26,6 @@ export const Navbar: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
     { name: 'Shop', path: '/shop' },
-    { name: 'Lash Training', path: '/training' },
-    { name: 'Gallery', path: '/gallery' },
-    { name: 'Reviews', path: '/reviews' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }
   ];

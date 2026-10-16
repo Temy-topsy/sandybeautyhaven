@@ -58,4 +58,6 @@ declare module 'lucide-react' {
   export const ShoppingBag: LucideIcon;
   export const ShoppingCart: LucideIcon;
   export const ShoppingBasket: LucideIcon;
+  export const Truck: LucideIcon;
+  export const Package: LucideIcon;
 }
