@@ -90,13 +90,13 @@ END:VCALENDAR`;
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '85vh', padding: 'clamp(2.5rem, 5vw, 4.5rem) 1.5rem' }}>
-      <div className="container" style={{ maxWidth: '720px' }}>
+    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '85vh', padding: 'clamp(3rem, 6vw, 5rem) 1.25rem' }}>
+      <div className="container" style={{ maxWidth: '680px' }}>
         <div style={{
           backgroundColor: 'var(--color-surface)',
           borderRadius: 'var(--radius-md)',
           border: '1px solid var(--color-border)',
-          padding: 'clamp(2rem, 5vw, 3.5rem)',
+          padding: 'clamp(2rem, 6vw, 3.5rem)',
           boxShadow: 'var(--shadow-card)',
           textAlign: 'center'
         }}>
@@ -113,46 +113,97 @@ END:VCALENDAR`;
             margin: '0 auto 1.5rem',
             border: '2px solid var(--color-rose)'
           }}>
-            <CheckCircle2 size={36} />
+            <CheckCircle2 size={34} />
           </div>
 
-          <span className="badge badge-rose" style={{ marginBottom: '0.75rem', fontSize: '0.75rem' }}>
-            {booking.paymentChoice === 'full' ? 'Paid in Full Confirmed' : 'Deposit Confirmed'}
+          <span className="badge badge-rose" style={{ marginBottom: '1rem', fontSize: '0.75rem', letterSpacing: '0.08em' }}>
+            {booking.paymentChoice === 'full' ? 'PAID IN FULL CONFIRMED' : 'DEPOSIT CONFIRMED'}
           </span>
 
-          <h1 style={{ fontSize: 'clamp(1.85rem, 4vw, 2.5rem)', marginBottom: '0.75rem' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'clamp(1.9rem, 4.5vw, 2.6rem)',
+            color: 'var(--color-espresso)',
+            marginBottom: '1rem',
+            lineHeight: 1.2
+          }}>
             We Look Forward To Welcoming You!
           </h1>
 
-          <p style={{ color: 'var(--color-taupe)', fontSize: '0.95rem', marginBottom: '2rem', lineHeight: 1.6 }}>
+          <div style={{
+            color: 'var(--color-taupe)',
+            fontSize: '0.925rem',
+            marginBottom: '2.5rem',
+            lineHeight: 1.7,
+            wordBreak: 'break-word',
+            overflowWrap: 'anywhere'
+          }}>
             Your booking reference is <strong style={{ color: 'var(--color-espresso)', letterSpacing: '0.05em' }}>{booking.reference}</strong>.
-            A confirmation receipt has been sent to <strong>{booking.client.email}</strong>.
-          </p>
+            <div style={{ marginTop: '0.35rem' }}>
+              A confirmation receipt has been sent to{' '}
+              <strong style={{ color: 'var(--color-espresso)', wordBreak: 'break-all' }}>
+                {booking.client.email}
+              </strong>.
+            </div>
+          </div>
 
           {/* Appointment Schedule & Venue Card */}
           <div style={{
             backgroundColor: 'var(--color-surface-subtle)',
             border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-sm)',
-            padding: '1.5rem',
+            padding: 'clamp(1.25rem, 4vw, 1.75rem)',
             textAlign: 'left',
-            marginBottom: '1.75rem'
+            marginBottom: '2rem'
           }}>
-            <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.5rem' }}>
+            <h3 style={{
+              fontSize: '1.05rem',
+              fontWeight: 600,
+              color: 'var(--color-espresso)',
+              marginBottom: '1.25rem',
+              borderBottom: '1px solid var(--color-border)',
+              paddingBottom: '0.65rem'
+            }}>
               Booked Treatments & Schedule
             </h3>
 
-            {/* List all booked services */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', marginBottom: '1.25rem' }}>
+            {/* List all booked services - Guaranteed collision-free */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
               {servicesList.map((svc, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <strong style={{ fontSize: '0.95rem' }}>{svc.name}</strong>
-                    <span style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginLeft: '0.5rem' }}>
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    gap: '1.25rem',
+                    paddingBottom: i < servicesList.length - 1 ? '0.85rem' : '0',
+                    borderBottom: i < servicesList.length - 1 ? '1px solid var(--color-border-subtle)' : 'none'
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontWeight: 600,
+                      fontSize: '0.925rem',
+                      color: 'var(--color-espresso)',
+                      lineHeight: 1.45,
+                      wordBreak: 'break-word'
+                    }}>
+                      {svc.name}
+                    </div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-taupe)', marginTop: '0.2rem' }}>
                       ({svc.duration} mins)
-                    </span>
+                    </div>
                   </div>
-                  <span style={{ fontWeight: 600 }}>£{svc.price}</span>
+                  <div style={{
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    color: 'var(--color-espresso)',
+                    flexShrink: 0,
+                    textAlign: 'right'
+                  }}>
+                    £{svc.price.toFixed(2)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -160,38 +211,40 @@ END:VCALENDAR`;
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '1rem',
-              paddingTop: '0.85rem',
+              gap: '1.25rem',
+              paddingTop: '1rem',
               borderTop: '1px solid var(--color-border-subtle)',
               marginBottom: '1rem',
               fontSize: '0.85rem'
             }}>
               <div>
-                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
+                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-taupe)', display: 'block', marginBottom: '0.35rem' }}>
                   Date & Time
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 600 }}>
-                  <Calendar size={14} style={{ color: 'var(--color-rose)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                  <Calendar size={15} style={{ color: 'var(--color-rose)' }} />
                   {formattedDate}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: 'var(--color-taupe)' }}>
-                  <Clock size={14} style={{ color: 'var(--color-rose)' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', color: 'var(--color-taupe)', marginTop: '0.25rem' }}>
+                  <Clock size={15} style={{ color: 'var(--color-rose)' }} />
                   {booking.time}
                 </div>
               </div>
 
               <div>
-                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
+                <span style={{ fontSize: '0.725rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-taupe)', display: 'block', marginBottom: '0.35rem' }}>
                   Practitioner
                 </span>
-                <strong style={{ fontSize: '0.9rem' }}>{booking.staff}</strong>
+                <strong style={{ fontSize: '0.925rem', color: 'var(--color-espresso)' }}>
+                  {booking.staff}
+                </strong>
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border-subtle)' }}>
+            <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'flex-start', paddingTop: '1rem', borderTop: '1px solid var(--color-border-subtle)' }}>
               <MapPin size={16} style={{ color: 'var(--color-rose)', flexShrink: 0, marginTop: '2px' }} />
-              <div style={{ fontSize: '0.825rem' }}>
-                <strong>Sandy Beauty Haven Studio:</strong> 101 Easter Road, Edinburgh, EH7 5PP
+              <div style={{ fontSize: '0.825rem', color: 'var(--color-taupe)', lineHeight: 1.5 }}>
+                <strong style={{ color: 'var(--color-espresso)' }}>Sandy Beauty Haven Studio:</strong> 101 Easter Road, Edinburgh, EH7 5PP
               </div>
             </div>
           </div>
@@ -199,27 +252,36 @@ END:VCALENDAR`;
           {/* Payment Breakdown */}
           <div style={{
             backgroundColor: 'var(--color-surface-subtle)',
+            border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-sm)',
-            padding: '1.25rem',
+            padding: '1.25rem 1.5rem',
             textAlign: 'left',
-            marginBottom: '1.75rem',
+            marginBottom: '2rem',
             fontSize: '0.875rem'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
               <span>Total Service Value:</span>
-              <span style={{ fontWeight: 600 }}>£{booking.totalPrice.toFixed(2)}</span>
+              <span style={{ fontWeight: 600, color: 'var(--color-espresso)' }}>£{booking.totalPrice.toFixed(2)}</span>
             </div>
             {booking.tip && booking.tip > 0 ? (
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--color-taupe)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.45rem', color: 'var(--color-taupe)' }}>
                 <span>Tip Included:</span>
                 <span style={{ fontWeight: 600 }}>+£{booking.tip.toFixed(2)}</span>
               </div>
             ) : null}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem', color: 'var(--color-success)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.45rem', color: 'var(--color-success)' }}>
               <span>{booking.paymentChoice === 'full' ? 'Paid in Full Online (256-bit SSL):' : 'Deposit Paid Online (256-bit SSL):'}</span>
               <span style={{ fontWeight: 600 }}>-£{booking.depositPaid.toFixed(2)}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid var(--color-border)', paddingTop: '0.5rem', fontWeight: 600, fontSize: '0.95rem' }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderTop: '1px solid var(--color-border)',
+              paddingTop: '0.65rem',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              color: 'var(--color-espresso)'
+            }}>
               <span>Remaining Balance Due on Arrival:</span>
               <span>{booking.remainingBalance <= 0 ? '£0.00 (Fully Settled)' : `£${booking.remainingBalance.toFixed(2)}`}</span>
             </div>
@@ -229,35 +291,48 @@ END:VCALENDAR`;
           <div style={{
             textAlign: 'left',
             borderLeft: '3px solid var(--color-rose)',
-            paddingLeft: '1rem',
-            marginBottom: '2rem',
+            backgroundColor: 'var(--color-surface-subtle)',
+            padding: '1rem 1.25rem',
+            borderRadius: '0 var(--radius-sm) var(--radius-sm) 0',
+            marginBottom: '2.5rem',
             fontSize: '0.825rem',
             color: 'var(--color-taupe)',
             lineHeight: 1.6
           }}>
-            <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.25rem' }}>
+            <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.35rem' }}>
               Important Reminders:
             </p>
             <p style={{ margin: 0 }}>
-              • Please arrive on time with clean, makeup-free lashes (no mascara or oily creams).<br />
-              • A 10-minute grace window applies; past 10 minutes, the appointment may be cancelled and deposit forfeited.<br />
-              • Rescheduling requires at least <strong>48 hours notice</strong> to transfer your deposit.
+              • Arrive on time with clean, makeup-free lashes (no oils or mascara).<br />
+              • A 10-minute grace window applies; after 10 minutes, appointments may be cancelled.<br />
+              • Rescheduling requires at least <strong>48 hours notice</strong> to transfer deposits.
             </p>
           </div>
 
-          {/* Actions */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Action CTAs */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={downloadIcsCalendar}
               className="btn btn-secondary"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
             >
-              <Download size={16} />
+              <Download size={15} />
               Add to Calendar (.ics)
             </button>
-            <Link to="/" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}>
-              <Home size={16} />
+            <Link
+              to="/shop"
+              className="btn btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
+            >
+              Shop Hair & Beauty
+            </Link>
+            <Link
+              to="/"
+              className="btn btn-primary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
+            >
+              <Home size={15} />
               Return Home
             </Link>
           </div>

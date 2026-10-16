@@ -1,14 +1,18 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { BookingProvider } from './context/BookingContext';
+import { CartProvider } from './context/CartContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { CookieBanner } from './components/layout/CookieBanner';
+import { CartDrawer } from './components/cart/CartDrawer';
+import { Toast } from './components/ui/Toast';
 
 // Pages
 import { HomePage } from './pages/HomePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { ServiceDetailPage } from './pages/ServiceDetailPage';
+import { ShopPage } from './pages/ShopPage';
 import { BookingPage } from './pages/BookingPage';
 import { BookingConfirmationPage } from './pages/BookingConfirmationPage';
 import { TrainingPage } from './pages/TrainingPage';
@@ -57,45 +61,51 @@ const NotFoundPage = () => (
 function App() {
   return (
     <BrowserRouter>
-      <BookingProvider>
-        <ScrollToTop />
-        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          <Navbar />
-          <main style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/services" element={<ServicesPage />} />
-              <Route path="/services/:slug" element={<ServiceDetailPage />} />
-              <Route path="/schedule" element={<BookingPage />} />
-              <Route path="/book" element={<BookingPage />} />
-              <Route path="/checkout" element={<BookingPage />} />
-              <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
-              <Route path="/training" element={<TrainingPage />} />
-              <Route path="/gallery" element={<GalleryPage />} />
-              <Route path="/reviews" element={<ReviewsPage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-              <Route path="/faq" element={<FaqPage />} />
+      <CartProvider>
+        <BookingProvider>
+          <ScrollToTop />
+          <CartDrawer />
+          <Toast />
+          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Navbar />
+            <main style={{ flex: 1 }}>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/services" element={<ServicesPage />} />
+                <Route path="/services/:slug" element={<ServiceDetailPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/products" element={<ShopPage />} />
+                <Route path="/schedule" element={<BookingPage />} />
+                <Route path="/book" element={<BookingPage />} />
+                <Route path="/checkout" element={<BookingPage />} />
+                <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
+                <Route path="/training" element={<TrainingPage />} />
+                <Route path="/gallery" element={<GalleryPage />} />
+                <Route path="/reviews" element={<ReviewsPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/faq" element={<FaqPage />} />
 
-              {/* Legal & Policy Sub-routes */}
-              <Route path="/policies" element={<PolicyLayout />}>
-                <Route index element={<BookingPolicy />} />
-                <Route path="booking" element={<BookingPolicy />} />
-                <Route path="cancellation" element={<CancellationPolicy />} />
-                <Route path="refunds" element={<RefundPolicy />} />
-                <Route path="privacy" element={<PrivacyPolicy />} />
-                <Route path="terms" element={<TermsPolicy />} />
-                <Route path="cookies" element={<CookiePolicy />} />
-              </Route>
+                {/* Legal & Policy Sub-routes */}
+                <Route path="/policies" element={<PolicyLayout />}>
+                  <Route index element={<BookingPolicy />} />
+                  <Route path="booking" element={<BookingPolicy />} />
+                  <Route path="cancellation" element={<CancellationPolicy />} />
+                  <Route path="refunds" element={<RefundPolicy />} />
+                  <Route path="privacy" element={<PrivacyPolicy />} />
+                  <Route path="terms" element={<TermsPolicy />} />
+                  <Route path="cookies" element={<CookiePolicy />} />
+                </Route>
 
-              {/* 404 Catch-All */}
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </main>
-          <Footer />
-          <CookieBanner />
-        </div>
-      </BookingProvider>
+                {/* 404 Catch-All */}
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </main>
+            <Footer />
+            <CookieBanner />
+          </div>
+        </BookingProvider>
+      </CartProvider>
     </BrowserRouter>
   );
 }

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Calendar } from 'lucide-react';
+import { Menu, X, Calendar, ShoppingBag } from 'lucide-react';
+import { useCart } from '../../context/CartContext';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { totalItemCount, openCart } = useCart();
   const location = useLocation();
 
   useEffect(() => {
@@ -23,6 +25,7 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
+    { name: 'Shop', path: '/shop' },
     { name: 'Lash Training', path: '/training' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Reviews', path: '/reviews' },
@@ -111,8 +114,53 @@ export const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Action: Primary Booking CTA */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Right Action: Shopping Bag & Primary Booking CTA */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <button
+              type="button"
+              onClick={openCart}
+              aria-label="View shopping bag"
+              style={{
+                position: 'relative',
+                background: 'transparent',
+                border: '1px solid var(--color-border)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '0.55rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--color-espresso)',
+                cursor: 'pointer',
+                transition: 'all var(--transition-fast)'
+              }}
+            >
+              <ShoppingBag size={18} />
+              {totalItemCount > 0 && (
+                <span
+                  key={totalItemCount}
+                  className="cart-bounce"
+                  style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    right: '-6px',
+                    backgroundColor: 'var(--color-rose)',
+                    color: '#FFFFFF',
+                    fontSize: '0.675rem',
+                    fontWeight: 700,
+                    borderRadius: '50%',
+                    width: '18px',
+                    height: '18px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.12)'
+                  }}
+                >
+                  {totalItemCount}
+                </span>
+              )}
+            </button>
+
             <Link
               to="/schedule"
               className="btn btn-primary"

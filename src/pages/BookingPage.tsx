@@ -12,10 +12,12 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
-  ShieldCheck
+  ShieldCheck,
+  ShoppingBag
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { useBooking } from '../context/BookingContext';
+import { useCart } from '../context/CartContext';
 
 // Crisp SVG Card Brand Badges matching Acuity
 const VisaIcon: React.FC = () => (
@@ -110,12 +112,24 @@ export const BookingPage: React.FC = () => {
     completeBooking
   } = useBooking();
 
+  const { showToast } = useCart();
+
   const [step, setStep] = useState<number>(1);
   const [bookingCategory, setBookingCategory] = useState<string>('All');
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [isProcessing, setIsProcessing] = useState(false);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [showTermsModal, setShowTermsModal] = useState(false);
+
+  const handleToggleService = (s: (typeof SERVICES)[0]) => {
+    const alreadySelected = isServiceSelected(s.id);
+    toggleService(s);
+    if (alreadySelected) {
+      showToast(`Removed "${s.name}" from appointment cart`);
+    } else {
+      showToast(`Added "${s.name}" to appointment cart`);
+    }
+  };
 
   // Step 4 State matching Acuity Scheduling exactly
   const [paymentChoice, setPaymentChoice] = useState<'full' | 'deposit'>('full');
@@ -334,20 +348,50 @@ export const BookingPage: React.FC = () => {
               </h1>
             </div>
 
-            {/* Selected items quick badge */}
+            {/* Selected items quick badge with smooth bounce */}
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem',
+              gap: '0.65rem',
               backgroundColor: 'var(--color-surface-subtle)',
-              padding: '0.5rem 1rem',
-              borderRadius: 'var(--radius-sm)',
+              padding: '0.65rem 1.15rem',
+              borderRadius: 'var(--radius-full)',
               border: '1px solid var(--color-border)',
-              fontSize: '0.85rem'
+              fontSize: '0.85rem',
+              boxShadow: 'var(--shadow-subtle)',
+              transition: 'all var(--transition-fast)'
             }}>
-              <span style={{ fontWeight: 600 }}>{selectedServices.length} Treatment{selectedServices.length !== 1 ? 's' : ''}</span>
-              <span>•</span>
-              <span style={{ color: 'var(--color-rose)', fontWeight: 600 }}>Total: £{totalPrice}</span>
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <ShoppingBag size={18} style={{ color: 'var(--color-rose)' }} />
+                {selectedServices.length > 0 && (
+                  <span
+                    className="cart-bounce"
+                    style={{
+                      position: 'absolute',
+                      top: '-6px',
+                      right: '-8px',
+                      backgroundColor: 'var(--color-espresso)',
+                      color: 'var(--color-ivory)',
+                      borderRadius: '50%',
+                      width: '16px',
+                      height: '16px',
+                      fontSize: '0.65rem',
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      lineHeight: 1
+                    }}
+                  >
+                    {selectedServices.length}
+                  </span>
+                )}
+              </div>
+              <span style={{ fontWeight: 600, color: 'var(--color-espresso)' }}>
+                {selectedServices.length} Treatment{selectedServices.length !== 1 ? 's' : ''} in Cart
+              </span>
+              <span style={{ color: 'var(--color-taupe)' }}>•</span>
+              <span style={{ color: 'var(--color-rose)', fontWeight: 700 }}>Total: £{totalPrice}</span>
             </div>
           </div>
 
@@ -453,19 +497,22 @@ export const BookingPage: React.FC = () => {
                   backgroundColor: 'var(--color-surface-subtle)',
                   border: '1px solid var(--color-border)',
                   borderRadius: 'var(--radius-sm)',
-                  padding: '1rem',
-                  marginBottom: '1.75rem'
+                  padding: '1.25rem',
+                  marginBottom: '2rem'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-                    <span style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                      Selected Services ({selectedServices.length}):
-                    </span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <ShoppingBag size={16} style={{ color: 'var(--color-rose)' }} />
+                      <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                        Appointment Cart ({selectedServices.length} {selectedServices.length === 1 ? 'service' : 'services'}):
+                      </span>
+                    </div>
                     <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
                       Est. Duration: {totalDuration} mins
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
                     {selectedServices.map((svc) => (
                       <div
                         key={svc.id}
@@ -473,16 +520,16 @@ export const BookingPage: React.FC = () => {
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
-                          backgroundColor: '#FFFFFF',
-                          padding: '0.5rem 0.75rem',
+                          backgroundColor: 'var(--color-surface)',
+                          padding: '0.65rem 0.85rem',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid var(--color-border-subtle)',
                           fontSize: '0.85rem'
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-                          <CheckCircle2 size={15} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
-                          <span style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                          <span style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--color-espresso)' }}>
                             {svc.name}
                           </span>
                           <span style={{ fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
@@ -491,11 +538,14 @@ export const BookingPage: React.FC = () => {
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-                          <span style={{ fontWeight: 600 }}>£{svc.price}</span>
+                          <span style={{ fontWeight: 600, color: 'var(--color-espresso)' }}>£{svc.price}</span>
                           {selectedServices.length > 1 && (
                             <button
                               type="button"
-                              onClick={() => removeService(svc.id)}
+                              onClick={() => {
+                                removeService(svc.id);
+                                showToast(`Removed "${svc.name}" from appointment cart`);
+                              }}
                               aria-label={`Remove ${svc.name}`}
                               style={{
                                 background: 'none',
@@ -517,30 +567,31 @@ export const BookingPage: React.FC = () => {
                 </div>
 
                 {/* Practitioner Selection */}
-                <div style={{ marginBottom: '1.75rem' }}>
-                  <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                <div style={{ marginBottom: '2rem' }}>
+                  <label className="form-label" style={{ display: 'block', marginBottom: '0.65rem' }}>
                     Select Practitioner
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.65rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
                     {staffMembers.map((staff) => (
                       <button
                         key={staff.id}
                         type="button"
                         onClick={() => setSelectedStaff(staff.id)}
                         style={{
-                          padding: '0.75rem 0.85rem',
+                          padding: '0.85rem 1rem',
                           textAlign: 'left',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid',
                           borderColor: selectedStaff === staff.id ? 'var(--color-rose)' : 'var(--color-border)',
                           backgroundColor: selectedStaff === staff.id ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          transition: 'all var(--transition-fast)'
                         }}
                       >
-                        <div style={{ fontWeight: 600, fontSize: '0.825rem', color: 'var(--color-espresso)' }}>
+                        <div style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--color-espresso)' }}>
                           {staff.name}
                         </div>
-                        <div style={{ fontSize: '0.725rem', color: 'var(--color-taupe)' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--color-taupe)', marginTop: '0.2rem' }}>
                           {staff.role}
                         </div>
                       </button>
@@ -551,10 +602,10 @@ export const BookingPage: React.FC = () => {
                 {/* Category Filter Pills */}
                 <div style={{
                   display: 'flex',
-                  gap: '0.45rem',
+                  gap: '0.5rem',
                   overflowX: 'auto',
                   paddingBottom: '0.5rem',
-                  marginBottom: '1rem',
+                  marginBottom: '1.25rem',
                   scrollbarWidth: 'none'
                 }}>
                   {bookingCategories.map((cat) => {
@@ -565,7 +616,7 @@ export const BookingPage: React.FC = () => {
                         type="button"
                         onClick={() => setBookingCategory(cat)}
                         style={{
-                          padding: '0.4rem 0.95rem',
+                          padding: '0.45rem 1rem',
                           borderRadius: 'var(--radius-sm)',
                           fontSize: '0.75rem',
                           fontWeight: 600,
@@ -585,15 +636,15 @@ export const BookingPage: React.FC = () => {
                 </div>
 
                 {/* Available Treatments List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '460px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '480px', overflowY: 'auto', paddingRight: '0.35rem' }}>
                   {displayedServices.map((s) => {
                     const isSelected = isServiceSelected(s.id);
                     return (
                       <div
                         key={s.id}
-                        onClick={() => toggleService(s)}
+                        onClick={() => handleToggleService(s)}
                         style={{
-                          padding: '0.85rem 1rem',
+                          padding: '1.05rem 1.25rem',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid',
                           borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-border)',
@@ -602,56 +653,63 @@ export const BookingPage: React.FC = () => {
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
-                          gap: '0.75rem',
+                          gap: '1rem',
+                          boxShadow: isSelected ? 'var(--shadow-card)' : 'none',
                           transition: 'all var(--transition-fast)'
                         }}
                       >
-                        <div style={{ minWidth: 0 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
-                            <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.name}</span>
-                            <span className="badge" style={{ fontSize: '0.65rem' }}>{s.category}</span>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.925rem', color: 'var(--color-espresso)' }}>{s.name}</span>
+                            <span className="badge" style={{ fontSize: '0.675rem' }}>{s.category}</span>
+                            {isSelected && (
+                              <span className="badge badge-rose" style={{ fontSize: '0.675rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                                <Check size={10} /> 1 In Cart
+                              </span>
+                            )}
                           </div>
-                          <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.6rem' }}>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.65rem' }}>
                             <span>{s.duration} mins</span>
                             <span>•</span>
                             <span>Deposit: £{s.deposit}</span>
                           </div>
                         </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
-                          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 600 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+                          <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
                             £{s.price}
                           </span>
                           <button
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleService(s);
+                              handleToggleService(s);
                             }}
                             style={{
-                              padding: '0.4rem 0.75rem',
+                              padding: '0.45rem 0.85rem',
                               fontSize: '0.75rem',
                               fontWeight: 600,
                               borderRadius: 'var(--radius-sm)',
                               border: '1px solid',
                               borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-espresso)',
-                              backgroundColor: isSelected ? 'var(--color-rose)' : '#FFFFFF',
+                              backgroundColor: isSelected ? 'var(--color-rose)' : 'var(--color-surface)',
                               color: isSelected ? '#FFFFFF' : 'var(--color-espresso)',
                               cursor: 'pointer',
                               display: 'inline-flex',
                               alignItems: 'center',
-                              gap: '0.3rem'
+                              gap: '0.35rem',
+                              transition: 'all var(--transition-fast)'
                             }}
                           >
                             {isSelected ? (
                               <>
-                                <Check size={12} />
-                                Added
+                                <Check size={13} />
+                                In Cart
                               </>
                             ) : (
                               <>
-                                <Plus size={12} />
-                                Add
+                                <Plus size={13} />
+                                Add to Cart
                               </>
                             )}
                           </button>
@@ -1036,48 +1094,44 @@ export const BookingPage: React.FC = () => {
             )}
 
             {/* ============================================================== */}
-            {/* STEP 4: ACUITY PAYMENT & ORDER SUMMARY EXPERIENCE */}
+            {/* STEP 4: PAYMENT & ORDER SUMMARY */}
             {/* ============================================================== */}
             {step === 4 && (
               <div>
-                {/* Brand Logo & Title (as seen in Acuity screenshot) */}
-                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                {/* Brand Logo */}
+                <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
                   <img
                     src="/sandy logo.png"
                     alt="Sandy Beauty Haven"
                     style={{
-                      width: '84px',
-                      height: '84px',
+                      width: '76px',
+                      height: '76px',
                       objectFit: 'contain',
-                      margin: '0 auto 0.65rem',
+                      margin: '0 auto',
                       display: 'block'
                     }}
                   />
-                  <div style={{
-                    fontFamily: 'var(--font-serif)',
-                    fontSize: '1.25rem',
-                    letterSpacing: '0.14em',
-                    textTransform: 'uppercase',
-                    color: '#111827',
-                    fontWeight: 600
-                  }}>
-                    SANDY BEAUTY HAVEN
-                  </div>
                 </div>
 
                 <form onSubmit={handleCompletePayment}>
                   {/* Section 1: Payment information Card */}
-                  <div style={{ marginBottom: '1.75rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.75rem' }}>
-                      Payment information
+                  <div style={{ marginBottom: '2.25rem' }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.35rem',
+                      color: 'var(--color-espresso)',
+                      marginBottom: '1rem',
+                      fontWeight: 600
+                    }}>
+                      Payment Details
                     </h3>
 
                     <div style={{
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '4px',
-                      padding: 'clamp(1rem, 3.5vw, 1.25rem)',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.02)'
+                      backgroundColor: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: 'clamp(1.25rem, 4vw, 1.75rem)',
+                      boxShadow: 'var(--shadow-subtle)'
                     }}>
                       {/* Top Row: Credit or debit card + Card Logos */}
                       <div style={{
@@ -1088,7 +1142,7 @@ export const BookingPage: React.FC = () => {
                         flexWrap: 'wrap',
                         gap: '0.5rem'
                       }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1F2937' }}>
+                        <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
                           Credit or debit card
                         </span>
                         <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
@@ -1100,8 +1154,8 @@ export const BookingPage: React.FC = () => {
                       </div>
 
                       {/* First name */}
-                      <div style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                      <div style={{ marginBottom: '1.1rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.35rem' }}>
                           First name *
                         </label>
                         <input
@@ -1112,20 +1166,21 @@ export const BookingPage: React.FC = () => {
                           style={{
                             width: '100%',
                             boxSizing: 'border-box',
-                            padding: '0.75rem 0.85rem',
-                            border: '1px solid #D1D5DB',
-                            borderRadius: '4px',
-                            backgroundColor: '#F9FAFB',
+                            padding: '0.8rem 0.95rem',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: 'var(--radius-sm)',
+                            backgroundColor: 'var(--color-surface)',
                             fontSize: '0.9rem',
-                            color: '#111827',
-                            outline: 'none'
+                            color: 'var(--color-espresso)',
+                            outline: 'none',
+                            transition: 'border-color var(--transition-fast)'
                           }}
                         />
                       </div>
 
                       {/* Last name */}
                       <div style={{ marginBottom: '1.25rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.35rem' }}>
+                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.35rem' }}>
                           Last name *
                         </label>
                         <input
@@ -1136,25 +1191,26 @@ export const BookingPage: React.FC = () => {
                           style={{
                             width: '100%',
                             boxSizing: 'border-box',
-                            padding: '0.75rem 0.85rem',
-                            border: '1px solid #D1D5DB',
-                            borderRadius: '4px',
-                            backgroundColor: '#F9FAFB',
+                            padding: '0.8rem 0.95rem',
+                            border: '1px solid var(--color-border)',
+                            borderRadius: 'var(--radius-sm)',
+                            backgroundColor: 'var(--color-surface)',
                             fontSize: '0.9rem',
-                            color: '#111827',
-                            outline: 'none'
+                            color: 'var(--color-espresso)',
+                            outline: 'none',
+                            transition: 'border-color var(--transition-fast)'
                           }}
                         />
                       </div>
 
                       {/* Card details */}
                       <div style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#374151', marginBottom: '0.45rem' }}>
-                          Card details *
+                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.45rem' }}>
+                          Payment Method *
                         </label>
 
                         {/* Segmented method toggle: Card / Google Pay */}
-                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.85rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
                           <button
                             type="button"
                             onClick={() => setCardSubMethod('card')}
@@ -1162,17 +1218,19 @@ export const BookingPage: React.FC = () => {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.45rem',
-                              padding: '0.65rem 1.1rem',
-                              borderRadius: '4px',
-                              border: '1px solid #D1D5DB',
-                              backgroundColor: cardSubMethod === 'card' ? '#E5E7EB' : '#FFFFFF',
-                              color: '#111827',
+                              padding: '0.7rem 1.15rem',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid',
+                              borderColor: cardSubMethod === 'card' ? 'var(--color-espresso)' : 'var(--color-border)',
+                              backgroundColor: cardSubMethod === 'card' ? 'var(--color-surface-warm)' : 'var(--color-surface)',
+                              color: 'var(--color-espresso)',
                               fontWeight: 600,
                               fontSize: '0.825rem',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              transition: 'all var(--transition-fast)'
                             }}
                           >
-                            <CreditCard size={14} />
+                            <CreditCard size={14} style={{ color: 'var(--color-rose)' }} />
                             Card
                           </button>
                           <button
@@ -1182,26 +1240,28 @@ export const BookingPage: React.FC = () => {
                               display: 'inline-flex',
                               alignItems: 'center',
                               gap: '0.45rem',
-                              padding: '0.65rem 1.1rem',
-                              borderRadius: '4px',
-                              border: '1px solid #D1D5DB',
-                              backgroundColor: cardSubMethod === 'gpay' ? '#E5E7EB' : '#FFFFFF',
-                              color: '#111827',
+                              padding: '0.7rem 1.15rem',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid',
+                              borderColor: cardSubMethod === 'gpay' ? 'var(--color-espresso)' : 'var(--color-border)',
+                              backgroundColor: cardSubMethod === 'gpay' ? 'var(--color-surface-warm)' : 'var(--color-surface)',
+                              color: 'var(--color-espresso)',
                               fontWeight: 600,
                               fontSize: '0.825rem',
-                              cursor: 'pointer'
+                              cursor: 'pointer',
+                              transition: 'all var(--transition-fast)'
                             }}
                           >
                             <span style={{ fontWeight: 800, color: '#4285F4' }}>G</span>
                             <span>Pay</span>
-                            <span style={{ color: '#6B7280', fontWeight: 500 }}>Google Pay</span>
+                            <span style={{ color: 'var(--color-taupe)', fontWeight: 500 }}>(Google Pay)</span>
                           </button>
                         </div>
 
                         {cardSubMethod === 'card' ? (
                           <>
                             {/* Card number input with brand icon */}
-                            <div style={{ position: 'relative', marginBottom: '0.75rem' }}>
+                            <div style={{ position: 'relative', marginBottom: '0.85rem' }}>
                               <input
                                 type="text"
                                 required
@@ -1211,12 +1271,12 @@ export const BookingPage: React.FC = () => {
                                 style={{
                                   width: '100%',
                                   boxSizing: 'border-box',
-                                  padding: '0.75rem 3.5rem 0.75rem 0.85rem',
-                                  border: '1px solid #D1D5DB',
-                                  borderRadius: '4px',
-                                  backgroundColor: '#FFFFFF',
+                                  padding: '0.8rem 3.5rem 0.8rem 0.95rem',
+                                  border: '1px solid var(--color-border)',
+                                  borderRadius: 'var(--radius-sm)',
+                                  backgroundColor: 'var(--color-surface)',
                                   fontSize: '0.9rem',
-                                  color: '#111827',
+                                  color: 'var(--color-espresso)',
                                   outline: 'none'
                                 }}
                               />
@@ -1229,11 +1289,11 @@ export const BookingPage: React.FC = () => {
                             <div style={{
                               display: 'grid',
                               gridTemplateColumns: '1fr 1fr',
-                              gap: '0.75rem',
-                              marginBottom: '0.75rem'
+                              gap: '0.85rem',
+                              marginBottom: '0.85rem'
                             }}>
                               <div>
-                                <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
+                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
                                   Expiration date
                                 </label>
                                 <input
@@ -1245,19 +1305,19 @@ export const BookingPage: React.FC = () => {
                                   style={{
                                     width: '100%',
                                     boxSizing: 'border-box',
-                                    padding: '0.75rem 0.85rem',
-                                    border: '1px solid #D1D5DB',
-                                    borderRadius: '4px',
-                                    backgroundColor: '#FFFFFF',
+                                    padding: '0.8rem 0.95rem',
+                                    border: '1px solid var(--color-border)',
+                                    borderRadius: 'var(--radius-sm)',
+                                    backgroundColor: 'var(--color-surface)',
                                     fontSize: '0.9rem',
-                                    color: '#111827',
+                                    color: 'var(--color-espresso)',
                                     outline: 'none'
                                   }}
                                 />
                               </div>
                               <div>
-                                <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-                                  Security code
+                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
+                                  Security code (CVC)
                                 </label>
                                 <div style={{ position: 'relative' }}>
                                   <input
@@ -1269,24 +1329,24 @@ export const BookingPage: React.FC = () => {
                                     style={{
                                       width: '100%',
                                       boxSizing: 'border-box',
-                                      padding: '0.75rem 2.5rem 0.75rem 0.85rem',
-                                      border: '1px solid #D1D5DB',
-                                      borderRadius: '4px',
-                                      backgroundColor: '#FFFFFF',
+                                      padding: '0.8rem 2.5rem 0.8rem 0.95rem',
+                                      border: '1px solid var(--color-border)',
+                                      borderRadius: 'var(--radius-sm)',
+                                      backgroundColor: 'var(--color-surface)',
                                       fontSize: '0.9rem',
-                                      color: '#111827',
+                                      color: 'var(--color-espresso)',
                                       outline: 'none'
                                     }}
                                   />
-                                  <CreditCard size={15} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+                                  <CreditCard size={15} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-taupe)' }} />
                                 </div>
                               </div>
                             </div>
 
                             {/* Country dropdown */}
                             <div>
-                              <label style={{ display: 'block', fontSize: '0.775rem', color: '#6B7280', marginBottom: '0.25rem' }}>
-                                Country
+                              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
+                                Country / Region
                               </label>
                               <select
                                 value={cardCountry}
@@ -1294,12 +1354,12 @@ export const BookingPage: React.FC = () => {
                                 style={{
                                   width: '100%',
                                   boxSizing: 'border-box',
-                                  padding: '0.75rem 0.85rem',
-                                  border: '1px solid #D1D5DB',
-                                  borderRadius: '4px',
-                                  backgroundColor: '#FFFFFF',
+                                  padding: '0.8rem 0.95rem',
+                                  border: '1px solid var(--color-border)',
+                                  borderRadius: 'var(--radius-sm)',
+                                  backgroundColor: 'var(--color-surface)',
                                   fontSize: '0.9rem',
-                                  color: '#111827',
+                                  color: 'var(--color-espresso)',
                                   outline: 'none',
                                   cursor: 'pointer'
                                 }}
@@ -1313,12 +1373,12 @@ export const BookingPage: React.FC = () => {
                         ) : (
                           <div style={{
                             padding: '1.25rem',
-                            backgroundColor: '#F9FAFB',
-                            borderRadius: '4px',
-                            border: '1px dashed #D1D5DB',
+                            backgroundColor: 'var(--color-surface-subtle)',
+                            borderRadius: 'var(--radius-sm)',
+                            border: '1px dashed var(--color-border)',
                             textAlign: 'center',
                             fontSize: '0.85rem',
-                            color: '#4B5563'
+                            color: 'var(--color-taupe)'
                           }}>
                             Google Pay biometric authentication will be prompted when you click <strong>Pay & Confirm</strong>.
                           </div>
@@ -1327,16 +1387,22 @@ export const BookingPage: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Section 2: Choose what to pay (Exact match of Acuity screenshot) */}
-                  <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.75rem' }}>
-                      Choose what to pay
+                  {/* Section 2: Choose what to pay */}
+                  <div style={{ marginBottom: '2.25rem' }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.35rem',
+                      color: 'var(--color-espresso)',
+                      marginBottom: '1rem',
+                      fontWeight: 600
+                    }}>
+                      Choose What To Pay
                     </h3>
 
                     <div style={{
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E5E7EB',
-                      borderRadius: '4px',
+                      backgroundColor: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
                       overflow: 'hidden'
                     }}>
                       {/* Option 1: Pay Full */}
@@ -1346,26 +1412,26 @@ export const BookingPage: React.FC = () => {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.85rem',
-                          padding: '1.15rem 1rem',
+                          padding: '1.25rem 1.15rem',
                           cursor: 'pointer',
-                          backgroundColor: paymentChoice === 'full' ? '#FAF5F7' : '#FFFFFF',
-                          transition: 'background-color 0.15s ease'
+                          backgroundColor: paymentChoice === 'full' ? 'var(--color-blush-light)' : 'var(--color-surface)',
+                          transition: 'background-color var(--transition-fast)'
                         }}
                       >
                         <div style={{
                           width: '20px',
                           height: '20px',
                           borderRadius: '50%',
-                          border: paymentChoice === 'full' ? '6px solid #4B5563' : '2px solid #D1D5DB',
+                          border: paymentChoice === 'full' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
                           backgroundColor: '#FFFFFF',
                           flexShrink: 0
                         }} />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
-                          Pay £{orderTotal.toFixed(2)} now
+                        <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                          Pay £{orderTotal.toFixed(2)} in full now
                         </span>
                       </label>
 
-                      <div style={{ height: '1px', backgroundColor: '#E5E7EB' }} />
+                      <div style={{ height: '1px', backgroundColor: 'var(--color-border-subtle)' }} />
 
                       {/* Option 2: Pay Deposit */}
                       <label
@@ -1374,56 +1440,65 @@ export const BookingPage: React.FC = () => {
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.85rem',
-                          padding: '1.15rem 1rem',
+                          padding: '1.25rem 1.15rem',
                           cursor: 'pointer',
-                          backgroundColor: paymentChoice === 'deposit' ? '#FAF5F7' : '#FFFFFF',
-                          transition: 'background-color 0.15s ease'
+                          backgroundColor: paymentChoice === 'deposit' ? 'var(--color-blush-light)' : 'var(--color-surface)',
+                          transition: 'background-color var(--transition-fast)'
                         }}
                       >
                         <div style={{
                           width: '20px',
                           height: '20px',
                           borderRadius: '50%',
-                          border: paymentChoice === 'deposit' ? '6px solid #4B5563' : '2px solid #D1D5DB',
+                          border: paymentChoice === 'deposit' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
                           backgroundColor: '#FFFFFF',
                           flexShrink: 0
                         }} />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 600, color: '#374151' }}>
-                          Pay £{depositNowDisplay.toFixed(2)} now, £{remainingLaterDisplay.toFixed(2)} later
+                        <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-espresso)' }}>
+                          Pay deposit £{depositNowDisplay.toFixed(2)} now, £{remainingLaterDisplay.toFixed(2)} balance at appointment
                         </span>
                       </label>
                     </div>
                   </div>
 
-                  {/* Section 3: Order summary (Exact match of Acuity screenshot) */}
-                  <div style={{ marginBottom: '2rem' }}>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#111827', marginBottom: '0.85rem' }}>
-                      Order summary
+                  {/* Section 3: Order summary */}
+                  <div style={{ marginBottom: '2.25rem' }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-serif)',
+                      fontSize: '1.35rem',
+                      color: 'var(--color-espresso)',
+                      marginBottom: '1rem',
+                      fontWeight: 600
+                    }}>
+                      Order Summary
                     </h3>
 
                     {/* Service Line Items */}
-                    <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                       {selectedServices.map((svc) => (
-                        <div key={svc.id} style={{ marginBottom: '0.85rem' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827' }}>
-                              {svc.name}
-                            </span>
-                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#111827' }}>
+                        <div key={svc.id} style={{
+                          paddingBottom: '0.75rem',
+                          borderBottom: '1px solid var(--color-border-subtle)'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <span style={{ fontWeight: 600, fontSize: '0.925rem', color: 'var(--color-espresso)', display: 'block', lineHeight: 1.4 }}>
+                                {svc.name}
+                              </span>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', marginTop: '0.25rem' }}>
+                                {formatAcuityDateTime(selectedDate, selectedTime)}
+                              </div>
+                            </div>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-espresso)', flexShrink: 0 }}>
                               £{svc.price.toFixed(2)}
                             </span>
-                          </div>
-                          <div style={{ fontSize: '0.85rem', color: '#6B7280', marginTop: '0.2rem' }}>
-                            {formatAcuityDateTime(selectedDate, selectedTime)}
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
-
                     {/* Package, gift, or coupon code */}
-                    <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ marginBottom: '1.5rem' }}>
                       <button
                         type="button"
                         onClick={() => setShowCouponInput(!showCouponInput)}
@@ -1439,10 +1514,10 @@ export const BookingPage: React.FC = () => {
                           textAlign: 'left'
                         }}
                       >
-                        <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#374151' }}>
-                          Package, gift, or coupon code
+                        <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--color-espresso)' }}>
+                          Have a coupon or gift code?
                         </span>
-                        <span style={{ fontSize: '1.2rem', color: '#374151', fontWeight: 600 }}>
+                        <span style={{ fontSize: '1.2rem', color: 'var(--color-rose)', fontWeight: 600 }}>
                           {showCouponInput ? '−' : '+'}
                         </span>
                       </button>
@@ -1457,25 +1532,19 @@ export const BookingPage: React.FC = () => {
                               onChange={(e) => setCouponCode(e.target.value)}
                               style={{
                                 flex: 1,
-                                padding: '0.65rem 0.85rem',
-                                border: '1px solid #D1D5DB',
-                                borderRadius: '4px',
-                                fontSize: '0.85rem'
+                                padding: '0.7rem 0.85rem',
+                                border: '1px solid var(--color-border)',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: '0.85rem',
+                                backgroundColor: 'var(--color-surface)',
+                                color: 'var(--color-espresso)'
                               }}
                             />
                             <button
                               type="button"
                               onClick={handleApplyCoupon}
-                              style={{
-                                padding: '0.65rem 1.15rem',
-                                backgroundColor: '#374151',
-                                color: '#FFFFFF',
-                                border: 'none',
-                                borderRadius: '4px',
-                                fontSize: '0.85rem',
-                                fontWeight: 600,
-                                cursor: 'pointer'
-                              }}
+                              className="btn btn-secondary"
+                              style={{ padding: '0.7rem 1.25rem', fontSize: '0.825rem' }}
                             >
                               Apply
                             </button>
@@ -1494,17 +1563,17 @@ export const BookingPage: React.FC = () => {
                       )}
                     </div>
 
-                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
+                    <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '1.5rem' }} />
 
                     {/* Subtotal & Tip */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.925rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
                         <span>Subtotal</span>
                         <span>£{subtotalAfterDiscount.toFixed(2)}</span>
                       </div>
 
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', fontWeight: 700, color: '#111827' }}>
-                        <span>Tip</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.925rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                        <span>Tip (Optional)</span>
                         <span>£{tipAmount.toFixed(2)}</span>
                       </div>
 
@@ -1512,7 +1581,7 @@ export const BookingPage: React.FC = () => {
                       <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(5, 1fr)',
-                        gap: '0.35rem',
+                        gap: '0.45rem',
                         marginTop: '0.25rem'
                       }}>
                         {[
@@ -1532,16 +1601,17 @@ export const BookingPage: React.FC = () => {
                                 if (tipOpt.id !== 'custom') setCustomTipInput('');
                               }}
                               style={{
-                                padding: '0.7rem 0.2rem',
-                                borderRadius: '4px',
-                                border: isActive ? '1px solid #D85A87' : '1px solid #E5E7EB',
-                                backgroundColor: isActive ? '#D85A87' : '#FFFFFF',
-                                color: isActive ? '#FFFFFF' : '#374151',
-                                fontWeight: 700,
-                                fontSize: '0.85rem',
+                                padding: '0.75rem 0.25rem',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid',
+                                borderColor: isActive ? 'var(--color-espresso)' : 'var(--color-border)',
+                                backgroundColor: isActive ? 'var(--color-espresso)' : 'var(--color-surface)',
+                                color: isActive ? 'var(--color-ivory)' : 'var(--color-espresso)',
+                                fontWeight: 600,
+                                fontSize: '0.825rem',
                                 cursor: 'pointer',
                                 textAlign: 'center',
-                                transition: 'all 0.15s ease'
+                                transition: 'all var(--transition-fast)'
                               }}
                             >
                               {tipOpt.label}
@@ -1552,7 +1622,7 @@ export const BookingPage: React.FC = () => {
 
                       {activeTipOption === 'custom' && (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                          <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>£</span>
+                          <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-espresso)' }}>£</span>
                           <input
                             type="number"
                             min="0"
@@ -1561,56 +1631,62 @@ export const BookingPage: React.FC = () => {
                             value={customTipInput}
                             onChange={(e) => setCustomTipInput(e.target.value)}
                             style={{
-                              padding: '0.5rem 0.75rem',
-                              borderRadius: '4px',
-                              border: '1px solid #D1D5DB',
+                              padding: '0.55rem 0.75rem',
+                              borderRadius: 'var(--radius-sm)',
+                              border: '1px solid var(--color-border)',
                               fontSize: '0.85rem',
-                              width: '140px'
+                              width: '140px',
+                              backgroundColor: 'var(--color-surface)',
+                              color: 'var(--color-espresso)'
                             }}
                           />
                         </div>
                       )}
                     </div>
 
-                    <div style={{ height: '1px', backgroundColor: '#E5E7EB', marginBottom: '1.25rem' }} />
+                    <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '1.5rem' }} />
 
                     {/* Total */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 800, color: '#111827', marginBottom: '1.75rem' }}>
-                      <span>Total</span>
-                      <span>£{orderTotal.toFixed(2)}</span>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      color: 'var(--color-espresso)',
+                      marginBottom: '2rem'
+                    }}>
+                      <span>Total Due Now</span>
+                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem' }}>
+                        £{paymentChoice === 'full' ? orderTotal.toFixed(2) : depositNowDisplay.toFixed(2)}
+                      </span>
                     </div>
 
-                    {/* PAY & CONFIRM Button (Acuity Hot Pink) */}
+                    {/* PAY & CONFIRM Button - Quiet Luxury Branding */}
                     <button
                       type="submit"
                       disabled={isProcessing}
+                      className="btn btn-primary"
                       style={{
                         width: '100%',
-                        padding: '1.15rem 1rem',
-                        backgroundColor: '#D85A87',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '1rem',
-                        fontWeight: 700,
-                        letterSpacing: '0.06em',
+                        padding: '1.2rem 1.5rem',
+                        fontSize: '0.95rem',
+                        fontWeight: 600,
+                        letterSpacing: '0.08em',
                         textTransform: 'uppercase',
-                        cursor: isProcessing ? 'not-allowed' : 'pointer',
-                        boxShadow: '0 4px 14px rgba(216, 90, 135, 0.32)',
-                        transition: 'all 0.2s ease'
+                        cursor: isProcessing ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {isProcessing ? 'Processing Payment...' : 'PAY & CONFIRM'}
+                      {isProcessing ? 'Processing Secure Booking...' : 'Pay & Confirm Appointment'}
                     </button>
 
-                    <div style={{ textAlign: 'center', marginTop: '1.25rem' }}>
+                    <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                       <button
                         type="button"
                         onClick={handlePrevStep}
                         style={{
                           background: 'none',
                           border: 'none',
-                          color: '#6B7280',
+                          color: 'var(--color-taupe)',
                           fontSize: '0.85rem',
                           cursor: 'pointer',
                           textDecoration: 'underline'

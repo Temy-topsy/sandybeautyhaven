@@ -54,4 +54,8 @@ declare module 'lucide-react' {
   export const Smartphone: LucideIcon;
   export const Trash2: LucideIcon;
   export const Plus: LucideIcon;
+  export const Minus: LucideIcon;
+  export const ShoppingBag: LucideIcon;
+  export const ShoppingCart: LucideIcon;
+  export const ShoppingBasket: LucideIcon;
 }
