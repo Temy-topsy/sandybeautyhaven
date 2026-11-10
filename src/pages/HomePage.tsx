@@ -1,14 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Calendar,
   Star,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Sparkles,
-  CheckCircle2,
-  BookOpen
+  CheckCircle2
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { REVIEWS } from '../data/reviews';
@@ -26,522 +22,353 @@ export const HomePage: React.FC = () => {
     navigate('/schedule');
   };
 
-  // 1. Cinematic Auto-Moving Hero Slideshow
-  const slides = [
-    {
-      id: 1,
-      tag: 'Bespoke Lash & Brow Atelier • Edinburgh',
-      title: 'Beauty that feels like you, only',
-      titleItalic: 'elevated.',
-      description:
-        'Precision Russian volume, wispy hybrids, and ombré powder brows crafted to enhance your natural facial contours.',
-      primaryBtn: { text: 'Book Appointment', link: '/schedule', icon: Calendar },
-      secondaryBtn: { text: 'View Treatment Menu', link: '/services' },
-      image: '/lashes inspo img.jpg'
-    },
-    {
-      id: 2,
-      tag: 'CPD Accredited Private Mentorship • Edinburgh',
-      title: 'Launch your lash career with',
-      titleItalic: 'master guidance.',
-      description:
-        'Comprehensive 3-day private intensive: theory, live model supervision, full starter kit (£150+ value), and lifetime business support.',
-      primaryBtn: { text: 'Course Details (£600)', link: '/training', icon: BookOpen },
-      secondaryBtn: { text: 'Reserve (£100 Deposit)', link: '/schedule' },
-      image: '/settings inspo img.jpg'
-    },
-    {
-      id: 3,
-      tag: '101 Easter Road • Edinburgh Studio',
-      title: 'Flawless retention with',
-      titleItalic: 'zero natural lash damage.',
-      description:
-        'Specialized isolation technique that protects natural lash health while delivering full, long-lasting lightweight beauty.',
-      primaryBtn: { text: 'Explore Client Gallery', link: '/gallery', icon: Sparkles },
-      secondaryBtn: { text: 'Read 5-Star Reviews', link: '/reviews' },
-      image: '/appointments/hybrid-lashes.jpg'
-    }
-  ];
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-  const autoSlideInterval = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (!isPaused) {
-      autoSlideInterval.current = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-      }, 5500);
-    }
-    return () => {
-      if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
-    };
-  }, [isPaused, slides.length]);
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
-  const activeSlide = slides[currentSlide];
-
-  // Marquee announcement ticker items
-  const tickerItems = [
-    'CPD ACCREDITED 1-ON-1 TRAINING',
-    '101 EASTER ROAD, EDINBURGH',
-    'BESPOKE HANDCRAFTED EXTENSIONS',
-    '48-HOUR CANCELLATION GUARANTEE',
-    'HEALTH-FIRST ISOLATION TECHNIQUE',
-    'MON–SAT APPOINTMENTS OPEN',
-    'PRIVATE ONE-TO-ONE MENTORSHIP',
-    '5-STAR VERIFIED CLIENT REVIEWS'
-  ];
-
   return (
     <div>
-      {/* 1. CINEMATIC AUTO-MOVING HERO */}
+      {/* 1. HERO SECTION - Grounded, Confident, High Contrast */}
       <section
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
         style={{
-          position: 'relative',
-          minHeight: 'calc(100svh - var(--header-height))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--color-ivory)',
-          backgroundImage: `linear-gradient(180deg, rgba(34, 27, 26, 0.44) 0%, rgba(34, 27, 26, 0.82) 100%), url("${activeSlide.image}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          textAlign: 'center',
-          padding: 'clamp(2.5rem, 5vw, 4rem) 1.5rem',
-          transition: 'background-image 0.85s cubic-bezier(0.16, 1, 0.3, 1)'
+          backgroundColor: 'var(--color-surface)',
+          borderBottom: '1px solid var(--color-border)',
+          paddingTop: 'clamp(3.5rem, 7vw, 6rem)',
+          paddingBottom: 'clamp(3.5rem, 7vw, 6rem)'
         }}
       >
-        <div style={{ maxWidth: '680px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
-              color: 'var(--color-blush)',
-              display: 'inline-block',
-              marginBottom: '1.25rem',
-              fontWeight: 600,
-              animation: 'fadeIn 0.4s ease'
-            }}
-          >
-            {activeSlide.tag}
-          </span>
-
-          <h1
-            key={`title-${currentSlide}`}
-            style={{
-              color: 'var(--color-ivory)',
-              fontSize: 'clamp(2.75rem, 7.5vw, 4.75rem)',
-              fontFamily: 'var(--font-serif)',
-              fontWeight: 400,
-              lineHeight: 1.08,
-              marginBottom: '1.5rem',
-              animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}
-          >
-            {activeSlide.title}{' '}
-            <span style={{ fontStyle: 'italic', color: 'var(--color-blush)' }}>
-              {activeSlide.titleItalic}
-            </span>
-          </h1>
-
-          <p
-            key={`desc-${currentSlide}`}
-            style={{
-              color: '#EFE8E1',
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-              lineHeight: 1.6,
-              marginBottom: '2.5rem',
-              maxWidth: '540px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              animation: 'fadeIn 0.6s ease'
-            }}
-          >
-            {activeSlide.description}
-          </p>
-
+        <div className="container">
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '1rem',
-              flexWrap: 'wrap'
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: 'clamp(2.5rem, 5vw, 5rem)',
+              alignItems: 'center'
             }}
           >
-            <Link
-              to={activeSlide.primaryBtn.link}
-              className="btn btn-rose"
-              style={{ padding: '1.1rem 2.25rem' }}
-            >
-              {activeSlide.primaryBtn.icon && <activeSlide.primaryBtn.icon size={15} />}
-              {activeSlide.primaryBtn.text}
-            </Link>
-            <Link
-              to={activeSlide.secondaryBtn.link}
-              className="btn btn-secondary"
-              style={{
-                padding: '1.1rem 2rem',
-                color: 'var(--color-ivory)',
-                borderColor: 'var(--color-ivory)'
-              }}
-            >
-              {activeSlide.secondaryBtn.text}
-            </Link>
-          </div>
-        </div>
-
-        {/* Carousel Desktop Navigation Arrows */}
-        <button
-          type="button"
-          onClick={handlePrevSlide}
-          aria-label="Previous slide"
-          style={{
-            position: 'absolute',
-            left: 'clamp(1rem, 3vw, 2.5rem)',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'rgba(34, 27, 26, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            color: '#FFFFFF',
-            borderRadius: 'var(--radius-sm)',
-            width: '42px',
-            height: '42px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 10
-          }}
-        >
-          <ChevronLeft size={20} />
-        </button>
-
-        <button
-          type="button"
-          onClick={handleNextSlide}
-          aria-label="Next slide"
-          style={{
-            position: 'absolute',
-            right: 'clamp(1rem, 3vw, 2.5rem)',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            background: 'rgba(34, 27, 26, 0.4)',
-            border: '1px solid rgba(255, 255, 255, 0.25)',
-            color: '#FFFFFF',
-            borderRadius: 'var(--radius-sm)',
-            width: '42px',
-            height: '42px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
-            backdropFilter: 'blur(4px)',
-            zIndex: 10
-          }}
-        >
-          <ChevronRight size={20} />
-        </button>
-
-        {/* Slide Progress Indicator Bars */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '1.75rem',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.65rem',
-            zIndex: 10
-          }}
-        >
-          {slides.map((s, index) => {
-            const isActive = currentSlide === index;
-            return (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setCurrentSlide(index)}
-                aria-label={`Jump to slide ${index + 1}`}
+            <div>
+              <p
                 style={{
-                  width: isActive ? '36px' : '16px',
-                  height: '4px',
-                  borderRadius: '2px',
-                  backgroundColor: isActive ? 'var(--color-rose)' : 'rgba(255, 255, 255, 0.35)',
-                  border: 'none',
-                  padding: 0,
-                  cursor: 'pointer',
-                  transition: 'all var(--transition-smooth)'
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  color: 'var(--color-rose)',
+                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em'
                 }}
-              />
-            );
-          })}
+              >
+                101 Easter Road, Edinburgh
+              </p>
+
+              <h1
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(2.5rem, 5.5vw, 4rem)',
+                  lineHeight: 1.12,
+                  color: 'var(--color-espresso)',
+                  marginBottom: '1.5rem',
+                  letterSpacing: '-0.02em'
+                }}
+              >
+                Bespoke lash extensions, brow styling, and private training.
+              </h1>
+
+              <p
+                style={{
+                  fontSize: '1.125rem',
+                  lineHeight: 1.7,
+                  color: '#5C524F',
+                  marginBottom: '2.25rem',
+                  maxWidth: '540px'
+                }}
+              >
+                Natural lash health comes first. Every extension set is custom mapped to your eyes, and every training course is taught privately one-to-one with Sandy.
+              </p>
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                  alignItems: 'center'
+                }}
+              >
+                <Link
+                  to="/schedule"
+                  className="btn btn-primary"
+                  style={{ padding: '0.95rem 2rem', fontSize: '0.85rem' }}
+                >
+                  <Calendar size={15} />
+                  Book an Appointment
+                </Link>
+
+                <Link
+                  to="/services"
+                  className="btn btn-secondary"
+                  style={{ padding: '0.95rem 1.85rem', fontSize: '0.85rem' }}
+                >
+                  View Treatment Menu
+                </Link>
+              </div>
+            </div>
+
+            <div>
+              <div
+                style={{
+                  borderRadius: 'var(--radius-sm)',
+                  overflow: 'hidden',
+                  border: '1px solid var(--color-border)',
+                  backgroundColor: 'var(--color-surface-subtle)',
+                  boxShadow: 'var(--shadow-card)'
+                }}
+              >
+                <img
+                  src="/lashes inspo img.jpg"
+                  alt="Sandy Beauty Haven lash extension styling"
+                  style={{
+                    width: '100%',
+                    height: 'clamp(360px, 45vw, 500px)',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. INFINITE LUXURY AUTO-TICKER (HONEY BEE BEAUTIFUL VIBE • REFINED) */}
-      <div
-        className="marquee-container"
+      {/* 2. WHAT WE DO - Three Clear Offerings (No Fake Numbers, No Floating Badges) */}
+      <section
         style={{
-          backgroundColor: 'var(--color-espresso)',
-          color: 'var(--color-ivory)',
-          padding: '0.85rem 0',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+          paddingTop: 'clamp(4rem, 6vw, 5.5rem)',
+          paddingBottom: 'clamp(4rem, 6vw, 5.5rem)',
+          borderBottom: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-ivory)'
         }}
       >
-        <div className="marquee-track">
-          {/* Duplicate twice for seamless infinite ribbon */}
-          {[...tickerItems, ...tickerItems].map((item, idx) => (
-            <div
-              key={idx}
+        <div className="container">
+          <div style={{ maxWidth: '620px', marginBottom: 'clamp(2.5rem, 4vw, 3.5rem)' }}>
+            <h2
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '1.5rem',
-                padding: '0 1.5rem',
-                fontSize: '0.75rem',
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                color: '#E0D8D3'
+                fontFamily: 'var(--font-serif)',
+                fontSize: 'clamp(2rem, 3.8vw, 2.75rem)',
+                color: 'var(--color-espresso)',
+                marginBottom: '0.75rem'
               }}
             >
-              <span>{item}</span>
-              <Sparkles size={12} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. THE 3-PORTAL JOURNEY GATEWAY */}
-      <section className="section" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-        <div className="container">
-          <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)', textAlign: 'center' }}>
-            <span className="section-eyebrow">Choose Your Journey</span>
-            <h2 className="section-title">Three Pillars of Beauty & Mentorship</h2>
-            <p style={{ maxWidth: '600px', margin: '0.75rem auto 0', color: 'var(--color-taupe)', fontSize: '0.95rem' }}>
-              Whether arriving for bespoke salon enhancements, advancing your career in our private academy, or exploring client transformations.
+              Services & Training
+            </h2>
+            <p style={{ fontSize: '1.0625rem', color: '#5C524F', lineHeight: 1.7, margin: 0 }}>
+              Choose your path: relax in the studio chair for custom extensions and brows, or build your own lash business with direct one-to-one mentorship.
             </p>
           </div>
 
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-              gap: 'clamp(1.5rem, 3vw, 2.5rem)'
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: 'clamp(1.5rem, 3vw, 2.25rem)'
             }}
           >
-            {/* Portal 1: Salon Appointments */}
+            {/* Offering 1 */}
             <div
-              className="editorial-card interactive-card"
               style={{
+                backgroundColor: 'var(--color-surface)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border)',
+                padding: 'clamp(1.75rem, 3vw, 2.25rem)',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
+                justifyContent: 'space-between'
               }}
             >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/lashes inspo img.jpg"
-                  alt="Bespoke Lash Treatments"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge badge-rose"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem' }}
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.65rem',
+                    color: 'var(--color-espresso)',
+                    marginBottom: '0.85rem'
+                  }}
                 >
-                  01. In-Studio Appointments
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Bespoke Lashes & Brows
+                  Lash Extensions
                 </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Custom hybrid sets, Russian volume, express weekend lashes, and semi-permanent ombré powder brows. Tailored specifically to your eye shape.
+                <p style={{ fontSize: '1rem', color: '#5C524F', lineHeight: 1.7, marginBottom: '1.75rem' }}>
+                  Classic, hybrid, volume, and express sets designed around your natural lash strength. No heavy fans, no clumping, and long retention.
                 </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/schedule"
-                    className="btn btn-primary"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    <Calendar size={14} />
-                    Book Slot
-                  </Link>
-                  <Link
-                    to="/services"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    View Menu →
-                  </Link>
-                </div>
+              </div>
+              <div>
+                <Link
+                  to="/services"
+                  className="btn btn-secondary"
+                  style={{ width: '100%', justifyContent: 'space-between' }}
+                >
+                  <span>Explore Lash Sets</span>
+                  <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
 
-            {/* Portal 2: 1-on-1 CPD Academy */}
+            {/* Offering 2 */}
             <div
-              className="editorial-card interactive-card"
               style={{
+                backgroundColor: 'var(--color-surface)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border)',
+                padding: 'clamp(1.75rem, 3vw, 2.25rem)',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
+                justifyContent: 'space-between'
               }}
             >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/settings inspo img.jpg"
-                  alt="Lash Academy Training"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: 'var(--color-espresso)', color: '#FFFFFF' }}
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.65rem',
+                    color: 'var(--color-espresso)',
+                    marginBottom: '0.85rem'
+                  }}
                 >
-                  02. Private Mentorship
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Accredited Lash Academy
+                  Ombré Powder Brows
                 </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Comprehensive 3-day private intensive with Sandy. Theory, live models, full professional kit (£150+ value), and lifetime mentorship.
+                <p style={{ fontSize: '1rem', color: '#5C524F', lineHeight: 1.7, marginBottom: '1.75rem' }}>
+                  Semi-permanent pixelated shading that heals into a soft powder finish. Custom measured to balance your bone structure and skin tone.
                 </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/training"
-                    className="btn btn-rose"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    <BookOpen size={14} />
-                    Course Details
-                  </Link>
-                  <Link
-                    to="/schedule"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    £100 Deposit
-                  </Link>
-                </div>
+              </div>
+              <div>
+                <Link
+                  to="/services"
+                  className="btn btn-secondary"
+                  style={{ width: '100%', justifyContent: 'space-between' }}
+                >
+                  <span>Explore Brow Styling</span>
+                  <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
 
-            {/* Portal 3: Studio & Transformations */}
+            {/* Offering 3 */}
             <div
-              className="editorial-card interactive-card"
               style={{
+                backgroundColor: 'var(--color-surface)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-border)',
+                padding: 'clamp(1.75rem, 3vw, 2.25rem)',
                 display: 'flex',
                 flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
+                justifyContent: 'space-between'
               }}
             >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/client-results.jpg"
-                  alt="Client Transformations"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge badge-rose"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem' }}
+              <div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '1.65rem',
+                    color: 'var(--color-espresso)',
+                    marginBottom: '0.85rem'
+                  }}
                 >
-                  03. Real Results
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Portfolio & Client Stories
+                  1-on-1 CPD Academy
                 </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Explore our verified gallery of healed ombré brow results, 4-week lash retention, and 5-star testimonials from Edinburgh clients.
+                <p style={{ fontSize: '1rem', color: '#5C524F', lineHeight: 1.7, marginBottom: '1.75rem' }}>
+                  Three days of accredited private training in Edinburgh. Includes complete starter kit, practical live model sets, and ongoing business guidance.
                 </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/gallery"
-                    className="btn btn-primary"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    <Sparkles size={14} />
-                    View Gallery
-                  </Link>
-                  <Link
-                    to="/reviews"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    Reviews →
-                  </Link>
-                </div>
+              </div>
+              <div>
+                <Link
+                  to="/training"
+                  className="btn btn-primary"
+                  style={{ width: '100%', justifyContent: 'space-between' }}
+                >
+                  <span>Course Curriculum</span>
+                  <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. SIGNATURE SERVICES */}
-      <section className="section" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      {/* 3. SIGNATURE TREATMENTS LIST */}
+      <section
+        style={{
+          paddingTop: 'clamp(4rem, 6vw, 5.5rem)',
+          paddingBottom: 'clamp(4rem, 6vw, 5.5rem)',
+          borderBottom: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)'
+        }}
+      >
         <div className="container">
-          <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-            <span className="section-eyebrow">Treatment Menu</span>
-            <h2 className="section-title">Signature Studio Services</h2>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-end',
+              marginBottom: 'clamp(2rem, 4vw, 3rem)',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}
+          >
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(2rem, 3.8vw, 2.75rem)',
+                  color: 'var(--color-espresso)',
+                  marginBottom: '0.5rem'
+                }}
+              >
+                Popular Treatments
+              </h2>
+              <p style={{ fontSize: '1.0625rem', color: '#5C524F', margin: 0 }}>
+                Straightforward pricing, clear durations, and easy online booking.
+              </p>
+            </div>
+
+            <Link
+              to="/services"
+              className="btn btn-secondary"
+              style={{ padding: '0.75rem 1.35rem', fontSize: '0.85rem' }}
+            >
+              View All Treatments →
+            </Link>
           </div>
 
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
-              marginBottom: '3.5rem'
+              gap: '1.5rem'
             }}
           >
             {featuredServices.map((service) => (
-              <div key={service.id} className="editorial-card">
-                <div style={{ height: '220px', position: 'relative', overflow: 'hidden' }}>
+              <div
+                key={service.id}
+                style={{
+                  backgroundColor: 'var(--color-ivory)',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--color-border)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                <div style={{ height: '200px', overflow: 'hidden' }}>
                   <img
                     src={service.image}
                     alt={service.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                   />
-                  <span
-                    className="badge badge-rose"
-                    style={{ position: 'absolute', top: '0.85rem', left: '0.85rem' }}
-                  >
-                    {service.category}
-                  </span>
                 </div>
 
                 <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', margin: 0 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'baseline',
+                      marginBottom: '0.5rem'
+                    }}
+                  >
+                    <h3 style={{ fontSize: '1.15rem', color: 'var(--color-espresso)', margin: 0 }}>
                       <Link to={`/services/${service.slug}`} style={{ color: 'inherit' }}>
                         {service.name}
                       </Link>
@@ -560,33 +387,36 @@ export const HomePage: React.FC = () => {
 
                   <p
                     style={{
-                      fontSize: '0.825rem',
-                      color: 'var(--color-taupe)',
-                      lineHeight: 1.5,
+                      fontSize: '0.95rem',
+                      color: '#5C524F',
+                      lineHeight: 1.6,
                       marginBottom: '1.25rem',
                       flex: 1
                     }}
                   >
-                    {service.duration} mins • £{service.deposit} deposit
+                    {service.duration} minutes • £{service.deposit} deposit to reserve
                   </p>
 
                   <div
                     style={{
                       paddingTop: '1rem',
-                      borderTop: '1px solid var(--color-border-subtle)',
+                      borderTop: '1px solid var(--color-border)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between'
                     }}
                   >
-                    <Link to={`/services/${service.slug}`} className="btn-link" style={{ fontSize: '0.8rem' }}>
+                    <Link
+                      to={`/services/${service.slug}`}
+                      style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-espresso)', textDecoration: 'underline' }}
+                    >
                       Details
                     </Link>
                     <button
                       type="button"
                       onClick={() => handleBookService(service)}
                       className="btn btn-primary"
-                      style={{ padding: '0.65rem 1.25rem', fontSize: '0.75rem' }}
+                      style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
                     >
                       Book Slot
                     </button>
@@ -595,152 +425,186 @@ export const HomePage: React.FC = () => {
               </div>
             ))}
           </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <Link to="/services" className="btn btn-secondary" style={{ padding: '0.95rem 2.25rem' }}>
-              Explore Full Treatment Menu
-              <ArrowRight size={15} />
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* 5. CPD LASH ACADEMY - ELEVATED WITH HONEY BEE BEAUTIFUL HIGH-VALUE CLARITY */}
-      <section className="section" style={{ backgroundColor: 'var(--color-surface-subtle)', borderBottom: '1px solid var(--color-border-subtle)' }}>
-        <div className="container" style={{ maxWidth: '1060px' }}>
+      {/* 4. CPD LASH ACADEMY - Flattened, Grounded, Clear Numbers */}
+      <section
+        style={{
+          paddingTop: 'clamp(4rem, 6vw, 6rem)',
+          paddingBottom: 'clamp(4rem, 6vw, 6rem)',
+          borderBottom: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-espresso)',
+          color: '#FFFFFF'
+        }}
+      >
+        <div className="container" style={{ maxWidth: '1040px' }}>
           <div
             style={{
-              backgroundColor: 'var(--color-espresso)',
-              color: 'var(--color-ivory)',
-              borderRadius: 'var(--radius-sm)',
-              overflow: 'hidden',
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: 'clamp(2.5rem, 5vw, 4rem)',
               alignItems: 'center'
             }}
           >
-            <div style={{ padding: 'clamp(2rem, 5vw, 3.5rem)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                <span className="badge badge-rose" style={{ fontSize: '0.7rem' }}>
-                  1-on-1 Private Tuition
-                </span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--color-blush)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  CPD Accredited
-                </span>
-              </div>
+            <div>
+              <p
+                style={{
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  color: 'var(--color-blush)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  marginBottom: '0.85rem'
+                }}
+              >
+                Accredited Education in Edinburgh
+              </p>
 
               <h2
                 style={{
-                  color: 'var(--color-ivory)',
-                  fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)',
-                  marginBottom: '1rem',
-                  lineHeight: 1.15
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(2rem, 4vw, 2.85rem)',
+                  color: '#FFFFFF',
+                  lineHeight: 1.15,
+                  marginBottom: '1.25rem'
                 }}
               >
-                3-Day Classic & Hybrid Lash Mentorship
+                3-Day Private Lash Mentorship
               </h2>
 
-              <p style={{ color: '#D5CDC7', lineHeight: 1.6, marginBottom: '1.5rem', fontSize: '0.925rem' }}>
-                Designed for ambitious beginners ready to step into a profitable lash career with accredited certification, high-touch 1-on-1 supervision, and zero guesswork.
-              </p>
-
-              {/* Value Checklist */}
-              <div
+              <p
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                  gap: '0.65rem',
-                  marginBottom: '2rem',
-                  fontSize: '0.8rem',
-                  color: '#EFE8E1'
+                  fontSize: '1.0625rem',
+                  lineHeight: 1.7,
+                  color: '#D5CDC7',
+                  marginBottom: '2rem'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Full Starter Kit (£150+ value)</span>
+                Learn directly from Sandy in an intensive, one-to-one studio setting. No crowded classrooms. You will work on real live models, learn proper isolation, master custom styling formulas, and receive continuous support after graduating.
+              </p>
+
+              {/* What is included */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                  marginBottom: '2.25rem',
+                  fontSize: '1rem',
+                  color: '#F4EFEB'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Full professional starter kit with tools and supplies (over £150 value)</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Live Model Practical Day</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Hands-on live model application with direct supervision</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Lash Theory & Safe Removal</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Lash anatomy, natural hair health, and safe removal protocols</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Pricing & Instagram Growth</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Pricing strategies, client consultation forms, and marketing setup</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Accredited CPD Certificate</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Accredited CPD Certificate of Completion</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                  <span>Lifetime Shadowing Access</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                  <CheckCircle2 size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+                  <span>Unlimited shadowing and direct WhatsApp mentorship access</span>
                 </div>
               </div>
 
-              {/* Pricing & Deposit Split */}
+              {/* Clear Pricing Breakdown (No Hidden Fees) */}
               <div
                 style={{
-                  padding: '1rem 1.25rem',
-                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  marginBottom: '1.75rem',
+                  borderTop: '1px solid rgba(255,255,255,0.15)',
+                  borderBottom: '1px solid rgba(255,255,255,0.15)',
+                  paddingTop: '1.25rem',
+                  paddingBottom: '1.25rem',
+                  marginBottom: '2rem',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
+                  alignItems: 'baseline',
                   flexWrap: 'wrap',
-                  gap: '0.75rem'
+                  gap: '1rem'
                 }}
               >
                 <div>
-                  <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--color-blush)', display: 'block' }}>
-                    Course Tuition
+                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', color: '#D5CDC7', display: 'block', marginBottom: '0.2rem' }}>
+                    Total Course Tuition
                   </span>
-                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', fontWeight: 600 }}>
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 600 }}>
                     £600
                   </span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#D5CDC7', display: 'block' }}>
-                    Reserve with <strong>£100 deposit</strong>
+                  <span style={{ fontSize: '0.9rem', color: '#FFFFFF', fontWeight: 600, display: 'block' }}>
+                    £100 deposit to reserve dates
                   </span>
-                  <span style={{ fontSize: '0.675rem', color: 'var(--color-blush)' }}>
-                    Remaining £500 balance due in studio on Day 1
+                  <span style={{ fontSize: '0.8rem', color: '#D5CDC7' }}>
+                    Remaining £500 balance paid at the studio on Day 1
                   </span>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
-                <Link to="/training" className="btn btn-rose" style={{ padding: '0.85rem 1.75rem', fontSize: '0.8rem' }}>
-                  Full Course Details →
+              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <Link
+                  to="/training"
+                  className="btn btn-rose"
+                  style={{ padding: '0.95rem 1.85rem', fontSize: '0.85rem' }}
+                >
+                  View Full Course Details
                 </Link>
                 <Link
                   to="/schedule"
                   className="btn btn-secondary"
-                  style={{ padding: '0.85rem 1.5rem', fontSize: '0.8rem', color: '#FFFFFF', borderColor: 'rgba(255,255,255,0.4)' }}
+                  style={{
+                    padding: '0.95rem 1.65rem',
+                    fontSize: '0.85rem',
+                    color: '#FFFFFF',
+                    borderColor: 'rgba(255,255,255,0.4)'
+                  }}
                 >
-                  Reserve Date (£100)
+                  Reserve with £100 Deposit
                 </Link>
               </div>
             </div>
 
-            <div style={{ height: '100%', minHeight: '380px' }}>
-              <img
-                src="/settings inspo img.jpg"
-                alt="Sandy Beauty Haven Training Studio"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
+            <div>
+              <div
+                style={{
+                  borderRadius: 'var(--radius-sm)',
+                  overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.15)'
+                }}
+              >
+                <img
+                  src="/settings inspo img.jpg"
+                  alt="Sandy Beauty Haven training room setup"
+                  style={{ width: '100%', height: '480px', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. ABOUT SANDY */}
-      <section className="section section-warm" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      {/* 5. ABOUT SANDY - Honest, Grounded Studio Story */}
+      <section
+        style={{
+          paddingTop: 'clamp(4rem, 6vw, 5.5rem)',
+          paddingBottom: 'clamp(4rem, 6vw, 5.5rem)',
+          borderBottom: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-surface)'
+        }}
+      >
         <div className="container" style={{ maxWidth: '960px' }}>
           <div
             style={{
@@ -755,106 +619,184 @@ export const HomePage: React.FC = () => {
                 style={{
                   borderRadius: 'var(--radius-sm)',
                   overflow: 'hidden',
-                  border: '1px solid var(--color-border-subtle)',
-                  boxShadow: 'var(--shadow-card)',
-                  backgroundColor: '#FFFFFF'
+                  border: '1px solid var(--color-border)'
                 }}
               >
                 <img
                   src="/Sandy pfp.png"
-                  alt="Sandy"
-                  style={{ width: '100%', maxHeight: '420px', objectFit: 'cover' }}
+                  alt="Sandy, founder and lash artist"
+                  style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
                 />
               </div>
             </div>
 
             <div>
-              <span className="section-eyebrow">The Artist</span>
-              <h2 style={{ marginBottom: '1rem', fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)' }}>
-                Precision lash & brow styling tailored to you.
+              <h2
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontSize: 'clamp(2rem, 3.8vw, 2.75rem)',
+                  color: 'var(--color-espresso)',
+                  marginBottom: '1.25rem'
+                }}
+              >
+                Meet Sandy
               </h2>
-              <p style={{ color: 'var(--color-taupe)', lineHeight: 1.7, marginBottom: '2rem' }}>
-                With over two years of experience, Sandy crafts custom lash sets and ombré brows that enhance your natural facial contours while protecting lash health.
+
+              <p style={{ fontSize: '1.0625rem', color: '#5C524F', lineHeight: 1.7, marginBottom: '1.25rem' }}>
+                Sandy has specialized in eyelash extensions and semi-permanent ombré powder brows for over two years in Edinburgh.
               </p>
+
+              <p style={{ fontSize: '1.0625rem', color: '#5C524F', lineHeight: 1.7, marginBottom: '2rem' }}>
+                Her approach centers strictly on natural lash preservation: selecting the proper diameter and length for your natural lash strength so you enjoy full, lightweight sets week after week with zero damage.
+              </p>
+
               <Link to="/about" className="btn btn-secondary">
-                Learn More About Sandy →
+                Read Sandy's Story →
               </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 7. VERIFIED REVIEWS */}
-      <section className="section section-subtle" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
+      {/* 6. VERIFIED CLIENT REVIEWS */}
+      <section
+        style={{
+          paddingTop: 'clamp(4rem, 6vw, 5.5rem)',
+          paddingBottom: 'clamp(4rem, 6vw, 5.5rem)',
+          borderBottom: '1px solid var(--color-border)',
+          backgroundColor: 'var(--color-ivory)'
+        }}
+      >
         <div className="container">
-          <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)' }}>
-            <span className="section-eyebrow">Feedback</span>
-            <h2 className="section-title">Client Reviews</h2>
+          <div style={{ maxWidth: '600px', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+            <h2
+              style={{
+                fontFamily: 'var(--font-serif)',
+                fontSize: 'clamp(2rem, 3.8vw, 2.75rem)',
+                color: 'var(--color-espresso)',
+                marginBottom: '0.5rem'
+              }}
+            >
+              Client Reviews
+            </h2>
+            <p style={{ fontSize: '1.0625rem', color: '#5C524F', margin: 0 }}>
+              Feedback from clients who visit our Easter Road studio.
+            </p>
           </div>
 
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: 'clamp(1.25rem, 3vw, 2rem)'
+              gap: '1.5rem'
             }}
           >
             {REVIEWS.slice(0, 3).map((r) => (
               <div
                 key={r.id}
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--color-surface)',
                   padding: '2rem',
                   borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--color-border-subtle)',
+                  border: '1px solid var(--color-border)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between'
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', gap: '0.2rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem' }}>
                     {[...Array(r.rating)].map((_, i) => (
                       <Star key={i} size={15} fill="var(--color-rose)" color="var(--color-rose)" />
                     ))}
                   </div>
-                  <p style={{ fontStyle: 'italic', color: 'var(--color-espresso-light)', lineHeight: 1.6, marginBottom: '1.5rem', fontSize: '0.925rem' }}>
+                  <p
+                    style={{
+                      fontSize: '1rem',
+                      lineHeight: 1.7,
+                      color: 'var(--color-espresso)',
+                      marginBottom: '1.5rem',
+                      fontStyle: 'italic'
+                    }}
+                  >
                     "{r.comment}"
                   </p>
                 </div>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{r.name}</div>
-                  <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)' }}>{r.service}</div>
+
+                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-espresso)' }}>
+                    {r.name}
+                  </div>
+                  <div style={{ fontSize: '0.85rem', color: '#5C524F', marginTop: '0.15rem' }}>
+                    {r.service}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
-            <Link to="/reviews" className="btn btn-secondary" style={{ padding: '0.85rem 1.75rem' }}>
-              Read All Verified Reviews
-              <ArrowRight size={14} />
+          <div style={{ marginTop: '2.5rem' }}>
+            <Link to="/reviews" className="btn btn-secondary">
+              Read All Reviews →
             </Link>
           </div>
         </div>
       </section>
 
-      {/* 8. STUDIO LOCATION & FINAL BOOKING CTA */}
-      <section className="section" style={{ textAlign: 'center' }}>
+      {/* 7. LOCATION & BOOKING CALLOUT */}
+      <section
+        style={{
+          paddingTop: 'clamp(4.5rem, 7vw, 6rem)',
+          paddingBottom: 'clamp(4.5rem, 7vw, 6rem)',
+          backgroundColor: 'var(--color-surface)',
+          textAlign: 'center'
+        }}
+      >
         <div className="container" style={{ maxWidth: '640px' }}>
-          <span className="section-eyebrow">Visit The Haven</span>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', marginBottom: '1rem' }}>
-            Ready to elevate your everyday look?
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'clamp(2.25rem, 4.5vw, 3rem)',
+              color: 'var(--color-espresso)',
+              marginBottom: '1rem'
+            }}
+          >
+            Visit the Studio
           </h2>
-          <p style={{ color: 'var(--color-taupe)', marginBottom: '2rem', lineHeight: 1.6 }}>
-            Located at 101 Easter Road, Edinburgh. Appointments book quickly — reserve your preferred slot with an instant online deposit.
+
+          <p
+            style={{
+              fontSize: '1.125rem',
+              color: '#5C524F',
+              lineHeight: 1.7,
+              marginBottom: '2.25rem'
+            }}
+          >
+            101 Easter Road, Edinburgh. Open Monday to Saturday from 9:00 AM to 5:00 PM. Book your slot online with an instant deposit to confirm your time.
           </p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link to="/schedule" className="btn btn-primary" style={{ padding: '1rem 2.25rem' }}>
+
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '1rem',
+              flexWrap: 'wrap'
+            }}
+          >
+            <Link
+              to="/schedule"
+              className="btn btn-primary"
+              style={{ padding: '1rem 2.25rem', fontSize: '0.875rem' }}
+            >
               <Calendar size={15} />
-              Book Your Appointment
+              Book an Appointment
             </Link>
-            <Link to="/contact" className="btn btn-secondary" style={{ padding: '1rem 2rem' }}>
+
+            <Link
+              to="/contact"
+              className="btn btn-secondary"
+              style={{ padding: '1rem 2rem', fontSize: '0.875rem' }}
+            >
               Find Our Studio
             </Link>
           </div>
