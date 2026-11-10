@@ -1,18 +1,16 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { BookingProvider } from './context/BookingContext';
-import { CartProvider } from './context/CartContext';
+import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { CookieBanner } from './components/layout/CookieBanner';
-import { CartDrawer } from './components/cart/CartDrawer';
 import { Toast } from './components/ui/Toast';
 
 // Pages
 import { HomePage } from './pages/HomePage';
 import { ServicesPage } from './pages/ServicesPage';
 import { ServiceDetailPage } from './pages/ServiceDetailPage';
-import { ShopPage } from './pages/ShopPage';
 import { BookingPage } from './pages/BookingPage';
 import { BookingConfirmationPage } from './pages/BookingConfirmationPage';
 import { TrainingPage } from './pages/TrainingPage';
@@ -61,10 +59,9 @@ const NotFoundPage = () => (
 function App() {
   return (
     <BrowserRouter>
-      <CartProvider>
+      <ToastProvider>
         <BookingProvider>
           <ScrollToTop />
-          <CartDrawer />
           <Toast />
           <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
             <Navbar />
@@ -73,8 +70,6 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/services/:slug" element={<ServiceDetailPage />} />
-                <Route path="/shop" element={<ShopPage />} />
-                <Route path="/products" element={<ShopPage />} />
                 <Route path="/schedule" element={<BookingPage />} />
                 <Route path="/book" element={<BookingPage />} />
                 <Route path="/checkout" element={<BookingPage />} />
@@ -105,7 +100,7 @@ function App() {
             <CookieBanner />
           </div>
         </BookingProvider>
-      </CartProvider>
+      </ToastProvider>
     </BrowserRouter>
   );
 }

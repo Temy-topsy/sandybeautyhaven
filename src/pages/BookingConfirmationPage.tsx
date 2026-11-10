@@ -321,11 +321,11 @@ END:VCALENDAR`;
               Add to Calendar (.ics)
             </button>
             <Link
-              to="/shop"
+              to="/services"
               className="btn btn-secondary"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
             >
-              Shop Hair & Beauty
+              View All Treatments
             </Link>
             <Link
               to="/"

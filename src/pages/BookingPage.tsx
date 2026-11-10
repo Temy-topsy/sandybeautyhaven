@@ -16,15 +16,8 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
-import {
-  SPECIALISTS,
-  getSpecialistPrice,
-  getSpecialistDeposit,
-  isSpecialistAvailableOnDate,
-  getSpecialistTimeSlots
-} from '../data/specialists';
 import { useBooking } from '../context/BookingContext';
-import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 
 // Crisp SVG Card Brand Badges matching Acuity
 const VisaIcon: React.FC = () => (
@@ -108,8 +101,6 @@ export const BookingPage: React.FC = () => {
     totalPrice,
     totalDeposit,
     totalDuration,
-    selectedSpecialistId,
-    setSelectedSpecialistId,
     selectedStaff,
     selectedDate,
     setSelectedDate,
@@ -120,7 +111,7 @@ export const BookingPage: React.FC = () => {
     completeBooking
   } = useBooking();
 
-  const { showToast } = useCart();
+  const { showToast } = useToast();
 
   const [step, setStep] = useState<number>(1);
   const [bookingCategory, setBookingCategory] = useState<string>('All');
@@ -165,43 +156,6 @@ export const BookingPage: React.FC = () => {
     }
   }, [clientDetails.fullName]);
 
-  // Sandy vs Studio Artist price computations & smart fallback helpers
-  const totalWorkerPrice = useMemo(() => {
-    return selectedServices.reduce((sum, s) => sum + getSpecialistPrice(s, 'studio-artist'), 0);
-  }, [selectedServices]);
-
-  const totalSandyPrice = useMemo(() => {
-    return selectedServices.reduce((sum, s) => sum + getSpecialistPrice(s, 'sandy'), 0);
-  }, [selectedServices]);
-
-  const isSandySelected = selectedSpecialistId === 'sandy' || selectedSpecialistId === 'Sandy Beauty' || !selectedSpecialistId;
-  const isSandyBookedOnDate = isSandySelected && !isSpecialistAvailableOnDate('sandy', selectedDate);
-
-  const handleSwitchToWorker = () => {
-    setSelectedSpecialistId('studio-artist');
-    showToast('Switched to Senior Studio Artist • Studio rates applied');
-  };
-
-  const handleJumpToNextSandyDay = () => {
-    const [y, m, d] = selectedDate.split('-').map(Number);
-    const current = new Date(y, m - 1, d);
-    for (let i = 1; i <= 14; i++) {
-      const next = new Date(current);
-      next.setDate(next.getDate() + i);
-      const dayOfWeek = next.getDay();
-      // Sandy is available on Mon (1), Wed (3), Fri (5), Sat (6)
-      if (dayOfWeek !== 0 && dayOfWeek !== 2 && dayOfWeek !== 4) {
-        const monthStr = String(next.getMonth() + 1).padStart(2, '0');
-        const dayStr = String(next.getDate()).padStart(2, '0');
-        const nextDateStr = `${next.getFullYear()}-${monthStr}-${dayStr}`;
-        setSelectedDate(nextDateStr);
-        setCurrentMonth(new Date(next.getFullYear(), next.getMonth(), 1));
-        showToast(`Jumped to Sandy's next open date: ${next.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}`);
-        break;
-      }
-    }
-  };
-
   // Calendar calculations
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -239,10 +193,17 @@ export const BookingPage: React.FC = () => {
     return days;
   }, [year, month, firstDayOfMonth, daysInMonth]);
 
-  // Dynamic available time slots based on practitioner schedule
+  // Standard available appointment slots
   const timeSlots = useMemo(() => {
-    return getSpecialistTimeSlots(selectedSpecialistId, selectedDate);
-  }, [selectedSpecialistId, selectedDate]);
+    return [
+      '09:30 AM',
+      '11:00 AM',
+      '12:30 PM',
+      '02:00 PM',
+      '03:30 PM',
+      '04:45 PM'
+    ];
+  }, []);
 
   // Category filter
   const bookingCategories = ['All', 'Lashes', 'Brows', 'Makeup', 'Training'];
@@ -570,7 +531,7 @@ export const BookingPage: React.FC = () => {
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
                           <span style={{ fontWeight: 600, color: 'var(--color-espresso)' }}>
-                            £{getSpecialistPrice(svc, selectedSpecialistId)}
+                            £{svc.price}
                           </span>
                           {selectedServices.length > 1 && (
                             <button
@@ -596,80 +557,6 @@ export const BookingPage: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
-                </div>
-
-                {/* Tiered Specialist Selection (Sandy vs Studio Artist) */}
-                <div style={{ marginBottom: '2rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.65rem' }}>
-                    <label className="form-label" style={{ margin: 0 }}>
-                      Select Specialist & Pricing Tier
-                    </label>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
-                      Prices update automatically
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.75rem' }}>
-                    {SPECIALISTS.map((spec) => {
-                      const isSelectedSpec = selectedSpecialistId === spec.id;
-                      const hasTraining = selectedServices.some((s) => s.category === 'Training');
-                      const isDisabled = hasTraining && spec.id !== 'sandy';
-
-                      return (
-                        <button
-                          key={spec.id}
-                          type="button"
-                          disabled={isDisabled}
-                          onClick={() => {
-                            setSelectedSpecialistId(spec.id);
-                            showToast(`Practitioner selected: ${spec.shortName}`);
-                          }}
-                          style={{
-                            padding: '1rem',
-                            textAlign: 'left',
-                            borderRadius: 'var(--radius-sm)',
-                            border: '1.5px solid',
-                            borderColor: isSelectedSpec ? 'var(--color-rose)' : 'var(--color-border)',
-                            backgroundColor: isSelectedSpec ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                            cursor: isDisabled ? 'not-allowed' : 'pointer',
-                            opacity: isDisabled ? 0.6 : 1,
-                            transition: 'all var(--transition-fast)',
-                            position: 'relative'
-                          }}
-                        >
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                            <span className={isSelectedSpec ? 'badge badge-rose' : 'badge'} style={{ fontSize: '0.675rem' }}>
-                              {spec.badge}
-                            </span>
-                            {isSelectedSpec && (
-                              <CheckCircle2 size={16} style={{ color: 'var(--color-rose)' }} />
-                            )}
-                          </div>
-
-                          <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-espresso)', marginBottom: '0.2rem' }}>
-                            {spec.name}
-                          </div>
-
-                          <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', lineHeight: 1.45 }}>
-                            {spec.description}
-                          </div>
-
-                          <div style={{
-                            marginTop: '0.65rem',
-                            paddingTop: '0.5rem',
-                            borderTop: '1px solid var(--color-border-subtle)',
-                            fontSize: '0.775rem',
-                            fontWeight: 600,
-                            color: isSelectedSpec ? 'var(--color-rose)' : 'var(--color-espresso)'
-                          }}>
-                            {spec.id === 'sandy' && 'Master Standard Pricing (e.g. £55 Hybrid)'}
-                            {spec.id === 'studio-artist' && (isDisabled ? 'Sandy only for CPD Course' : 'Studio Rate (~20% Lower • e.g. £44 Hybrid)')}
-                            {spec.id === 'any' && (isDisabled ? 'Sandy only for CPD Course' : 'Fastest Appointment Assignment')}
-                          </div>
-                        </button>
-                      );
-                    })}
                   </div>
                 </div>
 
@@ -745,20 +632,15 @@ export const BookingPage: React.FC = () => {
                           <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
                             <span>{s.duration} mins</span>
                             <span>•</span>
-                            <span>Deposit: £{getSpecialistDeposit(s, selectedSpecialistId)}</span>
+                            <span>Deposit: £{s.deposit}</span>
                           </div>
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
                           <div style={{ textAlign: 'right' }}>
                             <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                              £{getSpecialistPrice(s, selectedSpecialistId)}
+                              £{s.price}
                             </div>
-                            {selectedSpecialistId === 'studio-artist' && s.category !== 'Training' && (
-                              <div style={{ fontSize: '0.68rem', color: 'var(--color-rose)', whiteSpace: 'nowrap' }}>
-                                Studio rate (Sandy: £{s.price})
-                              </div>
-                            )}
                           </div>
                           <button
                             type="button"
@@ -827,66 +709,6 @@ export const BookingPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Compact Specialist Switcher Bar */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '0.75rem 1rem',
-                  backgroundColor: 'var(--color-surface-subtle)',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--color-border)',
-                  marginTop: '1.25rem',
-                  marginBottom: '1.5rem',
-                  flexWrap: 'wrap',
-                  gap: '0.75rem'
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>Practitioner:</span>
-                    <strong style={{ fontSize: '0.875rem', color: 'var(--color-espresso)' }}>
-                      {selectedSpecialistId === 'studio-artist' ? 'Senior Studio Artist' : 'Sandy (Founder & Master Artist)'}
-                    </strong>
-                    <span className="badge badge-rose" style={{ fontSize: '0.7rem' }}>
-                      Total: £{totalPrice}
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    {SPECIALISTS.map((spec) => {
-                      const isSpecActive = selectedSpecialistId === spec.id;
-                      const hasTraining = selectedServices.some((s) => s.category === 'Training');
-                      const isSpecDisabled = hasTraining && spec.id !== 'sandy';
-
-                      return (
-                        <button
-                          key={spec.id}
-                          type="button"
-                          disabled={isSpecDisabled}
-                          onClick={() => {
-                            setSelectedSpecialistId(spec.id);
-                            showToast(`Practitioner: ${spec.shortName} (${spec.id === 'studio-artist' ? 'Studio Rate' : 'Master Rate'})`);
-                          }}
-                          style={{
-                            padding: '0.4rem 0.8rem',
-                            borderRadius: 'var(--radius-sm)',
-                            fontSize: '0.75rem',
-                            fontWeight: 600,
-                            cursor: isSpecDisabled ? 'not-allowed' : 'pointer',
-                            opacity: isSpecDisabled ? 0.5 : 1,
-                            border: '1px solid',
-                            borderColor: isSpecActive ? 'var(--color-espresso)' : 'var(--color-border)',
-                            backgroundColor: isSpecActive ? 'var(--color-espresso)' : 'var(--color-surface)',
-                            color: isSpecActive ? 'var(--color-ivory)' : 'var(--color-espresso)',
-                            transition: 'all var(--transition-fast)'
-                          }}
-                        >
-                          {spec.shortName}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 {/* Month Navigator */}
                 <div style={{
                   display: 'flex',
@@ -948,7 +770,6 @@ export const BookingPage: React.FC = () => {
 
                     const isDisabled = cd.isSunday || cd.isPast;
                     const isSelected = selectedDate === cd.dateString;
-                    const isSandyDayBooked = isSandySelected && !isDisabled && !isSpecialistAvailableOnDate('sandy', cd.dateString);
 
                     return (
                       <button
@@ -960,7 +781,6 @@ export const BookingPage: React.FC = () => {
                           height: '42px',
                           minHeight: '42px',
                           display: 'flex',
-                          flexDirection: 'column',
                           alignItems: 'center',
                           justifyContent: 'center',
                           borderRadius: 'var(--radius-sm)',
@@ -970,8 +790,6 @@ export const BookingPage: React.FC = () => {
                             ? 'var(--color-espresso)'
                             : isDisabled
                             ? 'transparent'
-                            : isSandyDayBooked
-                            ? 'var(--color-blush-light)'
                             : 'var(--color-surface-subtle)',
                           color: isSelected
                             ? 'var(--color-ivory)'
@@ -980,121 +798,65 @@ export const BookingPage: React.FC = () => {
                             : 'var(--color-espresso)',
                           border: isSelected
                             ? '1px solid var(--color-espresso)'
-                            : isSandyDayBooked
-                            ? '1px dashed var(--color-rose)'
                             : '1px solid var(--color-border-subtle)',
-                          cursor: isDisabled ? 'not-allowed' : 'pointer',
-                          position: 'relative'
+                          cursor: isDisabled ? 'not-allowed' : 'pointer'
                         }}
                       >
-                        <span>{cd.dayNumber}</span>
-                        {isSandyDayBooked && !isSelected && (
-                          <span style={{ fontSize: '0.55rem', color: 'var(--color-rose)', lineHeight: 1, fontWeight: 700 }}>
-                            Team
-                          </span>
-                        )}
+                        {cd.dayNumber}
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Smart Fallback Banner: If Sandy is booked on this date */}
-                {isSandyBookedOnDate ? (
-                  <div style={{
-                    backgroundColor: 'var(--color-surface)',
-                    border: '1.5px solid var(--color-rose)',
-                    borderRadius: 'var(--radius-sm)',
-                    padding: '1.25rem 1.5rem',
-                    marginBottom: '1.5rem',
-                    boxShadow: 'var(--shadow-card)',
-                    animation: 'fadeIn 0.25s ease-out'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
-                      <span className="badge badge-rose" style={{ fontSize: '0.725rem' }}>
-                        Sandy is Fully Booked
-                      </span>
-                      <span style={{ fontSize: '0.825rem', color: 'var(--color-taupe)' }}>
-                        {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
-                      </span>
+                {/* Time Slots Grid */}
+                <div>
+                  <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Clock size={16} style={{ color: 'var(--color-rose)' }} />
+                    Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </h4>
+
+                  {timeSlots.length === 0 ? (
+                    <div style={{
+                      padding: '1.5rem',
+                      textAlign: 'center',
+                      backgroundColor: 'var(--color-surface)',
+                      border: '1px solid var(--color-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.85rem',
+                      color: 'var(--color-taupe)'
+                    }}>
+                      No slots available on this date. Please select another date on the calendar.
                     </div>
-
-                    <p style={{ fontSize: '0.875rem', color: 'var(--color-espresso)', margin: '0 0 1rem 0', lineHeight: 1.6 }}>
-                      Sandy has no appointments open on this day. However, our <strong>Senior Studio Artist</strong> has open slots at the special studio rate of <strong>£{totalWorkerPrice}</strong> (instead of Sandy's £{totalSandyPrice}).
-                    </p>
-
-                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                      <button
-                        type="button"
-                        onClick={handleSwitchToWorker}
-                        className="btn btn-primary"
-                        style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
-                      >
-                        Book with Senior Studio Artist (£{totalWorkerPrice})
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleJumpToNextSandyDay}
-                        className="btn btn-secondary"
-                        style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
-                      >
-                        Find Sandy's Next Free Date →
-                      </button>
+                  ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(95px, 1fr))', gap: '0.5rem' }}>
+                      {timeSlots.map((time) => {
+                        const isSelected = selectedTime === time;
+                        return (
+                          <button
+                            key={time}
+                            type="button"
+                            onClick={() => setSelectedTime(time)}
+                            style={{
+                              padding: '0.7rem 0.5rem',
+                              borderRadius: 'var(--radius-sm)',
+                              fontSize: '0.8rem',
+                              fontWeight: isSelected ? 600 : 500,
+                              textAlign: 'center',
+                              border: '1px solid',
+                              borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-border)',
+                              backgroundColor: isSelected ? 'var(--color-rose)' : 'var(--color-surface)',
+                              color: isSelected ? '#FFFFFF' : 'var(--color-espresso)',
+                              cursor: 'pointer',
+                              transition: 'all var(--transition-fast)'
+                            }}
+                          >
+                            {time}
+                          </button>
+                        );
+                      })}
                     </div>
-                  </div>
-                ) : (
-                  /* Time Slots Grid */
-                  <div>
-                    <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Clock size={16} style={{ color: 'var(--color-rose)' }} />
-                      Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                      <span style={{ fontSize: '0.75rem', color: 'var(--color-taupe)', fontWeight: 400 }}>
-                        ({selectedSpecialistId === 'studio-artist' ? 'Senior Studio Artist' : 'Sandy'})
-                      </span>
-                    </h4>
-
-                    {timeSlots.length === 0 ? (
-                      <div style={{
-                        padding: '1.5rem',
-                        textAlign: 'center',
-                        backgroundColor: 'var(--color-surface)',
-                        border: '1px solid var(--color-border)',
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: '0.85rem',
-                        color: 'var(--color-taupe)'
-                      }}>
-                        No slots available on this date. Please select another date on the calendar.
-                      </div>
-                    ) : (
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(95px, 1fr))', gap: '0.5rem' }}>
-                        {timeSlots.map((time) => {
-                          const isSelected = selectedTime === time;
-                          return (
-                            <button
-                              key={time}
-                              type="button"
-                              onClick={() => setSelectedTime(time)}
-                              style={{
-                                padding: '0.7rem 0.5rem',
-                                borderRadius: 'var(--radius-sm)',
-                                fontSize: '0.8rem',
-                                fontWeight: isSelected ? 600 : 500,
-                                textAlign: 'center',
-                                border: '1px solid',
-                                borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-border)',
-                                backgroundColor: isSelected ? 'var(--color-rose)' : 'var(--color-surface)',
-                                color: isSelected ? '#FFFFFF' : 'var(--color-espresso)',
-                                cursor: 'pointer',
-                                transition: 'all var(--transition-fast)'
-                              }}
-                            >
-                              {time}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
 
                 {/* Step Action Buttons */}
                 <div style={{
@@ -1960,7 +1722,7 @@ export const BookingPage: React.FC = () => {
                         {svc.name}
                       </h4>
                       <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
-                        {svc.duration} mins • £{getSpecialistPrice(svc, selectedSpecialistId)}
+                        {svc.duration} mins • £{svc.price}
                       </p>
                     </div>
                   </div>

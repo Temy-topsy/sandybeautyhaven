@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Clock, ShieldCheck, Calendar, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { SERVICES } from '../data/services';
-import { getSpecialistPrice } from '../data/specialists';
 import { useBooking } from '../context/BookingContext';
 
 export const ServiceDetailPage: React.FC = () => {
@@ -121,16 +120,11 @@ export const ServiceDetailPage: React.FC = () => {
             }}>
               <div>
                 <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>
-                  Price (Sandy)
+                  Price
                 </span>
                 <span style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
                   £{service.price}
                 </span>
-                {service.category !== 'Training' && (
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-rose)', marginTop: '0.2rem', fontWeight: 600 }}>
-                    or £{getSpecialistPrice(service, 'studio-artist')} with Studio Artist
-                  </div>
-                )}
               </div>
               <div style={{ borderLeft: '1px solid var(--color-border)', paddingLeft: '2rem' }}>
                 <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-taupe)', display: 'block' }}>

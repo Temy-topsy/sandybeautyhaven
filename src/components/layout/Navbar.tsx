@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Calendar, ShoppingBag } from 'lucide-react';
-import { useCart } from '../../context/CartContext';
+import { Menu, X, Calendar } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { totalItemCount, openCart } = useCart();
   const location = useLocation();
 
   useEffect(() => {
@@ -25,7 +23,6 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
-    { name: 'Shop', path: '/shop' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }
   ];
@@ -131,53 +128,8 @@ export const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Action: Shopping Bag & Primary Booking CTA */}
+          {/* Right Action: Primary Booking CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifySelf: 'end' }}>
-            <button
-              type="button"
-              onClick={openCart}
-              aria-label="View shopping bag"
-              style={{
-                position: 'relative',
-                background: 'transparent',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-sm)',
-                padding: '0.5rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--color-espresso)',
-                cursor: 'pointer',
-                transition: 'all var(--transition-fast)'
-              }}
-            >
-              <ShoppingBag size={17} />
-              {totalItemCount > 0 && (
-                <span
-                  key={totalItemCount}
-                  className="cart-bounce"
-                  style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '-6px',
-                    backgroundColor: 'var(--color-rose)',
-                    color: '#FFFFFF',
-                    fontSize: '0.65rem',
-                    fontWeight: 700,
-                    borderRadius: '50%',
-                    width: '18px',
-                    height: '18px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.12)'
-                  }}
-                >
-                  {totalItemCount}
-                </span>
-              )}
-            </button>
-
             <Link
               to="/schedule"
               className="btn btn-primary"
