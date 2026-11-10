@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Sparkles, ShieldCheck, Calendar, MapPin } from 'lucide-react';
+import { Heart, Award, ShieldCheck, Calendar, MapPin } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
@@ -123,7 +123,7 @@ export const AboutPage: React.FC = () => {
                 justifyContent: 'center',
                 marginBottom: '1.25rem'
               }}>
-                <Sparkles size={20} />
+                <Award size={20} />
               </div>
               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.65rem' }}>Bespoke Mapping</h3>
               <p style={{ color: 'var(--color-taupe)', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>

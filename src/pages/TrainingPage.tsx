@@ -4,7 +4,6 @@ import {
   Award,
   CheckCircle2,
   Calendar,
-  Sparkles,
   Users,
   MessageCircle,
   ShieldCheck,
@@ -319,7 +318,7 @@ export const TrainingPage: React.FC = () => {
               }}>
                 {kitItems.map((item, i) => (
                   <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.875rem', color: 'var(--color-taupe)' }}>
-                    <Sparkles size={14} style={{ color: 'var(--color-rose)' }} />
+                    <CheckCircle2 size={14} style={{ color: 'var(--color-rose)' }} />
                     <span>{item}</span>
                   </div>
                 ))}

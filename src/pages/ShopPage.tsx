@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ShoppingBag, Star, Check, Sparkles, Shield, Heart } from 'lucide-react';
+import { ShoppingBag, Star, Check, Award, Shield, Heart } from 'lucide-react';
 import { PRODUCTS, type ProductItem } from '../data/products';
 import { useCart } from '../context/CartContext';
 
@@ -339,7 +339,7 @@ export const ShopPage: React.FC = () => {
           }}>
             <div>
               <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'var(--color-blush-light)', color: 'var(--color-rose)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 0.85rem' }}>
-                <Sparkles size={20} />
+                <Award size={20} />
               </div>
               <h4 style={{ fontSize: '0.95rem', marginBottom: '0.35rem', color: 'var(--color-espresso)' }}>
                 100% Raw Virgin Quality
