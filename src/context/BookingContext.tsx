@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { SERVICES, type ServiceItem } from '../data/services';
+import { SPECIALISTS, getSpecialistPrice, getSpecialistDeposit } from '../data/specialists';
 
 export interface ClientDetails {
   fullName: string;
@@ -40,6 +41,8 @@ interface BookingContextType {
   totalPrice: number;
   totalDeposit: number;
   totalDuration: number;
+  selectedSpecialistId: string;
+  setSelectedSpecialistId: (id: string) => void;
   selectedStaff: string;
   setSelectedStaff: (staff: string) => void;
   selectedDate: string;
@@ -75,7 +78,16 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return [SERVICES[1]]; // default to Hybrid Lash Extensions
   });
 
-  const [selectedStaff, setSelectedStaff] = useState<string>('Sandy Beauty');
+  const [selectedSpecialistId, setSelectedSpecialistIdState] = useState<string>('sandy');
+  const [selectedStaff, setSelectedStaff] = useState<string>('Sandy (Founder & Master Artist)');
+
+  const setSelectedSpecialistId = (id: string) => {
+    setSelectedSpecialistIdState(id);
+    const spec = SPECIALISTS.find((s) => s.id === id);
+    if (spec) {
+      setSelectedStaff(spec.name);
+    }
+  };
   const [selectedDate, setSelectedDate] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -144,12 +156,12 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const totalPrice = useMemo(() => {
-    return selectedServices.reduce((sum, s) => sum + s.price, 0);
-  }, [selectedServices]);
+    return selectedServices.reduce((sum, s) => sum + getSpecialistPrice(s, selectedSpecialistId), 0);
+  }, [selectedServices, selectedSpecialistId]);
 
   const totalDeposit = useMemo(() => {
-    return selectedServices.reduce((sum, s) => sum + s.deposit, 0);
-  }, [selectedServices]);
+    return selectedServices.reduce((sum, s) => sum + getSpecialistDeposit(s, selectedSpecialistId), 0);
+  }, [selectedServices, selectedSpecialistId]);
 
   const totalDuration = useMemo(() => {
     return selectedServices.reduce((sum, s) => sum + s.duration, 0);
@@ -161,7 +173,12 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     remainingBalance?: number;
     tip?: number;
   }): ConfirmedBooking => {
-    const primaryService = selectedServices[0] || SERVICES[0];
+    const adjustedServices = selectedServices.map((s) => ({
+      ...s,
+      price: getSpecialistPrice(s, selectedSpecialistId),
+      deposit: getSpecialistDeposit(s, selectedSpecialistId)
+    }));
+    const primaryService = adjustedServices[0] || SERVICES[0];
     const randNum = Math.floor(1000 + Math.random() * 9000);
     const reference = `SBH-${new Date().getFullYear()}-${randNum}`;
 
@@ -175,7 +192,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     const booking: ConfirmedBooking = {
       reference,
-      services: [...selectedServices],
+      services: [...adjustedServices],
       service: primaryService,
       staff: selectedStaff,
       date: selectedDate,
@@ -219,6 +236,8 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         totalPrice,
         totalDeposit,
         totalDuration,
+        selectedSpecialistId,
+        setSelectedSpecialistId,
         selectedStaff,
         setSelectedStaff,
         selectedDate,

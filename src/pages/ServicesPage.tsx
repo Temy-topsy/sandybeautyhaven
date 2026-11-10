@@ -8,6 +8,7 @@ import {
   BookOpen
 } from 'lucide-react';
 import { SERVICES, CATEGORIES, type ServiceItem } from '../data/services';
+import { getSpecialistPrice } from '../data/specialists';
 import { useBooking } from '../context/BookingContext';
 
 export const ServicesPage: React.FC = () => {
@@ -222,14 +223,25 @@ export const ServicesPage: React.FC = () => {
                           {service.name}
                         </Link>
                       </h3>
-                      <span style={{
-                        fontFamily: 'var(--font-serif)',
-                        fontSize: '1.5rem',
-                        fontWeight: 600,
-                        color: 'var(--color-espresso)'
-                      }}>
-                        £{service.price}
-                      </span>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: '1.5rem',
+                          fontWeight: 600,
+                          color: 'var(--color-espresso)'
+                        }}>
+                          £{service.price}
+                        </span>
+                        {!isTraining ? (
+                          <div style={{ fontSize: '0.725rem', color: 'var(--color-taupe)', marginTop: '0.15rem', whiteSpace: 'nowrap' }}>
+                            From £{getSpecialistPrice(service, 'studio-artist')} with Studio Artist
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: '0.725rem', color: 'var(--color-rose)', marginTop: '0.15rem', fontWeight: 600 }}>
+                            Sandy Exclusive
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <p style={{
