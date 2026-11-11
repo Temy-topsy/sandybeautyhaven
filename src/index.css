@@ -470,7 +470,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: var(--shadow-card);
 }
 
-/* Infinite Luxury Ticker Marquee */
+/* Infinite Luxury Ticker Marquee with Cute Sideways Motion */
 @keyframes marqueeScroll {
   0% {
     transform: translateX(0%);
@@ -480,21 +480,206 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
+@keyframes cuteNudgeRight {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateX(5px);
+    opacity: 1;
+    color: #FFFFFF;
+  }
+}
+
 .marquee-container {
   overflow: hidden;
   white-space: nowrap;
   display: flex;
   user-select: none;
+  position: relative;
+  mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
 }
 
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marqueeScroll 32s linear infinite;
+  animation: marqueeScroll 24s linear infinite;
+  align-items: center;
 }
 
 .marquee-track:hover {
   animation-play-state: paused;
+}
+
+.cute-side-motion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cute-side-motion .cute-dot {
+  color: var(--color-rose);
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.cute-side-motion .cute-arrow {
+  display: inline-block;
+  color: var(--color-rose);
+  font-size: 0.95rem;
+  line-height: 1;
+  font-family: system-ui, -apple-system, sans-serif;
+  animation: cuteNudgeRight 1.5s ease-in-out infinite;
+}
+
+/* Hero Carousel Sideways Motion */
+@keyframes heroSlideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Navbar Overlay & Strong Hover System */
+.main-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 100;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.navbar-transparent {
+  background: linear-gradient(180deg, rgba(20, 16, 15, 0.72) 0%, rgba(20, 16, 15, 0.25) 65%, transparent 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.navbar-solid {
+  background-color: rgba(250, 247, 242, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px rgba(34, 27, 26, 0.04);
+}
+
+/* Desktop Nav Links - Very Strong Hover */
+.nav-link-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-item::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 0%;
+  height: 2px;
+  background-color: var(--color-rose);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+
+/* Transparent Navbar Hover */
+.navbar-transparent .nav-link-item {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.navbar-transparent .nav-link-item:hover {
+  color: #FFFFFF !important;
+  background-color: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-transparent .nav-link-item.active {
+  color: #FFFFFF !important;
+  background-color: rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+}
+
+.navbar-transparent .nav-link-item:hover::after,
+.navbar-transparent .nav-link-item.active::after {
+  width: calc(100% - 1.5rem);
+  box-shadow: 0 0 8px rgba(163, 111, 114, 0.7);
+}
+
+/* Solid Navbar Hover */
+.navbar-solid .nav-link-item {
+  color: var(--color-taupe);
+}
+
+.navbar-solid .nav-link-item:hover {
+  color: var(--color-espresso) !important;
+  background-color: rgba(163, 111, 114, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(34, 27, 26, 0.07);
+}
+
+.navbar-solid .nav-link-item.active {
+  color: var(--color-espresso) !important;
+  background-color: rgba(163, 111, 114, 0.08);
+  font-weight: 600;
+}
+
+.navbar-solid .nav-link-item:hover::after,
+.navbar-solid .nav-link-item.active::after {
+  width: calc(100% - 1.5rem);
+}
+
+/* Brand Logo Strong Hover */
+.navbar-brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-brand-logo:hover {
+  transform: scale(1.08) translateY(-1px);
+}
+
+/* CTA Strong Hover */
+.navbar-cta-btn {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.navbar-cta-btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(163, 111, 114, 0.45) !important;
+}
+
+.btn-navbar-hero {
+  background-color: var(--color-rose);
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(163, 111, 114, 0.35);
+}
+
+.btn-navbar-hero:hover {
+  background-color: #8E5A5D !important;
 }
 
 /* Reduced Motion */

@@ -27,6 +27,9 @@ export const Navbar: React.FC = () => {
     { name: 'Contact', path: '/contact' }
   ];
 
+  const isHome = location.pathname === '/';
+  const isTransparent = isHome && !isScrolled;
+
   const isActive = (path: string) => {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
@@ -34,16 +37,15 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Main Navigation Bar */}
+      {/* Main Navigation Bar (Overlays Hero on Home, Frosted Solid on Scroll/Other Pages) */}
       <header
+        className={`main-navbar ${isTransparent ? 'navbar-transparent' : 'navbar-solid'}`}
         style={{
-          position: 'sticky',
+          position: 'fixed',
           top: 0,
-          zIndex: 90,
-          backgroundColor: isScrolled ? 'rgba(250, 247, 242, 0.97)' : 'var(--color-ivory)',
-          backdropFilter: isScrolled ? 'blur(8px)' : 'none',
-          borderBottom: '1px solid var(--color-border)',
-          transition: 'all var(--transition-fast)'
+          left: 0,
+          right: 0,
+          zIndex: 100
         }}
       >
         <div
@@ -59,84 +61,70 @@ export const Navbar: React.FC = () => {
             alignItems: 'center'
           }}
         >
-          {/* Brand Logo & Wordmark (Shifted Left & Compact) */}
+          {/* Brand Logo Only (Clean Quiet-Luxury Monogram) */}
           <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'start' }}>
             <Link
               to="/"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.65rem',
-                textDecoration: 'none'
-              }}
+              className="navbar-brand-logo"
+              aria-label="Sandy Beauty Haven Home"
             >
               <img
                 src="/sandy logo.png"
                 alt="Sandy Beauty Haven Logo"
                 style={{
-                  width: '32px',
-                  height: '32px',
+                  width: '38px',
+                  height: '38px',
                   objectFit: 'contain',
-                  borderRadius: '50%'
+                  borderRadius: '50%',
+                  border: isTransparent
+                    ? '1.5px solid rgba(255, 255, 255, 0.35)'
+                    : '1.5px solid var(--color-border)',
+                  boxShadow: isTransparent
+                    ? '0 2px 8px rgba(0, 0, 0, 0.3)'
+                    : '0 2px 6px rgba(34, 27, 26, 0.08)',
+                  transition: 'all 0.25s ease'
                 }}
               />
-              <span
-                className="brand-wordmark"
-                style={{
-                  fontFamily: 'var(--font-serif)',
-                  fontSize: 'clamp(0.95rem, 1.4vw, 1.15rem)',
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
-                  textTransform: 'uppercase',
-                  color: 'var(--color-espresso)',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                Sandy Beauty Haven
-              </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation Links (Mathematically Centered with Generous Pacing) */}
+          {/* Desktop Navigation Links (Centered with Very Strong Tactile Hover) */}
           <nav
             style={{
               display: 'none',
               alignItems: 'center',
               justifyContent: 'center',
               justifySelf: 'center',
-              gap: 'clamp(2rem, 3.2vw, 3.5rem)'
+              gap: 'clamp(1rem, 2.5vw, 2.5rem)'
             }}
             className="desktop-nav"
           >
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                style={{
-                  fontSize: '0.9rem',
-                  fontWeight: 500,
-                  letterSpacing: '0.04em',
-                  color: isActive(link.path) ? 'var(--color-espresso)' : 'var(--color-taupe)',
-                  borderBottom: isActive(link.path) ? '2px solid var(--color-rose)' : '2px solid transparent',
-                  padding: '4px 6px',
-                  transition: 'all var(--transition-fast)',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const active = isActive(link.path);
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`nav-link-item ${active ? 'active' : ''}`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right Action: Primary Booking CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifySelf: 'end' }}>
             <Link
               to="/schedule"
-              className="btn btn-primary"
+              className={`btn ${isTransparent ? 'btn-navbar-hero' : 'btn-primary'} navbar-cta-btn`}
               style={{
-                padding: '0.55rem 1.15rem',
-                fontSize: '0.785rem',
-                display: 'inline-flex'
+                padding: '0.55rem 1.25rem',
+                fontSize: '0.8rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                borderRadius: 'var(--radius-sm)'
               }}
             >
               <Calendar size={14} />
@@ -153,12 +141,14 @@ export const Navbar: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'transparent',
-                border: '1px solid var(--color-border)',
+                background: isTransparent ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
+                border: isTransparent ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '0.45rem',
                 cursor: 'pointer',
-                color: 'var(--color-espresso)'
+                color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',
+                backdropFilter: isTransparent ? 'blur(6px)' : 'none',
+                transition: 'all 0.25s ease'
               }}
               className="mobile-menu-btn"
             >
@@ -178,7 +168,7 @@ export const Navbar: React.FC = () => {
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(36, 29, 28, 0.4)',
-            zIndex: 99,
+            zIndex: 101,
             display: 'flex',
             justifyContent: 'flex-end'
           }}
@@ -202,12 +192,9 @@ export const Navbar: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <img
                   src="/sandy logo.png"
-                  alt="Logo"
-                  style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                  alt="Sandy Beauty Haven Logo"
+                  style={{ width: '38px', height: '38px', borderRadius: '50%' }}
                 />
-                <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 600, fontSize: '1.1rem' }}>
-                  SANDY BEAUTY HAVEN
-                </span>
               </div>
               <button
                 type="button"
@@ -274,9 +261,6 @@ export const Navbar: React.FC = () => {
       {/* Global Responsive CSS rule */}
       <style>{`
         @media (max-width: 899px) {
-          .brand-wordmark {
-            display: none !important;
-          }
           .navbar-container {
             display: flex !important;
             justify-content: space-between !important;
@@ -288,9 +272,6 @@ export const Navbar: React.FC = () => {
           }
           .mobile-menu-btn {
             display: none !important;
-          }
-          .desktop-info {
-            display: inline-flex !important;
           }
         }
       `}</style>

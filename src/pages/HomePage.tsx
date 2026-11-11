@@ -101,7 +101,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <div>
-      {/* 1. CINEMATIC AUTO-MOVING HERO */}
+      {/* 1. CINEMATIC AUTO-MOVING HERO (FULL-BLEED UNDER FLOATING NAVBAR) */}
       <section
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
@@ -109,7 +109,7 @@ export const HomePage: React.FC = () => {
         onTouchEnd={() => setIsPaused(false)}
         style={{
           position: 'relative',
-          minHeight: 'calc(100svh - var(--header-height))',
+          minHeight: '100svh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -118,11 +118,20 @@ export const HomePage: React.FC = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           textAlign: 'center',
-          padding: 'clamp(2.5rem, 5vw, 4rem) 1.5rem',
+          padding: 'calc(var(--header-height) + 2.5rem) 1.5rem 4rem 1.5rem',
           transition: 'background-image 0.85s cubic-bezier(0.16, 1, 0.3, 1)'
         }}
       >
-        <div style={{ maxWidth: '680px', margin: '0 auto', position: 'relative', zIndex: 2 }}>
+        <div
+          key={`hero-slide-${currentSlide}`}
+          style={{
+            maxWidth: '680px',
+            margin: '0 auto',
+            position: 'relative',
+            zIndex: 2,
+            animation: 'heroSlideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}
+        >
           <span
             style={{
               fontSize: '0.75rem',
@@ -295,13 +304,13 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. INFINITE LUXURY AUTO-TICKER (CLEAN REFINED TYPOGRAPHY) */}
+      {/* 2. INFINITE LUXURY AUTO-TICKER (CLEAN REFINED TYPOGRAPHY WITH CUTE SIDEWAYS MOTION) */}
       <div
         className="marquee-container"
         style={{
           backgroundColor: 'var(--color-espresso)',
           color: 'var(--color-ivory)',
-          padding: '0.85rem 0',
+          padding: '0.9rem 0',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
         }}
       >
@@ -312,8 +321,8 @@ export const HomePage: React.FC = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '1.75rem',
-                padding: '0 1.75rem',
+                gap: '1.5rem',
+                padding: '0 1.5rem',
                 fontSize: '0.75rem',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
@@ -322,7 +331,10 @@ export const HomePage: React.FC = () => {
               }}
             >
               <span>{item}</span>
-              <span style={{ color: 'var(--color-rose)', fontSize: '0.9rem', lineHeight: 1 }}>•</span>
+              <span className="cute-side-motion">
+                <span className="cute-dot">•</span>
+                <span className="cute-arrow">→</span>
+              </span>
             </div>
           ))}
         </div>

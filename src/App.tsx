@@ -56,6 +56,50 @@ const NotFoundPage = () => (
   </div>
 );
 
+const MainLayout: React.FC = () => {
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <main style={{ flex: 1, paddingTop: isHome ? 0 : 'var(--header-height)' }}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/schedule" element={<BookingPage />} />
+          <Route path="/book" element={<BookingPage />} />
+          <Route path="/checkout" element={<BookingPage />} />
+          <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
+          <Route path="/training" element={<TrainingPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/reviews" element={<ReviewsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/faq" element={<FaqPage />} />
+
+          {/* Legal & Policy Sub-routes */}
+          <Route path="/policies" element={<PolicyLayout />}>
+            <Route index element={<BookingPolicy />} />
+            <Route path="booking" element={<BookingPolicy />} />
+            <Route path="cancellation" element={<CancellationPolicy />} />
+            <Route path="refunds" element={<RefundPolicy />} />
+            <Route path="privacy" element={<PrivacyPolicy />} />
+            <Route path="terms" element={<TermsPolicy />} />
+            <Route path="cookies" element={<CookiePolicy />} />
+          </Route>
+
+          {/* 404 Catch-All */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </main>
+      <Footer />
+      <CookieBanner />
+    </div>
+  );
+};
+
 function App() {
   return (
     <BrowserRouter>
@@ -63,42 +107,7 @@ function App() {
         <BookingProvider>
           <ScrollToTop />
           <Toast />
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
-            <main style={{ flex: 1 }}>
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/services" element={<ServicesPage />} />
-                <Route path="/services/:slug" element={<ServiceDetailPage />} />
-                <Route path="/schedule" element={<BookingPage />} />
-                <Route path="/book" element={<BookingPage />} />
-                <Route path="/checkout" element={<BookingPage />} />
-                <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
-                <Route path="/training" element={<TrainingPage />} />
-                <Route path="/gallery" element={<GalleryPage />} />
-                <Route path="/reviews" element={<ReviewsPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/faq" element={<FaqPage />} />
-
-                {/* Legal & Policy Sub-routes */}
-                <Route path="/policies" element={<PolicyLayout />}>
-                  <Route index element={<BookingPolicy />} />
-                  <Route path="booking" element={<BookingPolicy />} />
-                  <Route path="cancellation" element={<CancellationPolicy />} />
-                  <Route path="refunds" element={<RefundPolicy />} />
-                  <Route path="privacy" element={<PrivacyPolicy />} />
-                  <Route path="terms" element={<TermsPolicy />} />
-                  <Route path="cookies" element={<CookiePolicy />} />
-                </Route>
-
-                {/* 404 Catch-All */}
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </main>
-            <Footer />
-            <CookieBanner />
-          </div>
+          <MainLayout />
         </BookingProvider>
       </ToastProvider>
     </BrowserRouter>
