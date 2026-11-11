@@ -87,6 +87,18 @@ export const HomePage: React.FC = () => {
 
   const activeSlide = slides[currentSlide];
 
+  // Marquee announcement ticker items
+  const tickerItems = [
+    'CPD Accredited 1-on-1 Lash Academy',
+    '101 Easter Road, Edinburgh',
+    'Bespoke Handcrafted Extensions',
+    '48-Hour Cancellation Guarantee',
+    'Health-First Isolation Technique',
+    'Mon–Sat Appointments Open',
+    'Private One-to-One Mentorship',
+    '5-Star Verified Client Reviews'
+  ];
+
   return (
     <div>
       {/* 1. CINEMATIC AUTO-MOVING HERO */}
@@ -283,7 +295,40 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. THE 3-PORTAL JOURNEY GATEWAY */}
+      {/* 2. INFINITE LUXURY AUTO-TICKER (CLEAN REFINED TYPOGRAPHY) */}
+      <div
+        className="marquee-container"
+        style={{
+          backgroundColor: 'var(--color-espresso)',
+          color: 'var(--color-ivory)',
+          padding: '0.85rem 0',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+        }}
+      >
+        <div className="marquee-track">
+          {[...tickerItems, ...tickerItems].map((item, idx) => (
+            <div
+              key={idx}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '1.75rem',
+                padding: '0 1.75rem',
+                fontSize: '0.75rem',
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                color: '#E0D8D3'
+              }}
+            >
+              <span>{item}</span>
+              <span style={{ color: 'var(--color-rose)', fontSize: '0.9rem', lineHeight: 1 }}>•</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 3. THE 3-PORTAL JOURNEY GATEWAY */}
       <section className="section" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
         <div className="container">
           <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)', textAlign: 'center' }}>
