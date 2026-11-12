@@ -115,7 +115,7 @@ export const HomePage: React.FC = () => {
                     fontSize: '0.725rem',
                     textTransform: 'uppercase',
                     letterSpacing: '0.18em',
-                    color: 'var(--color-blush)',
+                    color: '#F2E8E4',
                     display: 'inline-block',
                     marginBottom: '0.75rem',
                     fontWeight: 600
@@ -126,7 +126,7 @@ export const HomePage: React.FC = () => {
 
                 <h1
                   style={{
-                    color: 'var(--color-ivory)',
+                    color: '#FFFFFF',
                     fontSize: 'clamp(2.1rem, 5.5vw, 3.8rem)',
                     fontFamily: 'var(--font-serif)',
                     fontWeight: 400,
@@ -303,6 +303,8 @@ export const HomePage: React.FC = () => {
                   <img
                     src={service.image}
                     alt={service.name}
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </div>
@@ -331,6 +333,8 @@ export const HomePage: React.FC = () => {
                   <img
                     src={service.image}
                     alt={service.name}
+                    loading="lazy"
+                    decoding="async"
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                   <span
@@ -536,6 +540,8 @@ export const HomePage: React.FC = () => {
               <img
                 src="/settings inspo img.jpg"
                 alt="Sandy Beauty Haven Training Studio"
+                loading="lazy"
+                decoding="async"
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -565,8 +571,10 @@ export const HomePage: React.FC = () => {
                 }}
               >
                 <img
-                  src="/Sandy pfp.png"
+                  src="/Sandy pfp.jpg"
                   alt="Sandy"
+                  loading="lazy"
+                  decoding="async"
                   style={{ width: '100%', maxHeight: '420px', objectFit: 'cover' }}
                 />
               </div>

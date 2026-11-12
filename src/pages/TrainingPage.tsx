@@ -169,7 +169,7 @@ export const TrainingPage: React.FC = () => {
                 backgroundColor: 'var(--color-noir)'
               }}>
                 <img
-                  src="/Sandy pfp.png"
+                  src="/Sandy pfp.jpg"
                   alt="Sandy - Certified Lash Educator Edinburgh"
                   style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }}
                 />

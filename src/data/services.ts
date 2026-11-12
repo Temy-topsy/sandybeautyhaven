@@ -312,7 +312,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'The iconic Kim Kardashian / strip-lash aesthetic! Features alternating closed volume spikes and shorter fluffy volume fans to create a textured, staggered, and fluttery look that replicates your favorite strip lash style.',
-    image: '/appointments/wispy-set.png',
+    image: '/appointments/wispy-set.jpg',
     features: [
       'Staggered spike mapping for iconic textured drama',
       'Replicates luxury strip lashes with 24/7 durability',
@@ -432,7 +432,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 90,
     deposit: 15,
     description: 'Infill for Mega Volume and Wispy sets. Rebuilds dense fan layers and replaces spike accents so your dramatic look stays completely unbroken.',
-    image: '/appointments/wispy-set.png',
+    image: '/appointments/wispy-set.jpg',
     features: [
       'Restores ultra-dark lash line',
       'Re-fans 5D-8D density',
@@ -529,7 +529,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 100,
     popular: true,
     description: 'Kickstart your beauty career with Sandy’s comprehensive 3-Day One-to-One Lash Course in Edinburgh. Designed for complete beginners, you will master lash theory, hygiene & contraindications, consultation, classic lash application, mapping, isolation, infills, removals, pricing, and business scaling. Includes luxury starter kit, manual, live model practice, CPD certificate, and lifetime ongoing mentorship.',
-    image: '/Sandy pfp.png',
+    image: '/Sandy pfp.jpg',
     features: [
       '1-on-1 private mentorship directly with Sandy',
       'Fully CPD-Accredited professional certificate',

@@ -25,7 +25,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: 'gal-3',
     title: 'Wispy Kardashian Strip-Lash Look',
     category: 'Lashes',
-    image: '/appointments/wispy-set.png',
+    image: '/appointments/wispy-set.jpg',
     description: 'Alternating spike lengths and volume fans delivering a textured, Kim K flutter.'
   },
   {

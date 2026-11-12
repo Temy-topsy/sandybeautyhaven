@@ -41,7 +41,7 @@ export const AboutPage: React.FC = () => {
               backgroundColor: 'var(--color-surface)'
             }}>
               <img
-                src="/Sandy pfp.png"
+                src="/Sandy pfp.jpg"
                 alt="Sandy - Certified Lash & Brow Artist"
                 style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }}
               />

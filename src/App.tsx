@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { BookingProvider } from './context/BookingContext';
@@ -8,27 +8,49 @@ import { Footer } from './components/layout/Footer';
 import { CookieBanner } from './components/layout/CookieBanner';
 import { Toast } from './components/ui/Toast';
 
-// Pages
+// Primary Instant Landing Route (Synchronous for instantaneous first paint)
 import { HomePage } from './pages/HomePage';
-import { ServicesPage } from './pages/ServicesPage';
-import { ServiceDetailPage } from './pages/ServiceDetailPage';
-import { BookingPage } from './pages/BookingPage';
-import { BookingConfirmationPage } from './pages/BookingConfirmationPage';
-import { TrainingPage } from './pages/TrainingPage';
-import { GalleryPage } from './pages/GalleryPage';
-import { ReviewsPage } from './pages/ReviewsPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { FaqPage } from './pages/FaqPage';
+
+// Code-split Secondary Routes (Loaded on-demand to maximize initial page speed)
+const ServicesPage = lazy(() => import('./pages/ServicesPage').then(m => ({ default: m.ServicesPage })));
+const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage').then(m => ({ default: m.ServiceDetailPage })));
+const BookingPage = lazy(() => import('./pages/BookingPage').then(m => ({ default: m.BookingPage })));
+const BookingConfirmationPage = lazy(() => import('./pages/BookingConfirmationPage').then(m => ({ default: m.BookingConfirmationPage })));
+const TrainingPage = lazy(() => import('./pages/TrainingPage').then(m => ({ default: m.TrainingPage })));
+const GalleryPage = lazy(() => import('./pages/GalleryPage').then(m => ({ default: m.GalleryPage })));
+const ReviewsPage = lazy(() => import('./pages/ReviewsPage').then(m => ({ default: m.ReviewsPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const FaqPage = lazy(() => import('./pages/FaqPage').then(m => ({ default: m.FaqPage })));
 
 // Policies
-import { PolicyLayout } from './pages/policies/PolicyLayout';
-import { BookingPolicy } from './pages/policies/BookingPolicy';
-import { CancellationPolicy } from './pages/policies/CancellationPolicy';
-import { RefundPolicy } from './pages/policies/RefundPolicy';
-import { PrivacyPolicy } from './pages/policies/PrivacyPolicy';
-import { TermsPolicy } from './pages/policies/TermsPolicy';
-import { CookiePolicy } from './pages/policies/CookiePolicy';
+const PolicyLayout = lazy(() => import('./pages/policies/PolicyLayout').then(m => ({ default: m.PolicyLayout })));
+const BookingPolicy = lazy(() => import('./pages/policies/BookingPolicy').then(m => ({ default: m.BookingPolicy })));
+const CancellationPolicy = lazy(() => import('./pages/policies/CancellationPolicy').then(m => ({ default: m.CancellationPolicy })));
+const RefundPolicy = lazy(() => import('./pages/policies/RefundPolicy').then(m => ({ default: m.RefundPolicy })));
+const PrivacyPolicy = lazy(() => import('./pages/policies/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const TermsPolicy = lazy(() => import('./pages/policies/TermsPolicy').then(m => ({ default: m.TermsPolicy })));
+const CookiePolicy = lazy(() => import('./pages/policies/CookiePolicy').then(m => ({ default: m.CookiePolicy })));
+
+// Quiet Luxury Subtle Loading State
+const PageLoader = () => (
+  <div style={{
+    minHeight: '60vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'var(--color-ivory)'
+  }}>
+    <div style={{
+      width: '28px',
+      height: '28px',
+      borderRadius: '50%',
+      border: '2px solid var(--color-border)',
+      borderTopColor: 'var(--color-rose)',
+      animation: 'spin 0.65s linear infinite'
+    }} />
+  </div>
+);
 
 // Scroll to top on every route transition
 const ScrollToTop = () => {
@@ -65,35 +87,37 @@ const MainLayout: React.FC = () => {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
       <main style={{ flex: 1, paddingTop: isHome ? 0 : 'var(--header-height)' }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:slug" element={<ServiceDetailPage />} />
-          <Route path="/schedule" element={<BookingPage />} />
-          <Route path="/book" element={<BookingPage />} />
-          <Route path="/checkout" element={<BookingPage />} />
-          <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
-          <Route path="/training" element={<TrainingPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/reviews" element={<ReviewsPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/faq" element={<FaqPage />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/services/:slug" element={<ServiceDetailPage />} />
+            <Route path="/schedule" element={<BookingPage />} />
+            <Route path="/book" element={<BookingPage />} />
+            <Route path="/checkout" element={<BookingPage />} />
+            <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
+            <Route path="/training" element={<TrainingPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/faq" element={<FaqPage />} />
 
-          {/* Legal & Policy Sub-routes */}
-          <Route path="/policies" element={<PolicyLayout />}>
-            <Route index element={<BookingPolicy />} />
-            <Route path="booking" element={<BookingPolicy />} />
-            <Route path="cancellation" element={<CancellationPolicy />} />
-            <Route path="refunds" element={<RefundPolicy />} />
-            <Route path="privacy" element={<PrivacyPolicy />} />
-            <Route path="terms" element={<TermsPolicy />} />
-            <Route path="cookies" element={<CookiePolicy />} />
-          </Route>
+            {/* Legal & Policy Sub-routes */}
+            <Route path="/policies" element={<PolicyLayout />}>
+              <Route index element={<BookingPolicy />} />
+              <Route path="booking" element={<BookingPolicy />} />
+              <Route path="cancellation" element={<CancellationPolicy />} />
+              <Route path="refunds" element={<RefundPolicy />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<TermsPolicy />} />
+              <Route path="cookies" element={<CookiePolicy />} />
+            </Route>
 
-          {/* 404 Catch-All */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+            {/* 404 Catch-All */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
       <CookieBanner />
