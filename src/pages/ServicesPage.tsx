@@ -200,7 +200,7 @@ export const ServicesPage: React.FC = () => {
                         bottom: '1rem',
                         right: '1rem',
                         backgroundColor: 'rgba(34, 27, 26, 0.85)',
-                        color: 'var(--color-ivory)',
+                        color: '#FFFFFF',
                         padding: '0.3rem 0.65rem',
                         borderRadius: 'var(--radius-sm)',
                         fontSize: '0.75rem',

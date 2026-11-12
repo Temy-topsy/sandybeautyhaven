@@ -21,6 +21,13 @@
   --color-border-subtle: #F0EAE3;
   --color-border-focus: #A36F72;
 
+  /* Atelier Permanent Noir Tokens (Permanently Deep Dark Luxury Sections) */
+  --color-noir: #181413;
+  --color-noir-surface: #201A19;
+  --color-noir-text: #FAF7F2;
+  --color-noir-muted: #B8ADA7;
+  --color-noir-border: rgba(255, 255, 255, 0.08);
+
   /* Status Tokens */
   --color-success: #3B664B;
   --color-success-bg: #EEF5F1;
@@ -642,14 +649,36 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   transform: scale(1.08) translateY(-1px);
 }
 
-/* CTA Strong Hover */
+/* CTA Strong Hover & Pill Styling */
 .navbar-cta-btn {
+  border-radius: var(--radius-full) !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  white-space: nowrap;
 }
 
 .navbar-cta-btn:hover {
   transform: translateY(-2px) scale(1.02) !important;
   box-shadow: 0 6px 20px rgba(163, 111, 114, 0.45) !important;
+}
+
+@media (max-width: 640px) {
+  .navbar-cta-btn {
+    padding: 0.45rem 0.85rem !important;
+    font-size: 0.725rem !important;
+    letter-spacing: 0.05em !important;
+  }
+}
+
+/* Footer Link High-Contrast Transitions */
+.footer-link {
+  color: var(--color-noir-muted) !important;
+  transition: color var(--transition-fast), transform var(--transition-fast) !important;
+  display: inline-block;
+}
+
+.footer-link:hover {
+  color: #FFFFFF !important;
+  transform: translateX(2px);
 }
 
 .btn-navbar-hero {
@@ -957,6 +986,13 @@ a.btn:active {
   --color-border: #282120;
   --color-border-subtle: #1F1918;
   --color-border-focus: #C48E91;
+
+  /* Atelier Permanent Noir Tokens in Dark Mode */
+  --color-noir: #0E0C0B;
+  --color-noir-surface: #141110;
+  --color-noir-text: #FAF7F2;
+  --color-noir-muted: #ABA09A;
+  --color-noir-border: rgba(255, 255, 255, 0.08);
 
   --shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.45);
   --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.6);

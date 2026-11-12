@@ -70,11 +70,11 @@ export const TrainingPage: React.FC = () => {
     <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '85vh', paddingBottom: 'clamp(4.5rem, 8vw, 7.5rem)' }}>
       {/* Editorial Hero Header */}
       <div style={{
-        backgroundColor: 'var(--color-espresso)',
-        color: 'var(--color-ivory)',
+        backgroundColor: 'var(--color-noir)',
+        color: 'var(--color-noir-text)',
         paddingTop: 'clamp(3.5rem, 6vw, 5.5rem)',
         paddingBottom: 'clamp(3.5rem, 6vw, 5rem)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)'
+        borderBottom: '1px solid var(--color-noir-border)'
       }}>
         <div className="container">
           <div style={{
@@ -88,7 +88,7 @@ export const TrainingPage: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                backgroundColor: 'rgba(255,255,255,0.1)',
+                backgroundColor: 'rgba(255,255,255,0.08)',
                 color: 'var(--color-blush)',
                 padding: '0.4rem 0.85rem',
                 borderRadius: 'var(--radius-sm)',
@@ -103,7 +103,7 @@ export const TrainingPage: React.FC = () => {
               </div>
 
               <h1 style={{
-                color: 'var(--color-ivory)',
+                color: 'var(--color-noir-text)',
                 fontSize: 'clamp(2.4rem, 4.5vw, 3.8rem)',
                 lineHeight: 1.1,
                 marginBottom: '1.25rem'
@@ -113,7 +113,7 @@ export const TrainingPage: React.FC = () => {
 
               <p style={{
                 fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-                color: '#D5CDC7',
+                color: 'var(--color-noir-muted)',
                 lineHeight: 1.6,
                 marginBottom: '2rem',
                 maxWidth: '540px'
@@ -132,7 +132,7 @@ export const TrainingPage: React.FC = () => {
                   Reserve Course (£100 Deposit)
                 </button>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
-                  <span style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: 600, color: 'var(--color-ivory)' }}>
+                  <span style={{ fontSize: '1.5rem', fontFamily: 'var(--font-serif)', fontWeight: 600, color: 'var(--color-noir-text)' }}>
                     Total: £600
                   </span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--color-blush)' }}>
@@ -146,7 +146,7 @@ export const TrainingPage: React.FC = () => {
                 alignItems: 'center',
                 gap: '1.5rem',
                 fontSize: '0.825rem',
-                color: '#ECE5DF',
+                color: 'var(--color-noir-muted)',
                 flexWrap: 'wrap'
               }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -166,7 +166,7 @@ export const TrainingPage: React.FC = () => {
                 overflow: 'hidden',
                 border: '1px solid rgba(255,255,255,0.15)',
                 boxShadow: 'var(--shadow-modal)',
-                backgroundColor: '#000000'
+                backgroundColor: 'var(--color-noir)'
               }}>
                 <img
                   src="/Sandy pfp.png"

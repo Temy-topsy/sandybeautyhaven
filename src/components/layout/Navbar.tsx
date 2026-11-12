@@ -142,7 +142,7 @@ export const Navbar: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                borderRadius: 'var(--radius-sm)'
+                borderRadius: 'var(--radius-full)'
               }}
             >
               <Calendar size={14} />
@@ -161,7 +161,7 @@ export const Navbar: React.FC = () => {
                 justifyContent: 'center',
                 background: isTransparent ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
                 border: isTransparent ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-sm)',
+                borderRadius: 'var(--radius-full)',
                 padding: '0.45rem',
                 cursor: 'pointer',
                 color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',

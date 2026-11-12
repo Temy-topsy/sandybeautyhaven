@@ -38,7 +38,7 @@ export const AboutPage: React.FC = () => {
               overflow: 'hidden',
               border: '1px solid var(--color-border-subtle)',
               boxShadow: 'var(--shadow-card)',
-              backgroundColor: '#FFFFFF'
+              backgroundColor: 'var(--color-surface)'
             }}>
               <img
                 src="/Sandy pfp.png"

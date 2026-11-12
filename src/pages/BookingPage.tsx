@@ -361,8 +361,8 @@ export const BookingPage: React.FC = () => {
                       position: 'absolute',
                       top: '-6px',
                       right: '-8px',
-                      backgroundColor: 'var(--color-espresso)',
-                      color: 'var(--color-ivory)',
+                      backgroundColor: 'var(--color-rose)',
+                      color: '#FFFFFF',
                       borderRadius: '50%',
                       width: '16px',
                       height: '16px',
@@ -418,7 +418,7 @@ export const BookingPage: React.FC = () => {
                       fontWeight: 600,
                       fontSize: '0.8rem',
                       backgroundColor: isCompleted ? 'var(--color-rose)' : isCurrent ? 'var(--color-espresso)' : 'var(--color-surface)',
-                      color: isCompleted || isCurrent ? 'var(--color-ivory)' : 'var(--color-taupe)',
+                      color: isCompleted ? '#FFFFFF' : isCurrent ? 'var(--color-ivory)' : 'var(--color-taupe)',
                       border: '1px solid',
                       borderColor: isCompleted ? 'var(--color-rose)' : isCurrent ? 'var(--color-espresso)' : 'var(--color-border)'
                     }}>
@@ -1602,7 +1602,7 @@ export const BookingPage: React.FC = () => {
                           height: '20px',
                           borderRadius: '50%',
                           border: paymentChoice === 'full' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: 'var(--color-surface)',
                           flexShrink: 0
                         }} />
                         <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
@@ -1630,7 +1630,7 @@ export const BookingPage: React.FC = () => {
                           height: '20px',
                           borderRadius: '50%',
                           border: paymentChoice === 'deposit' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
-                          backgroundColor: '#FFFFFF',
+                          backgroundColor: 'var(--color-surface)',
                           flexShrink: 0
                         }} />
                         <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-espresso)' }}>

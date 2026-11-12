@@ -412,13 +412,15 @@ export const HomePage: React.FC = () => {
         <div className="container" style={{ maxWidth: '1060px' }}>
           <div
             style={{
-              backgroundColor: 'var(--color-espresso)',
-              color: 'var(--color-ivory)',
+              backgroundColor: 'var(--color-noir)',
+              color: 'var(--color-noir-text)',
               borderRadius: 'var(--radius-sm)',
               overflow: 'hidden',
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              alignItems: 'center'
+              alignItems: 'center',
+              border: '1px solid var(--color-noir-border)',
+              boxShadow: 'var(--shadow-modal)'
             }}
           >
             <div style={{ padding: 'clamp(2rem, 5vw, 3.5rem)' }}>
@@ -433,7 +435,7 @@ export const HomePage: React.FC = () => {
 
               <h2
                 style={{
-                  color: 'var(--color-ivory)',
+                  color: 'var(--color-noir-text)',
                   fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)',
                   marginBottom: '1rem',
                   lineHeight: 1.15
@@ -442,7 +444,7 @@ export const HomePage: React.FC = () => {
                 3-Day Classic & Hybrid Lash Mentorship
               </h2>
 
-              <p style={{ color: '#D5CDC7', lineHeight: 1.6, marginBottom: '1.5rem', fontSize: '0.925rem' }}>
+              <p style={{ color: 'var(--color-noir-muted)', lineHeight: 1.6, marginBottom: '1.5rem', fontSize: '0.925rem' }}>
                 Designed for ambitious beginners ready to step into a profitable lash career with accredited certification, high-touch 1-on-1 supervision, and zero guesswork.
               </p>
 
@@ -454,7 +456,7 @@ export const HomePage: React.FC = () => {
                   gap: '0.65rem',
                   marginBottom: '2rem',
                   fontSize: '0.8rem',
-                  color: '#EFE8E1'
+                  color: 'var(--color-noir-text)'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
@@ -502,12 +504,12 @@ export const HomePage: React.FC = () => {
                   <span style={{ fontSize: '0.7rem', textTransform: 'uppercase', color: 'var(--color-blush)', display: 'block' }}>
                     Course Tuition
                   </span>
-                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', fontWeight: 600 }}>
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', fontWeight: 600, color: 'var(--color-noir-text)' }}>
                     £600
                   </span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <span style={{ fontSize: '0.75rem', color: '#D5CDC7', display: 'block' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--color-noir-muted)', display: 'block' }}>
                     Reserve with <strong>£100 deposit</strong>
                   </span>
                   <span style={{ fontSize: '0.675rem', color: 'var(--color-blush)' }}>
@@ -523,7 +525,7 @@ export const HomePage: React.FC = () => {
                 <Link
                   to="/schedule"
                   className="btn btn-secondary"
-                  style={{ padding: '0.85rem 1.5rem', fontSize: '0.8rem', color: '#FFFFFF', borderColor: 'rgba(255,255,255,0.4)' }}
+                  style={{ padding: '0.85rem 1.5rem', fontSize: '0.8rem', color: 'var(--color-noir-text)', borderColor: 'rgba(255,255,255,0.4)' }}
                 >
                   Reserve Date (£100)
                 </Link>
@@ -559,7 +561,7 @@ export const HomePage: React.FC = () => {
                   overflow: 'hidden',
                   border: '1px solid var(--color-border-subtle)',
                   boxShadow: 'var(--shadow-card)',
-                  backgroundColor: '#FFFFFF'
+                  backgroundColor: 'var(--color-surface)'
                 }}
               >
                 <img
@@ -605,10 +607,11 @@ export const HomePage: React.FC = () => {
               <div
                 key={r.id}
                 style={{
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--color-surface)',
                   padding: '2rem',
                   borderRadius: 'var(--radius-sm)',
-                  border: '1px solid var(--color-border-subtle)',
+                  border: '1px solid var(--color-border)',
+                  boxShadow: 'var(--shadow-subtle)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between'
@@ -625,7 +628,7 @@ export const HomePage: React.FC = () => {
                   </p>
                 </div>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{r.name}</div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-espresso)' }}>{r.name}</div>
                   <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)' }}>{r.service}</div>
                 </div>
               </div>
