@@ -20,6 +20,18 @@ export const Navbar: React.FC = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Lock background scroll when full-screen mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
@@ -127,7 +139,7 @@ export const Navbar: React.FC = () => {
               Book Now
             </Link>
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Mobile Menu Toggle Button with Tactile Feedback */}
             <button
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -143,148 +155,110 @@ export const Navbar: React.FC = () => {
                 padding: '0.45rem',
                 cursor: 'pointer',
                 color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',
-                backdropFilter: isTransparent ? 'blur(6px)' : 'none',
-                transition: 'all 0.25s ease'
+                backdropFilter: isTransparent ? 'blur(6px)' : 'none'
               }}
               className="mobile-menu-btn"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                transform: mobileMenuOpen ? 'rotate(90deg)' : 'none'
+              }}>
+                {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Full-Screen Mobile Navigation (Honey Bee Beautiful Refined Layout) */}
-      {mobileMenuOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            width: '100vw',
-            height: '100dvh',
-            backgroundColor: 'var(--color-ivory)',
-            zIndex: 1000,
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto'
-          }}
-        >
-          {/* Top Bar with Close X and Centered Bold Logo */}
-          <div
-            style={{
-              height: 'var(--header-height)',
-              padding: '0 1.5rem',
-              display: 'grid',
-              gridTemplateColumns: '40px 1fr 40px',
-              alignItems: 'center',
-              borderBottom: '1px solid var(--color-border)'
-            }}
+      {/* Full-Screen Mobile Navigation with Smooth Entrance & Cascade Animation */}
+      <div
+        className={`mobile-menu-drawer ${mobileMenuOpen ? 'is-open' : ''}`}
+        aria-hidden={!mobileMenuOpen}
+      >
+        {/* Top Bar with Close X and Centered Bold Logo */}
+        <div className="mobile-menu-header">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
+            className="mobile-menu-close-btn"
           >
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close menu"
-              style={{
-                background: 'transparent',
-                border: 'none',
-                padding: '0.4rem',
-                cursor: 'pointer',
-                color: 'var(--color-espresso)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <X size={24} />
-            </button>
+            <X size={24} />
+          </button>
 
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <img
-                src="/sandy logo.png"
-                alt="Sandy Beauty Haven Logo"
-                style={{ width: '46px', height: '46px', objectFit: 'contain', borderRadius: '50%' }}
-              />
-            </div>
-
-            <div />
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img
+              src="/sandy logo.png"
+              alt="Sandy Beauty Haven Logo"
+              style={{ width: '46px', height: '46px', objectFit: 'contain', borderRadius: '50%' }}
+            />
           </div>
 
-          {/* Full-Screen Clean Navigation Links */}
-          <nav style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: '0.5rem' }}>
-            {navLinks.map((link) => {
-              const active = isActive(link.path);
-              return (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  style={{
-                    padding: '1.15rem 1.75rem',
-                    fontSize: '1.1rem',
-                    fontWeight: active ? 600 : 500,
-                    letterSpacing: '0.02em',
-                    color: 'var(--color-espresso)',
-                    backgroundColor: active ? 'var(--color-surface-warm)' : 'transparent',
-                    borderBottom: '1px solid var(--color-border-subtle)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between'
-                  }}
-                >
-                  <span>{link.name}</span>
-                  {active && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-rose)' }} />}
-                </Link>
-              );
-            })}
-          </nav>
+          <div />
+        </div>
 
-          {/* Bottom Booking Action & Studio Location Details */}
+        {/* Full-Screen Clean Navigation Links with Staggered Cascade */}
+        <nav className="mobile-nav-links-list">
+          {navLinks.map((link, idx) => {
+            const active = isActive(link.path);
+            return (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`mobile-nav-link ${active ? 'is-active' : ''}`}
+                style={{ animationDelay: `${(idx + 1) * 0.05}s` }}
+              >
+                <span>{link.name}</span>
+                {active ? (
+                  <span className="mobile-nav-dot" />
+                ) : (
+                  <span className="mobile-nav-arrow">→</span>
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Bottom Booking Action & Studio Location Details */}
+        <div className="mobile-menu-footer">
+          <Link
+            to="/schedule"
+            onClick={() => setMobileMenuOpen(false)}
+            className="btn btn-primary"
+            style={{
+              width: '100%',
+              padding: '0.95rem',
+              fontSize: '0.85rem',
+              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.5rem'
+            }}
+          >
+            <Calendar size={16} />
+            Book Appointment
+          </Link>
+
           <div
             style={{
-              padding: '1.5rem 1.75rem',
-              marginTop: 'auto',
-              borderTop: '1px solid var(--color-border)',
-              backgroundColor: 'var(--color-surface)',
+              fontSize: '0.825rem',
+              color: 'var(--color-taupe)',
               display: 'flex',
               flexDirection: 'column',
-              gap: '1rem'
+              gap: '0.3rem',
+              textAlign: 'center'
             }}
           >
-            <Link
-              to="/schedule"
-              onClick={() => setMobileMenuOpen(false)}
-              className="btn btn-primary"
-              style={{
-                width: '100%',
-                padding: '0.95rem',
-                fontSize: '0.85rem',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.5rem'
-              }}
-            >
-              <Calendar size={16} />
-              Book Appointment
-            </Link>
-
-            <div
-              style={{
-                fontSize: '0.825rem',
-                color: 'var(--color-taupe)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.3rem',
-                textAlign: 'center'
-              }}
-            >
-              <p style={{ margin: 0, fontWeight: 500, color: 'var(--color-espresso)' }}>101 Easter Road, Edinburgh</p>
-              <p style={{ margin: 0 }}>Mon–Sat: 9am – 5pm • +44 07733777956</p>
-            </div>
+            <p style={{ margin: 0, fontWeight: 500, color: 'var(--color-espresso)' }}>101 Easter Road, Edinburgh</p>
+            <p style={{ margin: 0 }}>Mon–Sat: 9am – 5pm • +44 07733777956</p>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Global Responsive CSS rule */}
       <style>{`

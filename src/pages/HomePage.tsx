@@ -177,6 +177,7 @@ export const HomePage: React.FC = () => {
           type="button"
           onClick={handlePrevSlide}
           aria-label="Previous slide"
+          className="hero-slider-arrow"
           style={{
             position: 'absolute',
             left: 'clamp(0.75rem, 2.5vw, 2rem)',
@@ -192,7 +193,6 @@ export const HomePage: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
             backdropFilter: 'blur(4px)',
             zIndex: 10
           }}
@@ -204,6 +204,7 @@ export const HomePage: React.FC = () => {
           type="button"
           onClick={handleNextSlide}
           aria-label="Next slide"
+          className="hero-slider-arrow"
           style={{
             position: 'absolute',
             right: 'clamp(0.75rem, 2.5vw, 2rem)',
@@ -219,7 +220,6 @@ export const HomePage: React.FC = () => {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            transition: 'all 0.2s ease',
             backdropFilter: 'blur(4px)',
             zIndex: 10
           }}

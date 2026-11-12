@@ -663,6 +663,281 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background-color: #8E5A5D !important;
 }
 
+/* ============================================================== */
+/* LUXURY MOBILE MENU DRAWER & STAGGERED CASCADE ANIMATIONS */
+/* ============================================================== */
+.mobile-menu-drawer {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: var(--color-ivory);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-menu-drawer.is-open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.mobile-menu-header {
+  height: var(--header-height);
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-ivory);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.mobile-menu-close-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--color-espresso);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+}
+
+.mobile-menu-close-btn:hover {
+  transform: rotate(90deg) scale(1.1);
+  background-color: rgba(34, 27, 26, 0.05);
+}
+
+.mobile-menu-close-btn:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
+.mobile-nav-links-list {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding-top: 0.5rem;
+}
+
+.mobile-nav-link {
+  padding: 1.25rem 1.75rem;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  color: var(--color-espresso);
+  border-bottom: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  background-color: transparent;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: background-color 0.18s ease, padding-left 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.12s ease;
+}
+
+.mobile-menu-drawer.is-open .mobile-nav-link {
+  animation: mobileLinkCascade 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-nav-link:hover {
+  padding-left: 2.1rem;
+  background-color: rgba(163, 111, 114, 0.06);
+}
+
+.mobile-nav-link:active {
+  transform: scale(0.985);
+  background-color: rgba(163, 111, 114, 0.14) !important;
+}
+
+.mobile-nav-link.is-active {
+  background-color: var(--color-surface-warm);
+  font-weight: 600;
+}
+
+.mobile-nav-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-rose);
+  box-shadow: 0 0 8px rgba(163, 111, 114, 0.7);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+.mobile-nav-arrow {
+  color: var(--color-taupe);
+  font-size: 1.05rem;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.mobile-nav-link:hover .mobile-nav-arrow {
+  transform: translateX(4px);
+  color: var(--color-rose);
+}
+
+.mobile-menu-footer {
+  padding: 1.5rem 1.75rem;
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.mobile-menu-drawer.is-open .mobile-menu-footer {
+  animation: mobileFooterFade 0.4s 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes mobileLinkCascade {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileFooterFade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.8;
+  }
+}
+
+/* ============================================================== */
+/* TACTILE SHORT-LIVED USER FEEDBACK ACROSS THE ENTIRE WEBSITE */
+/* ============================================================== */
+
+/* Universal tactile button press */
+button,
+.btn,
+a.btn,
+.mobile-menu-btn {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):active,
+.btn:not(:disabled):active,
+a.btn:active {
+  transform: scale(0.96) !important;
+  transition-duration: 0.08s !important;
+}
+
+/* Category filter buttons tactile tap */
+.booking-cat-btn:active,
+.filter-pill:active {
+  transform: scale(0.92) !important;
+  transition-duration: 0.06s !important;
+}
+
+/* Hero directional arrows micro-feedback */
+.hero-slider-arrow {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease !important;
+}
+.hero-slider-arrow:hover {
+  transform: translateY(-50%) scale(1.12) !important;
+}
+.hero-slider-arrow:active {
+  transform: translateY(-50%) scale(0.9) !important;
+}
+
+/* Mobile 2-column treatment cards tactile feedback */
+.mobile-services-grid a {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.mobile-services-grid a:active {
+  transform: scale(0.96);
+  background-color: var(--color-surface-subtle);
+}
+.mobile-services-grid a img {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-services-grid a:hover img {
+  transform: scale(1.05);
+}
+.mobile-services-grid a:hover {
+  border-color: var(--color-rose);
+}
+
+/* Editorial cards smooth zoom & tap feedback */
+.editorial-card img {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.editorial-card:hover img {
+  transform: scale(1.04);
+}
+
+/* Short-lived Pop on Calendar Days and Time Slots */
+.calendar-day-btn,
+.time-slot-btn {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+.calendar-day-btn:not(:disabled):active,
+.time-slot-btn:not(:disabled):active {
+  transform: scale(0.92) !important;
+}
+
+/* Responsive Toast Popup */
+.toast-container {
+  animation: toastSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .toast-container {
+    left: 50% !important;
+    right: auto !important;
+    bottom: 1.5rem !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 2rem) !important;
+    max-width: 380px !important;
+    justify-content: center !important;
+  }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -9,6 +9,7 @@ export const Toast: React.FC = () => {
 
   return (
     <div
+      className="toast-container"
       style={{
         position: 'fixed',
         bottom: '2rem',
@@ -23,11 +24,22 @@ export const Toast: React.FC = () => {
         gap: '0.65rem',
         fontSize: '0.85rem',
         boxShadow: 'var(--shadow-modal)',
-        animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        border: '1px solid rgba(255, 255, 255, 0.12)'
       }}
     >
-      <Check size={16} style={{ color: 'var(--color-rose)' }} />
-      <span>{toastMessage}</span>
+      <div style={{
+        width: '20px',
+        height: '20px',
+        borderRadius: '50%',
+        backgroundColor: 'rgba(163, 111, 114, 0.25)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0
+      }}>
+        <Check size={13} style={{ color: 'var(--color-rose)' }} />
+      </div>
+      <span style={{ fontWeight: 500 }}>{toastMessage}</span>
     </div>
   );
 };
