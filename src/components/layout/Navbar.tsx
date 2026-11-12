@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
             alignItems: 'center'
           }}
         >
-          {/* Brand Logo Only (Clean Quiet-Luxury Monogram) */}
+          {/* Brand Logo Only (Clean Quiet-Luxury Monogram - Zero Border Artifacts) */}
           <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'start' }}>
             <Link
               to="/"
@@ -72,17 +72,13 @@ export const Navbar: React.FC = () => {
                 src="/sandy logo.png"
                 alt="Sandy Beauty Haven Logo"
                 style={{
-                  width: '38px',
-                  height: '38px',
+                  width: '40px',
+                  height: '40px',
                   objectFit: 'contain',
                   borderRadius: '50%',
-                  border: isTransparent
-                    ? '1.5px solid rgba(255, 255, 255, 0.35)'
-                    : '1.5px solid var(--color-border)',
-                  boxShadow: isTransparent
-                    ? '0 2px 8px rgba(0, 0, 0, 0.3)'
-                    : '0 2px 6px rgba(34, 27, 26, 0.08)',
-                  transition: 'all 0.25s ease'
+                  border: 'none',
+                  outline: 'none',
+                  display: 'block'
                 }}
               />
             </Link>

@@ -470,79 +470,41 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: var(--shadow-card);
 }
 
-/* Infinite Luxury Ticker Marquee with Cute Sideways Motion */
-@keyframes marqueeScroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes cuteNudgeRight {
-  0%, 100% {
-    transform: translateX(0);
-    opacity: 0.65;
-  }
-  50% {
-    transform: translateX(5px);
-    opacity: 1;
-    color: #FFFFFF;
-  }
-}
-
-.marquee-container {
-  overflow: hidden;
-  white-space: nowrap;
-  display: flex;
-  user-select: none;
+/* Horizontal Slide Carousel (Honey Bee Beautiful Refined Motion) */
+.hero-slider-container {
   position: relative;
-  mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 48px, black calc(100% - 48px), transparent 100%);
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-espresso);
 }
 
-.marquee-track {
+.hero-slider-track {
   display: flex;
-  width: max-content;
-  animation: marqueeScroll 24s linear infinite;
+  width: 100%;
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.hero-slider-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  min-width: 100%;
+  min-height: clamp(480px, 78vh, 760px);
+  display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--color-ivory);
+  background-size: cover;
+  background-position: center;
+  padding: calc(var(--header-height) + 1.5rem) 1.5rem 3.5rem 1.5rem;
+  position: relative;
 }
 
-.marquee-track:hover {
-  animation-play-state: paused;
-}
-
-.cute-side-motion {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.cute-side-motion .cute-dot {
-  color: var(--color-rose);
-  font-size: 0.85rem;
-  line-height: 1;
-}
-
-.cute-side-motion .cute-arrow {
-  display: inline-block;
-  color: var(--color-rose);
-  font-size: 0.95rem;
-  line-height: 1;
-  font-family: system-ui, -apple-system, sans-serif;
-  animation: cuteNudgeRight 1.5s ease-in-out infinite;
-}
-
-/* Hero Carousel Sideways Motion */
-@keyframes heroSlideInRight {
-  0% {
-    opacity: 0;
-    transform: translateX(40px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
+@media (max-width: 768px) {
+  .hero-slider-slide {
+    min-height: clamp(420px, 68vh, 560px);
+    padding: calc(var(--header-height) + 1rem) 1.25rem 2.5rem 1.25rem;
   }
 }
 
@@ -559,7 +521,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .navbar-transparent {
   background: linear-gradient(180deg, rgba(20, 16, 15, 0.72) 0%, rgba(20, 16, 15, 0.25) 65%, transparent 100%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: none;
+  border: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }

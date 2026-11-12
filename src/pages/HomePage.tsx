@@ -6,8 +6,7 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  CheckCircle2,
-  BookOpen
+  CheckCircle2
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { REVIEWS } from '../data/reviews';
@@ -17,7 +16,7 @@ export const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { setSelectedService } = useBooking();
 
-  // Curate 4 top services
+  // Curate top popular services
   const featuredServices = SERVICES.filter((s) => s.popular).slice(0, 4);
 
   const handleBookService = (service: (typeof SERVICES)[0]) => {
@@ -25,57 +24,40 @@ export const HomePage: React.FC = () => {
     navigate('/schedule');
   };
 
-  // 1. Cinematic Auto-Moving Hero Slideshow
+  // 1. Honey Bee Beautiful Style Horizontal Slider
   const slides = [
     {
       id: 1,
-      tag: 'Bespoke Lash & Brow Atelier • Edinburgh',
-      title: 'Beauty that feels like you, only',
-      titleItalic: 'elevated.',
-      description:
-        'Precision Russian volume, wispy hybrids, and ombré powder brows crafted to enhance your natural facial contours.',
-      primaryBtn: { text: 'Book Appointment', link: '/schedule', icon: Calendar },
-      secondaryBtn: { text: 'View Treatment Menu', link: '/services' },
+      tag: 'Sandy Beauty Haven • Edinburgh',
+      title: 'Flawless Lashes, Crafted for You.',
+      description: 'Specialized lash extensions & bespoke styling at 101 Easter Road.',
+      btnText: 'Book Appointment',
+      btnLink: '/schedule',
       image: '/lashes inspo img.jpg'
     },
     {
       id: 2,
-      tag: 'CPD Accredited Private Mentorship • Edinburgh',
-      title: 'Launch your lash career with',
-      titleItalic: 'master guidance.',
-      description:
-        'Comprehensive 3-day private intensive: theory, live model supervision, full starter kit (£150+ value), and lifetime business support.',
-      primaryBtn: { text: 'Course Details (£600)', link: '/training', icon: BookOpen },
-      secondaryBtn: { text: 'Reserve (£100 Deposit)', link: '/schedule' },
+      tag: '1-on-1 Lash Academy',
+      title: 'Master the Art of Lashes.',
+      description: 'CPD accredited private mentorship with full starter kit & live model training.',
+      btnText: 'View Academy Details',
+      btnLink: '/training',
       image: '/settings inspo img.jpg'
     },
     {
       id: 3,
-      tag: '101 Easter Road • Edinburgh Studio',
-      title: 'Flawless retention with',
-      titleItalic: 'zero natural lash damage.',
-      description:
-        'Specialized isolation technique that protects natural lash health while delivering full, long-lasting lightweight beauty.',
-      primaryBtn: { text: 'Explore Client Gallery', link: '/gallery' },
-      secondaryBtn: { text: 'Read 5-Star Reviews', link: '/reviews' },
+      tag: 'Health-First Isolation',
+      title: 'Natural Lash Health, Zero Damage.',
+      description: 'Bespoke lightweight sets tailored for long-lasting, damage-free retention.',
+      btnText: 'Explore Treatments',
+      btnLink: '/services',
       image: '/appointments/hybrid-lashes.jpg'
     }
   ];
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const autoSlideInterval = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (!isPaused) {
-      autoSlideInterval.current = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-      }, 5500);
-    }
-    return () => {
-      if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
-    };
-  }, [isPaused, slides.length]);
+  const touchStartX = useRef<number | null>(null);
 
   const handleNextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -85,131 +67,109 @@ export const HomePage: React.FC = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  const activeSlide = slides[currentSlide];
-
-  // Marquee announcement ticker items
-  const tickerItems = [
-    'CPD Accredited 1-on-1 Lash Academy',
-    '101 Easter Road, Edinburgh',
-    'Bespoke Handcrafted Extensions',
-    '48-Hour Cancellation Guarantee',
-    'Health-First Isolation Technique',
-    'Mon–Sat Appointments Open',
-    'Private One-to-One Mentorship',
-    '5-Star Verified Client Reviews'
-  ];
+  // Auto-advance slider every 6s
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [isPaused, slides.length]);
 
   return (
     <div>
-      {/* 1. CINEMATIC AUTO-MOVING HERO (FULL-BLEED UNDER FLOATING NAVBAR) */}
+      {/* 1. HONEY BEE BEAUTIFUL STYLE HORIZONTAL SLIDING HERO CAROUSEL */}
       <section
+        className="hero-slider-container"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
-        onTouchStart={() => setIsPaused(true)}
-        onTouchEnd={() => setIsPaused(false)}
-        style={{
-          position: 'relative',
-          minHeight: '100svh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'var(--color-ivory)',
-          backgroundImage: `linear-gradient(180deg, rgba(34, 27, 26, 0.44) 0%, rgba(34, 27, 26, 0.82) 100%), url("${activeSlide.image}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          textAlign: 'center',
-          padding: 'calc(var(--header-height) + 2.5rem) 1.5rem 4rem 1.5rem',
-          transition: 'background-image 0.85s cubic-bezier(0.16, 1, 0.3, 1)'
+        onTouchStart={(e) => {
+          setIsPaused(true);
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          setIsPaused(false);
+          if (touchStartX.current !== null) {
+            const deltaX = touchStartX.current - e.changedTouches[0].clientX;
+            if (deltaX > 40) handleNextSlide();
+            else if (deltaX < -40) handlePrevSlide();
+            touchStartX.current = null;
+          }
         }}
       >
         <div
-          key={`hero-slide-${currentSlide}`}
+          className="hero-slider-track"
           style={{
-            maxWidth: '680px',
-            margin: '0 auto',
-            position: 'relative',
-            zIndex: 2,
-            animation: 'heroSlideInRight 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
+            transform: `translateX(-${currentSlide * 100}%)`
           }}
         >
-          <span
-            style={{
-              fontSize: '0.75rem',
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
-              color: 'var(--color-blush)',
-              display: 'inline-block',
-              marginBottom: '1.25rem',
-              fontWeight: 600,
-              animation: 'fadeIn 0.4s ease'
-            }}
-          >
-            {activeSlide.tag}
-          </span>
-
-          <h1
-            key={`title-${currentSlide}`}
-            style={{
-              color: 'var(--color-ivory)',
-              fontSize: 'clamp(2.75rem, 7.5vw, 4.75rem)',
-              fontFamily: 'var(--font-serif)',
-              fontWeight: 400,
-              lineHeight: 1.08,
-              marginBottom: '1.5rem',
-              animation: 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}
-          >
-            {activeSlide.title}{' '}
-            <span style={{ fontStyle: 'italic', color: 'var(--color-blush)' }}>
-              {activeSlide.titleItalic}
-            </span>
-          </h1>
-
-          <p
-            key={`desc-${currentSlide}`}
-            style={{
-              color: '#EFE8E1',
-              fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-              lineHeight: 1.6,
-              marginBottom: '2.5rem',
-              maxWidth: '540px',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              animation: 'fadeIn 0.6s ease'
-            }}
-          >
-            {activeSlide.description}
-          </p>
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: '1rem',
-              flexWrap: 'wrap'
-            }}
-          >
-            <Link
-              to={activeSlide.primaryBtn.link}
-              className="btn btn-rose"
-              style={{ padding: '1.1rem 2.25rem' }}
-            >
-              {activeSlide.primaryBtn.icon && <activeSlide.primaryBtn.icon size={15} />}
-              {activeSlide.primaryBtn.text}
-            </Link>
-            <Link
-              to={activeSlide.secondaryBtn.link}
-              className="btn btn-secondary"
+          {slides.map((slide) => (
+            <div
+              key={slide.id}
+              className="hero-slider-slide"
               style={{
-                padding: '1.1rem 2rem',
-                color: 'var(--color-ivory)',
-                borderColor: 'var(--color-ivory)'
+                backgroundImage: `linear-gradient(180deg, rgba(20, 15, 14, 0.48) 0%, rgba(20, 15, 14, 0.8) 100%), url("${slide.image}")`
               }}
             >
-              {activeSlide.secondaryBtn.text}
-            </Link>
-          </div>
+              <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1rem' }}>
+                <span
+                  style={{
+                    fontSize: '0.725rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.18em',
+                    color: 'var(--color-blush)',
+                    display: 'inline-block',
+                    marginBottom: '0.75rem',
+                    fontWeight: 600
+                  }}
+                >
+                  {slide.tag}
+                </span>
+
+                <h1
+                  style={{
+                    color: 'var(--color-ivory)',
+                    fontSize: 'clamp(2.1rem, 5.5vw, 3.8rem)',
+                    fontFamily: 'var(--font-serif)',
+                    fontWeight: 400,
+                    lineHeight: 1.12,
+                    marginBottom: '0.85rem'
+                  }}
+                >
+                  {slide.title}
+                </h1>
+
+                <p
+                  style={{
+                    color: '#EFE8E1',
+                    fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
+                    lineHeight: 1.55,
+                    maxWidth: '480px',
+                    margin: '0 auto 1.75rem auto'
+                  }}
+                >
+                  {slide.description}
+                </p>
+
+                <div>
+                  <Link
+                    to={slide.btnLink}
+                    className="btn btn-rose"
+                    style={{
+                      padding: '0.85rem 1.85rem',
+                      fontSize: '0.85rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                  >
+                    <Calendar size={14} />
+                    {slide.btnText}
+                  </Link>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Carousel Desktop Navigation Arrows */}
@@ -219,25 +179,25 @@ export const HomePage: React.FC = () => {
           aria-label="Previous slide"
           style={{
             position: 'absolute',
-            left: 'clamp(1rem, 3vw, 2.5rem)',
+            left: 'clamp(0.75rem, 2.5vw, 2rem)',
             top: '50%',
             transform: 'translateY(-50%)',
-            background: 'rgba(34, 27, 26, 0.4)',
+            background: 'rgba(20, 15, 14, 0.45)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
             color: '#FFFFFF',
             borderRadius: 'var(--radius-sm)',
-            width: '42px',
-            height: '42px',
+            width: '38px',
+            height: '38px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
+            transition: 'all 0.2s ease',
             backdropFilter: 'blur(4px)',
             zIndex: 10
           }}
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={18} />
         </button>
 
         <button
@@ -246,282 +206,80 @@ export const HomePage: React.FC = () => {
           aria-label="Next slide"
           style={{
             position: 'absolute',
-            right: 'clamp(1rem, 3vw, 2.5rem)',
+            right: 'clamp(0.75rem, 2.5vw, 2rem)',
             top: '50%',
             transform: 'translateY(-50%)',
-            background: 'rgba(34, 27, 26, 0.4)',
+            background: 'rgba(20, 15, 14, 0.45)',
             border: '1px solid rgba(255, 255, 255, 0.25)',
             color: '#FFFFFF',
             borderRadius: 'var(--radius-sm)',
-            width: '42px',
-            height: '42px',
+            width: '38px',
+            height: '38px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            transition: 'all var(--transition-fast)',
+            transition: 'all 0.2s ease',
             backdropFilter: 'blur(4px)',
             zIndex: 10
           }}
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={18} />
         </button>
 
-        {/* Slide Progress Indicator Bars */}
+        {/* Slide Counter & Dots Indicator (Clean Minimalist Luxury Aesthetic) */}
         <div
           style={{
             position: 'absolute',
-            bottom: '1.75rem',
+            bottom: '1.25rem',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.65rem',
-            zIndex: 10
+            zIndex: 10,
+            background: 'rgba(20, 15, 14, 0.45)',
+            backdropFilter: 'blur(6px)',
+            padding: '0.35rem 0.85rem',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.15)'
           }}
         >
-          {slides.map((s, index) => {
-            const isActive = currentSlide === index;
-            return (
+          <span style={{ fontSize: '0.72rem', letterSpacing: '0.12em', color: '#EDE5DF', fontWeight: 600 }}>
+            0{currentSlide + 1} / 0{slides.length}
+          </span>
+          <div style={{ display: 'flex', gap: '0.35rem' }}>
+            {slides.map((s, index) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => setCurrentSlide(index)}
                 aria-label={`Jump to slide ${index + 1}`}
                 style={{
-                  width: isActive ? '36px' : '16px',
+                  width: currentSlide === index ? '18px' : '6px',
                   height: '4px',
                   borderRadius: '2px',
-                  backgroundColor: isActive ? 'var(--color-rose)' : 'rgba(255, 255, 255, 0.35)',
+                  backgroundColor: currentSlide === index ? 'var(--color-rose)' : 'rgba(255, 255, 255, 0.35)',
                   border: 'none',
                   padding: 0,
                   cursor: 'pointer',
-                  transition: 'all var(--transition-smooth)'
+                  transition: 'all 0.25s ease'
                 }}
               />
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 2. INFINITE LUXURY AUTO-TICKER (CLEAN REFINED TYPOGRAPHY WITH CUTE SIDEWAYS MOTION) */}
-      <div
-        className="marquee-container"
-        style={{
-          backgroundColor: 'var(--color-espresso)',
-          color: 'var(--color-ivory)',
-          padding: '0.9rem 0',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
-        }}
-      >
-        <div className="marquee-track">
-          {[...tickerItems, ...tickerItems].map((item, idx) => (
-            <div
-              key={idx}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '1.5rem',
-                padding: '0 1.5rem',
-                fontSize: '0.75rem',
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                fontWeight: 600,
-                color: '#E0D8D3'
-              }}
-            >
-              <span>{item}</span>
-              <span className="cute-side-motion">
-                <span className="cute-dot">•</span>
-                <span className="cute-arrow">→</span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 3. THE 3-PORTAL JOURNEY GATEWAY */}
-      <section className="section" style={{ backgroundColor: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-        <div className="container">
-          <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)', textAlign: 'center' }}>
-            <span className="section-eyebrow">Choose Your Journey</span>
-            <h2 className="section-title">Three Pillars of Beauty & Mentorship</h2>
-            <p style={{ maxWidth: '600px', margin: '0.75rem auto 0', color: 'var(--color-taupe)', fontSize: '0.95rem' }}>
-              Whether arriving for bespoke salon enhancements, advancing your career in our private academy, or exploring client transformations.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-              gap: 'clamp(1.5rem, 3vw, 2.5rem)'
-            }}
-          >
-            {/* Portal 1: Salon Appointments */}
-            <div
-              className="editorial-card interactive-card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
-              }}
-            >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/lashes inspo img.jpg"
-                  alt="Bespoke Lash Treatments"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge badge-rose"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem' }}
-                >
-                  01. In-Studio Appointments
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Bespoke Lashes & Brows
-                </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Custom hybrid sets, Russian volume, express weekend lashes, and semi-permanent ombré powder brows. Tailored specifically to your eye shape.
-                </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/schedule"
-                    className="btn btn-primary"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    <Calendar size={14} />
-                    Book Slot
-                  </Link>
-                  <Link
-                    to="/services"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    View Menu →
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Portal 2: 1-on-1 CPD Academy */}
-            <div
-              className="editorial-card interactive-card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
-              }}
-            >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/settings inspo img.jpg"
-                  alt="Lash Academy Training"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem', backgroundColor: 'var(--color-espresso)', color: '#FFFFFF' }}
-                >
-                  02. Private Mentorship
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Accredited Lash Academy
-                </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Comprehensive 3-day private intensive with Sandy. Theory, live models, full professional kit (£150+ value), and lifetime mentorship.
-                </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/training"
-                    className="btn btn-rose"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    <BookOpen size={14} />
-                    Course Details
-                  </Link>
-                  <Link
-                    to="/schedule"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    £100 Deposit
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Portal 3: Studio & Transformations */}
-            <div
-              className="editorial-card interactive-card"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                borderRadius: 'var(--radius-sm)',
-                overflow: 'hidden',
-                backgroundColor: 'var(--color-ivory)',
-                border: '1px solid var(--color-border)'
-              }}
-            >
-              <div style={{ height: '240px', overflow: 'hidden', position: 'relative' }}>
-                <img
-                  src="/client-results.jpg"
-                  alt="Client Transformations"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
-                />
-                <span
-                  className="badge badge-rose"
-                  style={{ position: 'absolute', top: '1rem', left: '1rem' }}
-                >
-                  03. Real Results
-                </span>
-              </div>
-              <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '1.35rem', marginBottom: '0.65rem' }}>
-                  Portfolio & Client Stories
-                </h3>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', lineHeight: 1.6, marginBottom: '1.5rem', flex: 1 }}>
-                  Explore our verified gallery of healed ombré brow results, 4-week lash retention, and 5-star testimonials from Edinburgh clients.
-                </p>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <Link
-                    to="/gallery"
-                    className="btn btn-primary"
-                    style={{ padding: '0.75rem 1.35rem', fontSize: '0.785rem', flex: 1, textAlign: 'center' }}
-                  >
-                    View Gallery
-                  </Link>
-                  <Link
-                    to="/reviews"
-                    className="btn btn-secondary"
-                    style={{ padding: '0.75rem 1.15rem', fontSize: '0.785rem' }}
-                  >
-                    Reviews →
-                  </Link>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 4. SIGNATURE SERVICES */}
+      {/* 2. SIGNATURE SERVICES (Directly after Hero - Zero Ticker, Zero Intermediary) */}
       <section className="section" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
         <div className="container">
-          <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+          <div className="section-header" style={{ marginBottom: 'clamp(2rem, 4.5vw, 3.5rem)', textAlign: 'center' }}>
             <span className="section-eyebrow">Treatment Menu</span>
             <h2 className="section-title">Signature Studio Services</h2>
+            <p style={{ maxWidth: '540px', margin: '0.65rem auto 0', color: 'var(--color-taupe)', fontSize: '0.925rem' }}>
+              Bespoke lash sets and precision brow enhancements by Sandy. Select a treatment below to book your appointment.
+            </p>
           </div>
 
           <div
@@ -529,7 +287,7 @@ export const HomePage: React.FC = () => {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
-              marginBottom: '3.5rem'
+              marginBottom: '3rem'
             }}
           >
             {featuredServices.map((service) => (
@@ -614,7 +372,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 5. CPD LASH ACADEMY - ELEVATED WITH HONEY BEE BEAUTIFUL HIGH-VALUE CLARITY */}
+      {/* 3. CPD LASH ACADEMY SPOTLIGHT */}
       <section className="section" style={{ backgroundColor: 'var(--color-surface-subtle)', borderBottom: '1px solid var(--color-border-subtle)' }}>
         <div className="container" style={{ maxWidth: '1060px' }}>
           <div
@@ -748,7 +506,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 6. ABOUT SANDY */}
+      {/* 4. ABOUT SANDY */}
       <section className="section section-warm" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
         <div className="container" style={{ maxWidth: '960px' }}>
           <div
@@ -793,7 +551,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 7. VERIFIED REVIEWS */}
+      {/* 5. VERIFIED REVIEWS */}
       <section className="section section-subtle" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
         <div className="container">
           <div className="section-header" style={{ marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)' }}>
@@ -848,7 +606,7 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 8. STUDIO LOCATION & FINAL BOOKING CTA */}
+      {/* 6. STUDIO LOCATION & FINAL BOOKING CTA */}
       <section className="section" style={{ textAlign: 'center' }}>
         <div className="container" style={{ maxWidth: '640px' }}>
           <span className="section-eyebrow">Visit The Haven</span>
