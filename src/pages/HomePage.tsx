@@ -67,14 +67,14 @@ export const HomePage: React.FC = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
 
-  // Auto-advance slider every 6s
+  // Auto-advance slider every 5s reliably
   useEffect(() => {
     if (isPaused) return;
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
+    }, 5000);
     return () => clearInterval(timer);
-  }, [isPaused, slides.length]);
+  }, [isPaused, currentSlide, slides.length]);
 
   return (
     <div>
@@ -84,11 +84,9 @@ export const HomePage: React.FC = () => {
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={(e) => {
-          setIsPaused(true);
           touchStartX.current = e.touches[0].clientX;
         }}
         onTouchEnd={(e) => {
-          setIsPaused(false);
           if (touchStartX.current !== null) {
             const deltaX = touchStartX.current - e.changedTouches[0].clientX;
             if (deltaX > 40) handleNextSlide();

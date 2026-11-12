@@ -177,10 +177,21 @@ export const ServiceDetailPage: React.FC = () => {
                 type="button"
                 onClick={handleBook}
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '0.95rem' }}
+                style={{
+                  width: '100%',
+                  padding: '0.95rem 1.25rem',
+                  fontSize: '0.875rem',
+                  letterSpacing: '0.04em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  whiteSpace: 'normal',
+                  textAlign: 'center'
+                }}
               >
                 <Calendar size={16} />
-                Book {service.name}
+                Book This Treatment
               </button>
             </div>
           </div>
