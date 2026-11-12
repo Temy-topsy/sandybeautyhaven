@@ -483,7 +483,6 @@ export const BookingPage: React.FC = () => {
                     <div style={{ marginBottom: '2rem' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
                         <div>
-                          <span className="section-eyebrow" style={{ margin: 0, fontSize: '0.75rem' }}>Your Selected Treatment</span>
                           <h2 style={{ fontSize: '1.25rem', margin: '0.2rem 0 0 0' }}>Confirm Your Selection</h2>
                         </div>
                         <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>

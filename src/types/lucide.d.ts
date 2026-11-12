@@ -17,7 +17,6 @@ declare module 'lucide-react' {
   export const Mail: LucideIcon;
   export const ShieldCheck: LucideIcon;
   export const Star: LucideIcon;
-  export const Sparkles: LucideIcon;
   export const Check: LucideIcon;
   export const CheckCircle2: LucideIcon;
   export const ChevronDown: LucideIcon;
@@ -43,7 +42,6 @@ declare module 'lucide-react' {
   export const Search: LucideIcon;
   export const Filter: LucideIcon;
   export const Share2: LucideIcon;
-  export const Sparkle: LucideIcon;
   export const HelpCircle: LucideIcon;
   export const FileText: LucideIcon;
   export const Shield: LucideIcon;

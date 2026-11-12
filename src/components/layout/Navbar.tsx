@@ -178,7 +178,7 @@ export const Navbar: React.FC = () => {
         className={`mobile-menu-drawer ${mobileMenuOpen ? 'is-open' : ''}`}
         aria-hidden={!mobileMenuOpen}
       >
-        {/* Top Bar with Close X, Centered Bold Logo & Theme Toggle */}
+        {/* Top Bar with Close X, Centered Bold Logo */}
         <div className="mobile-menu-header">
           <button
             type="button"

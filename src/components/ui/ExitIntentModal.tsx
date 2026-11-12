@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { X, Sparkles, ArrowRight, Clock } from 'lucide-react';
+import { X, ArrowRight, Clock } from 'lucide-react';
 import { useBooking } from '../../context/BookingContext';
 
 export const ExitIntentModal: React.FC = () => {
@@ -42,7 +42,7 @@ export const ExitIntentModal: React.FC = () => {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(20, 15, 14, 0.65)',
+        backgroundColor: 'rgba(250, 247, 242, 0.88)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         zIndex: 9999,
@@ -55,13 +55,13 @@ export const ExitIntentModal: React.FC = () => {
     >
       <div
         style={{
-          backgroundColor: 'var(--color-surface)',
+          backgroundColor: '#FFFFFF',
           border: '1px solid var(--color-border)',
           borderRadius: 'var(--radius-md)',
           maxWidth: '480px',
           width: '100%',
           padding: 'clamp(2rem, 5vw, 2.75rem)',
-          boxShadow: 'var(--shadow-modal)',
+          boxShadow: '0 24px 60px rgba(34, 27, 26, 0.1)',
           position: 'relative',
           textAlign: 'center'
         }}
@@ -91,20 +91,25 @@ export const ExitIntentModal: React.FC = () => {
           <X size={18} />
         </button>
 
-        {/* Atelier Icon */}
+        {/* Brand Monogram Mark */}
         <div style={{
-          width: '46px',
-          height: '46px',
-          borderRadius: '50%',
-          backgroundColor: 'var(--color-blush-light)',
-          color: 'var(--color-rose)',
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 1.25rem auto',
-          border: '1px solid rgba(163, 111, 114, 0.2)'
+          marginBottom: '1.25rem'
         }}>
-          <Sparkles size={20} />
+          <img
+            src="/sandy logo.png"
+            alt="Sandy Beauty Haven"
+            style={{
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              objectFit: 'contain',
+              border: '1px solid var(--color-border)',
+              backgroundColor: '#FFFFFF',
+              boxShadow: 'var(--shadow-subtle)'
+            }}
+          />
         </div>
 
         {/* Eyebrow */}

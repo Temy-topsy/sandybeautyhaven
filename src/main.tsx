@@ -3,13 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-// Clean up any lingering theme attributes
+// Enforce constant light mode across all environments & purge legacy theme data
 if (typeof document !== 'undefined') {
   document.documentElement.removeAttribute('data-theme');
+  document.documentElement.style.colorScheme = 'light';
   try {
     localStorage.removeItem('sbh_theme');
+    sessionStorage.removeItem('sbh_theme');
   } catch {
-    // Ignore
+    // Ignore storage restriction
   }
 }
 
