@@ -1568,75 +1568,203 @@ export const BookingPage: React.FC = () => {
 
                   {/* Section 2: Choose what to pay */}
                   <div style={{ marginBottom: '2.25rem' }}>
-                    <h3 style={{
-                      fontFamily: 'var(--font-serif)',
-                      fontSize: '1.35rem',
-                      color: 'var(--color-espresso)',
-                      marginBottom: '1rem',
-                      fontWeight: 600
-                    }}>
-                      Choose What To Pay
-                    </h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <h3 style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: '1.35rem',
+                        color: 'var(--color-espresso)',
+                        margin: 0,
+                        fontWeight: 600
+                      }}>
+                        Choose What To Pay
+                      </h3>
+                      <span style={{ fontSize: '0.725rem', color: 'var(--color-taupe)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
+                        Tap Option to Select
+                      </span>
+                    </div>
 
                     <div style={{
-                      backgroundColor: 'var(--color-surface)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-sm)',
-                      overflow: 'hidden'
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.85rem'
                     }}>
                       {/* Option 1: Pay Full */}
-                      <label
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={paymentChoice === 'full'}
                         onClick={() => setPaymentChoice('full')}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setPaymentChoice('full');
+                          }
+                        }}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '0.85rem',
-                          padding: '1.25rem 1.15rem',
+                          justifyContent: 'space-between',
+                          gap: '1rem',
+                          padding: '1.25rem 1.25rem',
+                          borderRadius: 'var(--radius-sm)',
                           cursor: 'pointer',
+                          border: paymentChoice === 'full' ? '2px solid var(--color-rose)' : '1px solid var(--color-border)',
                           backgroundColor: paymentChoice === 'full' ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                          transition: 'background-color var(--transition-fast)'
+                          boxShadow: paymentChoice === 'full' ? '0 4px 16px rgba(163, 111, 114, 0.16)' : 'none',
+                          transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                          userSelect: 'none'
                         }}
                       >
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          border: paymentChoice === 'full' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
-                          backgroundColor: 'var(--color-surface)',
-                          flexShrink: 0
-                        }} />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                          Pay £{orderTotal.toFixed(2)} in full now
-                        </span>
-                      </label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          {/* Tactile Radio Ring */}
+                          <div style={{
+                            width: '22px',
+                            height: '22px',
+                            borderRadius: '50%',
+                            border: paymentChoice === 'full' ? '2px solid var(--color-rose)' : '2px solid var(--color-taupe-light)',
+                            backgroundColor: 'transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)'
+                          }}>
+                            {paymentChoice === 'full' && (
+                              <div style={{
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '50%',
+                                backgroundColor: 'var(--color-rose)',
+                                animation: 'toastSlideUp 0.18s ease'
+                              }} />
+                            )}
+                          </div>
 
-                      <div style={{ height: '1px', backgroundColor: 'var(--color-border-subtle)' }} />
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '0.975rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                                Pay in full now
+                              </span>
+                              <span style={{
+                                fontSize: '0.675rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
+                                padding: '0.2rem 0.55rem',
+                                borderRadius: 'var(--radius-sm)',
+                                backgroundColor: paymentChoice === 'full' ? 'var(--color-rose)' : 'var(--color-surface-subtle)',
+                                color: paymentChoice === 'full' ? '#FFFFFF' : 'var(--color-taupe)',
+                                transition: 'all 0.18s ease'
+                              }}>
+                                Zero Balance Later
+                              </span>
+                            </div>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'var(--color-taupe)', lineHeight: 1.4 }}>
+                              Pay total amount today. Nothing left to pay at your appointment.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <span style={{
+                            fontFamily: 'var(--font-serif)',
+                            fontSize: '1.3rem',
+                            fontWeight: 700,
+                            color: paymentChoice === 'full' ? 'var(--color-rose)' : 'var(--color-espresso)'
+                          }}>
+                            £{orderTotal.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
 
                       {/* Option 2: Pay Deposit */}
-                      <label
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={paymentChoice === 'deposit'}
                         onClick={() => setPaymentChoice('deposit')}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setPaymentChoice('deposit');
+                          }
+                        }}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '0.85rem',
-                          padding: '1.25rem 1.15rem',
+                          justifyContent: 'space-between',
+                          gap: '1rem',
+                          padding: '1.25rem 1.25rem',
+                          borderRadius: 'var(--radius-sm)',
                           cursor: 'pointer',
+                          border: paymentChoice === 'deposit' ? '2px solid var(--color-rose)' : '1px solid var(--color-border)',
                           backgroundColor: paymentChoice === 'deposit' ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                          transition: 'background-color var(--transition-fast)'
+                          boxShadow: paymentChoice === 'deposit' ? '0 4px 16px rgba(163, 111, 114, 0.16)' : 'none',
+                          transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)',
+                          userSelect: 'none'
                         }}
                       >
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          borderRadius: '50%',
-                          border: paymentChoice === 'deposit' ? '6px solid var(--color-espresso)' : '2px solid var(--color-border)',
-                          backgroundColor: 'var(--color-surface)',
-                          flexShrink: 0
-                        }} />
-                        <span style={{ fontSize: '0.95rem', fontWeight: 500, color: 'var(--color-espresso)' }}>
-                          Pay deposit £{depositNowDisplay.toFixed(2)} now, £{remainingLaterDisplay.toFixed(2)} balance at appointment
-                        </span>
-                      </label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          {/* Tactile Radio Ring */}
+                          <div style={{
+                            width: '22px',
+                            height: '22px',
+                            borderRadius: '50%',
+                            border: paymentChoice === 'deposit' ? '2px solid var(--color-rose)' : '2px solid var(--color-taupe-light)',
+                            backgroundColor: 'transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0,
+                            transition: 'all 0.18s cubic-bezier(0.16, 1, 0.3, 1)'
+                          }}>
+                            {paymentChoice === 'deposit' && (
+                              <div style={{
+                                width: '10px',
+                                height: '10px',
+                                borderRadius: '50%',
+                                backgroundColor: 'var(--color-rose)',
+                                animation: 'toastSlideUp 0.18s ease'
+                              }} />
+                            )}
+                          </div>
+
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '0.975rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                                Pay deposit now
+                              </span>
+                              <span style={{
+                                fontSize: '0.675rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.06em',
+                                padding: '0.2rem 0.55rem',
+                                borderRadius: 'var(--radius-sm)',
+                                backgroundColor: paymentChoice === 'deposit' ? 'var(--color-rose)' : 'var(--color-surface-subtle)',
+                                color: paymentChoice === 'deposit' ? '#FFFFFF' : 'var(--color-taupe)',
+                                transition: 'all 0.18s ease'
+                              }}>
+                                Secure Date
+                              </span>
+                            </div>
+                            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.8rem', color: 'var(--color-taupe)', lineHeight: 1.4 }}>
+                              Pay £{depositNowDisplay.toFixed(2)} deposit today • £{remainingLaterDisplay.toFixed(2)} balance due at appointment.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <span style={{
+                            fontFamily: 'var(--font-serif)',
+                            fontSize: '1.3rem',
+                            fontWeight: 700,
+                            color: paymentChoice === 'deposit' ? 'var(--color-rose)' : 'var(--color-espresso)'
+                          }}>
+                            £{depositNowDisplay.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -1825,18 +1953,36 @@ export const BookingPage: React.FC = () => {
 
                     <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '1.5rem' }} />
 
-                    {/* Total */}
+                    {/* Total Breakdown */}
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       fontSize: '1.25rem',
                       fontWeight: 700,
                       color: 'var(--color-espresso)',
-                      marginBottom: '2rem'
+                      marginBottom: '0.65rem'
                     }}>
-                      <span>Total Due Now</span>
-                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.45rem' }}>
-                        £{paymentChoice === 'full' ? orderTotal.toFixed(2) : depositNowDisplay.toFixed(2)}
+                      <span>Total Due Today</span>
+                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: 'var(--color-rose)' }}>
+                        £{paymentChoice === 'full' ? orderTotal.toFixed(2) : (depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0)).toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '0.85rem',
+                      color: 'var(--color-taupe)',
+                      marginBottom: '1.75rem',
+                      padding: '0.75rem 1rem',
+                      backgroundColor: 'var(--color-surface-subtle)',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--color-border-subtle)'
+                    }}>
+                      <span>{paymentChoice === 'full' ? 'Remaining at Appointment:' : 'Remaining Balance (Due in Studio):'}</span>
+                      <span style={{ fontWeight: 700, color: paymentChoice === 'full' ? 'var(--color-success)' : 'var(--color-espresso)' }}>
+                        {paymentChoice === 'full' ? '£0.00 (Fully Settled)' : `£${remainingLaterDisplay.toFixed(2)}`}
                       </span>
                     </div>
 
@@ -1848,14 +1994,18 @@ export const BookingPage: React.FC = () => {
                       style={{
                         width: '100%',
                         padding: '1.2rem 1.5rem',
-                        fontSize: '0.95rem',
+                        fontSize: '0.925rem',
                         fontWeight: 600,
                         letterSpacing: '0.08em',
                         textTransform: 'uppercase',
                         cursor: isProcessing ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {isProcessing ? 'Processing Secure Booking...' : 'Pay & Confirm Appointment'}
+                      {isProcessing
+                        ? 'Processing Secure Booking...'
+                        : paymentChoice === 'full'
+                        ? `Pay £${orderTotal.toFixed(2)} in Full & Confirm`
+                        : `Pay Deposit £${(depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0)).toFixed(2)} & Confirm`}
                     </button>
 
                     <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
