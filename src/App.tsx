@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { BookingProvider } from './context/BookingContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/layout/Navbar';
@@ -102,15 +103,17 @@ const MainLayout: React.FC = () => {
 
 function App() {
   return (
-    <BrowserRouter>
-      <ToastProvider>
-        <BookingProvider>
-          <ScrollToTop />
-          <Toast />
-          <MainLayout />
-        </BookingProvider>
-      </ToastProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
+        <ToastProvider>
+          <BookingProvider>
+            <ScrollToTop />
+            <Toast />
+            <MainLayout />
+          </BookingProvider>
+        </ToastProvider>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

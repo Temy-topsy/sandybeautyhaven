@@ -938,6 +938,159 @@ a.btn:active {
   }
 }
 
+/* ==========================================================================
+   DARK MODE PALETTE (INSPIRATION: GLOWMUSE NOIR EDITORIAL LUXURY)
+   ========================================================================== */
+[data-theme="dark"] {
+  --color-ivory: #0C0A09;
+  --color-surface: #141110;
+  --color-surface-subtle: #1C1816;
+  --color-surface-warm: #241F1D;
+  --color-blush: #382A29;
+  --color-blush-light: #1E1615;
+  --color-rose: #C48E91;
+  --color-rose-dark: #D4A0A3;
+  --color-espresso: #FBF8F5;
+  --color-espresso-light: #EDE5DF;
+  --color-taupe: #ABA09A;
+  --color-taupe-light: #7E736D;
+  --color-border: #282120;
+  --color-border-subtle: #1F1918;
+  --color-border-focus: #C48E91;
+
+  --shadow-subtle: 0 2px 10px rgba(0, 0, 0, 0.45);
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 14px 40px rgba(0, 0, 0, 0.75);
+  --shadow-modal: 0 28px 70px rgba(0, 0, 0, 0.9);
+}
+
+/* Global smooth transition on theme switch */
+html, body {
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark mode specific button styles matching Glowmuse */
+[data-theme="dark"] .btn-primary {
+  background-color: #FFFFFF !important;
+  color: #0C0A09 !important;
+  border-color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #EFE8E1 !important;
+  color: #0C0A09 !important;
+  border-color: #EFE8E1 !important;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background-color: transparent !important;
+  color: #FBF8F5 !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+[data-theme="dark"] .btn-subtle {
+  background-color: #171312 !important;
+  color: #FBF8F5 !important;
+  border-color: #282120 !important;
+}
+
+[data-theme="dark"] .btn-link {
+  color: #FBF8F5 !important;
+  border-color: #FBF8F5 !important;
+}
+
+[data-theme="dark"] .btn-link:hover {
+  color: var(--color-rose) !important;
+  border-color: var(--color-rose) !important;
+}
+
+[data-theme="dark"] .editorial-card {
+  background-color: #141110;
+  border-color: #282120;
+}
+
+[data-theme="dark"] .editorial-card:hover {
+  border-color: #3D3230;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .navbar-solid {
+  background-color: rgba(12, 10, 9, 0.94) !important;
+  border-bottom: 1px solid #282120 !important;
+}
+
+[data-theme="dark"] .mobile-menu-drawer {
+  background-color: #0C0A09 !important;
+}
+
+[data-theme="dark"] .mobile-menu-header {
+  background-color: #0C0A09 !important;
+  border-bottom: 1px solid #282120 !important;
+}
+
+[data-theme="dark"] .mobile-menu-close-btn {
+  color: #FBF8F5 !important;
+}
+
+[data-theme="dark"] .mobile-nav-link {
+  color: #FBF8F5 !important;
+  border-bottom: 1px solid #1F1918 !important;
+}
+
+[data-theme="dark"] .mobile-nav-link:hover {
+  background-color: rgba(196, 142, 145, 0.1) !important;
+}
+
+[data-theme="dark"] .mobile-nav-link.is-active {
+  background-color: #1C1816 !important;
+}
+
+[data-theme="dark"] .mobile-menu-footer {
+  background-color: #141110 !important;
+  border-top: 1px solid #282120 !important;
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-textarea,
+[data-theme="dark"] select {
+  background-color: #141110 !important;
+  color: #FBF8F5 !important;
+  border-color: #282120 !important;
+}
+
+[data-theme="dark"] .form-input:focus,
+[data-theme="dark"] .form-textarea:focus,
+[data-theme="dark"] select:focus {
+  border-color: var(--color-rose) !important;
+}
+
+[data-theme="dark"] .badge {
+  background-color: #241F1D !important;
+  color: #ABA09A !important;
+}
+
+[data-theme="dark"] .badge-rose {
+  background-color: rgba(196, 142, 145, 0.2) !important;
+  color: #E6B5B8 !important;
+}
+
+/* Theme Toggle Button Hover & Micro-interactions */
+.theme-toggle-btn:hover {
+  background-color: rgba(163, 111, 114, 0.15) !important;
+  border-color: var(--color-rose) !important;
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.92) !important;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

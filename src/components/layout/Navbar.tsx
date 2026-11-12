@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Calendar } from 'lucide-react';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -121,8 +122,17 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right Action: Primary Booking CTA */}
+          {/* Right Action: Theme Toggle & Primary Booking CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifySelf: 'end' }}>
+            <ThemeToggle
+              style={{
+                background: isTransparent ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
+                borderColor: isTransparent ? 'rgba(255, 255, 255, 0.3)' : 'var(--color-border)',
+                color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',
+                backdropFilter: isTransparent ? 'blur(6px)' : 'none'
+              }}
+            />
+
             <Link
               to="/schedule"
               className={`btn ${isTransparent ? 'btn-navbar-hero' : 'btn-primary'} navbar-cta-btn`}
@@ -178,7 +188,7 @@ export const Navbar: React.FC = () => {
         className={`mobile-menu-drawer ${mobileMenuOpen ? 'is-open' : ''}`}
         aria-hidden={!mobileMenuOpen}
       >
-        {/* Top Bar with Close X and Centered Bold Logo */}
+        {/* Top Bar with Close X, Centered Bold Logo & Theme Toggle */}
         <div className="mobile-menu-header">
           <button
             type="button"
@@ -197,7 +207,9 @@ export const Navbar: React.FC = () => {
             />
           </div>
 
-          <div />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Full-Screen Clean Navigation Links with Staggered Cascade */}
