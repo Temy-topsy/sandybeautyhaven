@@ -7,6 +7,7 @@ import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { CookieBanner } from './components/layout/CookieBanner';
 import { Toast } from './components/ui/Toast';
+import { ExitIntentModal } from './components/ui/ExitIntentModal';
 
 // Primary Instant Landing Route (Synchronous for instantaneous first paint)
 import { HomePage } from './pages/HomePage';
@@ -133,6 +134,7 @@ function App() {
           <BookingProvider>
             <ScrollToTop />
             <Toast />
+            <ExitIntentModal />
             <MainLayout />
           </BookingProvider>
         </ToastProvider>
