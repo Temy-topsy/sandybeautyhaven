@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Calendar } from 'lucide-react';
-import { ThemeToggle } from '../ui/ThemeToggle';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -122,17 +121,8 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Right Action: Theme Toggle & Primary Booking CTA */}
+          {/* Right Action: Primary Booking CTA */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', justifySelf: 'end' }}>
-            <ThemeToggle
-              style={{
-                background: isTransparent ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
-                borderColor: isTransparent ? 'rgba(255, 255, 255, 0.3)' : 'var(--color-border)',
-                color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',
-                backdropFilter: isTransparent ? 'blur(6px)' : 'none'
-              }}
-            />
-
             <Link
               to="/schedule"
               className={`btn ${isTransparent ? 'btn-navbar-hero' : 'btn-primary'} navbar-cta-btn`}
@@ -142,7 +132,7 @@ export const Navbar: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.45rem',
-                borderRadius: 'var(--radius-full)'
+                borderRadius: 'var(--radius-sm)'
               }}
             >
               <Calendar size={14} />
@@ -161,7 +151,7 @@ export const Navbar: React.FC = () => {
                 justifyContent: 'center',
                 background: isTransparent ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
                 border: isTransparent ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-full)',
+                borderRadius: 'var(--radius-sm)',
                 padding: '0.45rem',
                 cursor: 'pointer',
                 color: isTransparent ? '#FFFFFF' : 'var(--color-espresso)',
@@ -207,9 +197,7 @@ export const Navbar: React.FC = () => {
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ThemeToggle />
-          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '36px' }} />
         </div>
 
         {/* Full-Screen Clean Navigation Links with Staggered Cascade */}

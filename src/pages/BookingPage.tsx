@@ -333,7 +333,6 @@ export const BookingPage: React.FC = () => {
             marginBottom: '1.5rem'
           }}>
             <div>
-              <span className="section-eyebrow">Online Booking</span>
               <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.4rem)', margin: 0 }}>
                 Schedule Your Appointment
               </h1>
@@ -599,9 +598,6 @@ export const BookingPage: React.FC = () => {
                     <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1.75rem' }}>
                       <div style={{ marginBottom: '1rem' }}>
                         <h3 style={{ fontSize: '1.15rem', margin: '0 0 0.25rem 0' }}>Add Extra Treatments (Optional)</h3>
-                        <p style={{ fontSize: '0.825rem', color: 'var(--color-taupe)', margin: 0 }}>
-                          Complement your appointment with brow shaping, touch-ups, or additional treatments.
-                        </p>
                       </div>
 
                       {/* Category Tabs */}
@@ -799,7 +795,7 @@ export const BookingPage: React.FC = () => {
                 )}
               </div>
             )}
-            
+
             {/* ============================================================== */}
             {/* STEP 2: DATE & TIME */}
             {/* ============================================================== */}
@@ -894,13 +890,13 @@ export const BookingPage: React.FC = () => {
                           backgroundColor: isSelected
                             ? 'var(--color-espresso)'
                             : isDisabled
-                            ? 'transparent'
-                            : 'var(--color-surface-subtle)',
+                              ? 'transparent'
+                              : 'var(--color-surface-subtle)',
                           color: isSelected
                             ? 'var(--color-ivory)'
                             : isDisabled
-                            ? '#C5BBB5'
-                            : 'var(--color-espresso)',
+                              ? '#C5BBB5'
+                              : 'var(--color-espresso)',
                           border: isSelected
                             ? '1px solid var(--color-espresso)'
                             : '1px solid var(--color-border-subtle)',
@@ -2004,8 +2000,8 @@ export const BookingPage: React.FC = () => {
                       {isProcessing
                         ? 'Processing Secure Booking...'
                         : paymentChoice === 'full'
-                        ? `Pay £${orderTotal.toFixed(2)} in Full & Confirm`
-                        : `Pay Deposit £${(depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0)).toFixed(2)} & Confirm`}
+                          ? `Pay £${orderTotal.toFixed(2)} in Full & Confirm`
+                          : `Pay Deposit £${(depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0)).toFixed(2)} & Confirm`}
                     </button>
 
                     <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>

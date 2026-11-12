@@ -208,3 +208,4 @@ export const ExitIntentModal: React.FC = () => {
     </div>
   );
 };
+
