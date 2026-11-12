@@ -1103,8 +1103,8 @@ export const BookingPage: React.FC = () => {
                       onChange={(e) => setClientDetails({ ...clientDetails, agreeToPolicies: e.target.checked })}
                       style={{ marginTop: '3px', flexShrink: 0 }}
                     />
-                    <span style={{ lineHeight: 1.5 }}>
-                      I have read, understood, and agree to the <strong>Terms & Conditions</strong>, including the non-refundable deposit and <strong>48-hour cancellation policy</strong>. *
+                    <span style={{ lineHeight: 1.5, fontWeight: 600, color: 'var(--color-espresso)' }}>
+                      I have read and agree to the terms above *
                     </span>
                   </label>
                   {formErrors.agreeToPolicies && <span className="form-error">{formErrors.agreeToPolicies}</span>}
@@ -1143,20 +1143,113 @@ export const BookingPage: React.FC = () => {
                       lineHeight: 1.6,
                       color: 'var(--color-taupe)'
                     }}>
-                      <strong style={{ color: 'var(--color-espresso)', display: 'block', marginBottom: '0.5rem' }}>
-                        SANDY BEAUTY HAVEN – TERMS & CONDITIONS
-                      </strong>
-                      <p><strong>1. Appointments & Deposits:</strong> Non-refundable deposit deducted from total cost. Not confirmed until deposit paid.</p>
-                      <p><strong>2. Cancellations & Rescheduling:</strong> At least 48 hours notice required. Under 48 hours forfeits deposit. Same-day cancellation / no-show charged 100%.</p>
-                      <p><strong>3. Late Arrivals:</strong> 10-minute grace window. After 10 mins, appointment may be cancelled and deposit forfeited.</p>
-                      <p><strong>4. No-Shows:</strong> Required to pay in full upfront for any future bookings.</p>
-                      <p><strong>5. Refills & Foreign Work:</strong> Refills only on Sandy Beauty Haven work. Foreign sets charged as removal + full set.</p>
-                      <p><strong>6. Refund Policy:</strong> No refunds. Complimentary fixes assessed if reported within 48h and booked within 3 days.</p>
-                      <p><strong>7. Patch Tests & Allergies:</strong> Client responsibility to disclose allergies/eye conditions.</p>
-                      <p><strong>8. Aftercare & Responsibility:</strong> Proper aftercare must be followed. Not responsible for retention affected by oils, hormones, medication, rubbing.</p>
-                      <p><strong>9. Children, Guests & Phones:</strong> No extra guests or children allowed unless agreed beforehand.</p>
-                      <p><strong>10. Right to Refuse Service:</strong> Inappropriate behavior, unsafe contraindications, or repeated no-shows.</p>
-                      <p><strong>11. Agreement:</strong> By booking, you confirm you have read and agreed to all policies above.</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-espresso)', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.4rem' }}>
+                          SANDY BEAUTY HAVEN – TERMS & CONDITIONS
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>1. Appointments & Deposits</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>All appointments require a non-refundable deposit to secure your booking.</li>
+                            <li>Your deposit is deducted from the total cost of your treatment.</li>
+                            <li>Appointments are not confirmed until the deposit has been paid.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>2. Cancellations & Rescheduling</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>You must give at least 48 hours’ notice to cancel or reschedule your appointment.</li>
+                            <li>Cancellations or reschedules made within 48 hours will forfeit your deposit.</li>
+                            <li>Same-day cancellations or failure to attend will be charged 100% of the service cost.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>3. Late Arrivals</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>Please arrive on time to your appointment.</li>
+                            <li>If you are more than 10 minutes late, your appointment may be cancelled and your deposit forfeited.</li>
+                            <li>If I am able to proceed, your treatment time may be shortened to avoid affecting the next client.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>4. No-Shows</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>Failure to attend your appointment without notice is considered a no-show.</li>
+                            <li>No-shows will be required to pay in full upfront for any future bookings.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>5. Refills & Foreign Work</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>Refills are only accepted on work done by Sandy Beauty Haven unless otherwise agreed.</li>
+                            <li>Lashes done by another technician will be charged as a full set or removal + full set.</li>
+                            <li>You must book the correct service. If you book the wrong one, your appointment may be cancelled and deposit lost.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>6. Refund Policy</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>No refunds are offered on any services.</li>
+                            <li>If you are unhappy, please contact us within 48 hours and we will assess if a complimentary fix is appropriate.</li>
+                            <li>Fixes are at the technician’s discretion and must be booked within 3 days.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>7. Patch Tests & Allergies</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>It is your responsibility to inform us of any allergies, sensitivities, medical conditions, or eye conditions before your appointment.</li>
+                            <li>Patch tests are recommended for new clients or those with sensitive skin.</li>
+                            <li>Sandy Beauty Haven will not be held responsible for reactions where the client has failed to disclose relevant information.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>8. Aftercare & Responsibility</strong>
+                          <p style={{ margin: '0.35rem 0 0.25rem 0' }}>Proper aftercare instructions will be given and must be followed. We are not responsible for poor retention or issues caused by:</p>
+                          <ul style={{ margin: '0 0 0 1.25rem', padding: 0 }}>
+                            <li>Oily skin</li>
+                            <li>Hormones</li>
+                            <li>Medication</li>
+                            <li>Sleeping habits</li>
+                            <li>Not following aftercare</li>
+                            <li>Picking or rubbing lashes</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>9. Children, Guests & Phones</strong>
+                          <ul style={{ margin: '0.35rem 0 0 1.25rem', padding: 0 }}>
+                            <li>No extra guests or children are allowed unless agreed beforehand.</li>
+                            <li>Please keep phone use minimal during your treatment.</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>10. Right to Refuse Service</strong>
+                          <p style={{ margin: '0.35rem 0 0.25rem 0' }}>Sandy Beauty Haven reserves the right to refuse service to anyone who:</p>
+                          <ul style={{ margin: '0 0 0 1.25rem', padding: 0 }}>
+                            <li>Is rude, aggressive, or inappropriate</li>
+                            <li>Has contraindications making treatment unsafe</li>
+                            <li>Repeatedly cancels, reschedules, or no-shows</li>
+                          </ul>
+                        </div>
+
+                        <div>
+                          <strong style={{ color: 'var(--color-espresso)' }}>11. Agreement</strong>
+                          <p style={{ margin: '0.35rem 0 0.25rem 0' }}>By booking an appointment with Sandy Beauty Haven, you confirm that:</p>
+                          <ul style={{ margin: '0 0 0 1.25rem', padding: 0 }}>
+                            <li>You have read and understood these Terms & Conditions</li>
+                            <li>You agree to all policies stated above</li>
+                          </ul>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

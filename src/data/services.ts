@@ -560,3 +560,19 @@ export const CATEGORIES = [
   'Extras',
   'Training'
 ] as const;
+
+export interface AcuityAddon {
+  id: number;
+  name: string;
+  duration: number;
+  price: number;
+}
+
+export const ACUITY_ADDONS: AcuityAddon[] = [
+  { id: 5815710, name: 'Bottom lashes', duration: 15, price: 10 },
+  { id: 5386579, name: 'Brow shaping', duration: 10, price: 10 },
+  { id: 5689813, name: 'Brow shaping & Tinting', duration: 30, price: 20 },
+  { id: 5465345, name: 'Lash After care kits', duration: 0, price: 15 },
+  { id: 4936238, name: 'Lash removal', duration: 30, price: 10 },
+  { id: 5491837, name: 'Spikes', duration: 15, price: 5 }
+];
