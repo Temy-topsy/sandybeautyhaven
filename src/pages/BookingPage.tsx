@@ -4,7 +4,6 @@ import {
   Calendar as CalendarIcon,
   Clock,
   CreditCard,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -456,10 +455,10 @@ export const BookingPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="container" style={{ maxWidth: step === 4 ? '560px' : '1000px', paddingTop: 'clamp(1.5rem, 3vw, 2.5rem)', transition: 'max-width 0.3s ease' }}>
+      <div className="container" style={{ maxWidth: step === 4 ? '560px' : step === 1 ? '780px' : '1000px', paddingTop: 'clamp(1.5rem, 3vw, 2.5rem)', transition: 'max-width 0.3s ease' }}>
         <div style={{
-          display: step === 4 ? 'block' : 'grid',
-          gridTemplateColumns: step === 4 ? 'none' : 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+          display: step === 4 || step === 1 ? 'block' : 'grid',
+          gridTemplateColumns: step === 4 || step === 1 ? 'none' : 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
           gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
           alignItems: 'start'
         }}>
@@ -475,226 +474,332 @@ export const BookingPage: React.FC = () => {
           }}>
 
             {/* ============================================================== */}
-            {/* STEP 1: MULTI-SERVICE SELECTION (Add-to-Cart Style) */}
+            {/* STEP 1: STREAMLINED SELECTION & ADD-ONS */}
             {/* ============================================================== */}
             {step === 1 && (
               <div>
-                <h2 style={{ fontSize: '1.35rem', marginBottom: '0.35rem' }}>1. Choose Your Treatments</h2>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', marginBottom: '1.5rem' }}>
-                  Select one or multiple services. You can add extra services (e.g. Lashes + Brows + Touch-Up) in a single booking.
-                </p>
-
-                {/* Selected Treatments Cart Tray */}
-                <div style={{
-                  backgroundColor: 'var(--color-surface-subtle)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '1.25rem',
-                  marginBottom: '2rem'
-                }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <ShoppingBag size={16} style={{ color: 'var(--color-rose)' }} />
-                      <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                        Appointment Cart ({selectedServices.length} {selectedServices.length === 1 ? 'service' : 'services'}):
-                      </span>
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
-                      Est. Duration: {totalDuration} mins
-                    </span>
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
-                    {selectedServices.map((svc) => (
-                      <div
-                        key={svc.id}
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          backgroundColor: 'var(--color-surface)',
-                          padding: '0.65rem 0.85rem',
-                          borderRadius: 'var(--radius-sm)',
-                          border: '1px solid var(--color-border-subtle)',
-                          fontSize: '0.85rem'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', minWidth: 0 }}>
-                          <CheckCircle2 size={15} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
-                          <span style={{ fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--color-espresso)' }}>
-                            {svc.name}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
-                            ({svc.duration}m)
-                          </span>
+                {selectedServices.length > 0 ? (
+                  <>
+                    {/* Top: Selected Treatments */}
+                    <div style={{ marginBottom: '2rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
+                        <div>
+                          <span className="section-eyebrow" style={{ margin: 0, fontSize: '0.75rem' }}>Your Selected Treatment</span>
+                          <h2 style={{ fontSize: '1.25rem', margin: '0.2rem 0 0 0' }}>Confirm Your Selection</h2>
                         </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0 }}>
-                          <span style={{ fontWeight: 600, color: 'var(--color-espresso)' }}>
-                            £{svc.price}
-                          </span>
-                          {selectedServices.length > 1 && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                removeService(svc.id);
-                                showToast(`Removed "${svc.name}" from appointment cart`);
-                              }}
-                              aria-label={`Remove ${svc.name}`}
-                              style={{
-                                background: 'none',
-                                border: 'none',
-                                color: 'var(--color-error)',
-                                cursor: 'pointer',
-                                padding: '2px',
-                                display: 'flex',
-                                alignItems: 'center'
-                              }}
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                          )}
-                        </div>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
+                          Est. Duration: {totalDuration} mins
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                </div>
 
-                {/* Category Filter Pills */}
-                <div style={{
-                  display: 'flex',
-                  gap: '0.5rem',
-                  overflowX: 'auto',
-                  paddingBottom: '0.5rem',
-                  marginBottom: '1.25rem',
-                  scrollbarWidth: 'none'
-                }}>
-                  {bookingCategories.map((cat) => {
-                    const isSelected = bookingCategory === cat;
-                    return (
-                      <button
-                        key={cat}
-                        type="button"
-                        onClick={() => setBookingCategory(cat)}
-                        style={{
-                          padding: '0.45rem 1rem',
-                          borderRadius: 'var(--radius-sm)',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          whiteSpace: 'nowrap',
-                          border: '1px solid',
-                          borderColor: isSelected ? 'var(--color-espresso)' : 'var(--color-border)',
-                          backgroundColor: isSelected ? 'var(--color-espresso)' : 'var(--color-surface)',
-                          color: isSelected ? 'var(--color-ivory)' : 'var(--color-espresso)',
-                          transition: 'all var(--transition-fast)'
-                        }}
-                      >
-                        {cat}
-                      </button>
-                    );
-                  })}
-                </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                        {selectedServices.map((svc) => (
+                          <div
+                            key={svc.id}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '1rem 1.15rem',
+                              backgroundColor: 'var(--color-blush-light)',
+                              border: '1.5px solid var(--color-rose)',
+                              borderRadius: 'var(--radius-sm)',
+                              gap: '1rem'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
+                              <img
+                                src={svc.image}
+                                alt={svc.name}
+                                style={{ width: '52px', height: '52px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
+                              />
+                              <div style={{ minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
+                                  <span style={{ fontWeight: 700, fontSize: '0.975rem', color: 'var(--color-espresso)' }}>{svc.name}</span>
+                                  <span className="badge" style={{ fontSize: '0.675rem' }}>{svc.category}</span>
+                                </div>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                  <span>{svc.duration} mins</span>
+                                  <span>•</span>
+                                  <span>Deposit: £{svc.deposit}</span>
+                                </div>
+                              </div>
+                            </div>
 
-                {/* Available Treatments List */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '480px', overflowY: 'auto', paddingRight: '0.35rem' }}>
-                  {displayedServices.map((s) => {
-                    const isSelected = isServiceSelected(s.id);
-                    return (
-                      <div
-                        key={s.id}
-                        onClick={() => handleToggleService(s)}
-                        style={{
-                          padding: '1.05rem 1.25rem',
-                          borderRadius: 'var(--radius-sm)',
-                          border: '1px solid',
-                          borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-border)',
-                          backgroundColor: isSelected ? 'var(--color-blush-light)' : 'var(--color-surface)',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          gap: '1rem',
-                          boxShadow: isSelected ? 'var(--shadow-card)' : 'none',
-                          transition: 'all var(--transition-fast)'
-                        }}
-                      >
-                        <div style={{ minWidth: 0, flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
-                            <span style={{ fontWeight: 600, fontSize: '0.925rem', color: 'var(--color-espresso)' }}>{s.name}</span>
-                            <span className="badge" style={{ fontSize: '0.675rem' }}>{s.category}</span>
-                            {isSelected && (
-                              <span className="badge badge-rose" style={{ fontSize: '0.675rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                                <Check size={10} /> 1 In Cart
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
+                              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                                £{svc.price}
                               </span>
-                            )}
-                          </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
-                            <span>{s.duration} mins</span>
-                            <span>•</span>
-                            <span>Deposit: £{s.deposit}</span>
-                          </div>
-                        </div>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-                          <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                              £{s.price}
+                              {selectedServices.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    removeService(svc.id);
+                                    showToast(`Removed "${svc.name}"`);
+                                  }}
+                                  title="Remove treatment"
+                                  style={{
+                                    background: 'none',
+                                    border: '1px solid var(--color-border)',
+                                    borderRadius: 'var(--radius-sm)',
+                                    padding: '0.4rem',
+                                    cursor: 'pointer',
+                                    color: 'var(--color-taupe)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all var(--transition-fast)'
+                                  }}
+                                >
+                                  <Trash2 size={15} />
+                                </button>
+                              )}
                             </div>
                           </div>
+                        ))}
+                      </div>
+
+                      {/* Integrated Booking Action & Summary Box */}
+                      <div style={{
+                        backgroundColor: 'var(--color-surface-subtle)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: '1.25rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '1.15rem'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
+                          <div>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'block' }}>Estimated Total:</span>
+                            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-espresso)' }}>
+                              £{totalPrice}
+                            </span>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'block' }}>Deposit Due Today:</span>
+                            <span style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-rose)' }}>
+                              £{totalDeposit}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleNextStep}
+                          className="btn btn-primary"
+                          style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', letterSpacing: '0.04em' }}
+                        >
+                          Next: Choose Date & Time ({selectedServices.length}) →
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Bottom Section: Add Extra Services (Optional) */}
+                    <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1.75rem' }}>
+                      <div style={{ marginBottom: '1rem' }}>
+                        <h3 style={{ fontSize: '1.15rem', margin: '0 0 0.25rem 0' }}>Add Extra Treatments (Optional)</h3>
+                        <p style={{ fontSize: '0.825rem', color: 'var(--color-taupe)', margin: 0 }}>
+                          Complement your appointment with brow shaping, touch-ups, or additional treatments.
+                        </p>
+                      </div>
+
+                      {/* Category Tabs */}
+                      <div style={{
+                        display: 'flex',
+                        gap: '0.5rem',
+                        overflowX: 'auto',
+                        paddingBottom: '0.5rem',
+                        marginBottom: '1rem',
+                        scrollbarWidth: 'none'
+                      }}>
+                        {bookingCategories.map((cat) => {
+                          const isSelected = bookingCategory === cat;
+                          return (
+                            <button
+                              key={cat}
+                              type="button"
+                              onClick={() => setBookingCategory(cat)}
+                              style={{
+                                padding: '0.4rem 0.85rem',
+                                borderRadius: 'var(--radius-sm)',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap',
+                                border: '1px solid',
+                                borderColor: isSelected ? 'var(--color-espresso)' : 'var(--color-border)',
+                                backgroundColor: isSelected ? 'var(--color-espresso)' : 'var(--color-surface)',
+                                color: isSelected ? 'var(--color-ivory)' : 'var(--color-espresso)',
+                                transition: 'all var(--transition-fast)'
+                              }}
+                            >
+                              {cat}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Additional Services List (Compact Add-on Cards) */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '380px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                        {displayedServices
+                          .filter((s) => !isServiceSelected(s.id))
+                          .map((s) => (
+                            <div
+                              key={s.id}
+                              style={{
+                                padding: '0.85rem 1rem',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid var(--color-border)',
+                                backgroundColor: 'var(--color-surface)',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                gap: '0.75rem'
+                              }}
+                            >
+                              <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
+                                  <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--color-espresso)' }}>{s.name}</span>
+                                  <span className="badge" style={{ fontSize: '0.65rem' }}>{s.category}</span>
+                                </div>
+                                <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)' }}>
+                                  {s.duration} mins • Deposit: £{s.deposit}
+                                </div>
+                              </div>
+
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
+                                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                                  £{s.price}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleService(s)}
+                                  style={{
+                                    padding: '0.4rem 0.75rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 600,
+                                    borderRadius: 'var(--radius-sm)',
+                                    border: '1px solid var(--color-espresso)',
+                                    backgroundColor: 'var(--color-surface)',
+                                    color: 'var(--color-espresso)',
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.25rem',
+                                    transition: 'all var(--transition-fast)'
+                                  }}
+                                >
+                                  <Plus size={13} />
+                                  Add
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Zero selection state */}
+                    <h2 style={{ fontSize: '1.35rem', marginBottom: '0.35rem' }}>1. Choose Your Treatment</h2>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--color-taupe)', marginBottom: '1.5rem' }}>
+                      Select a service below to schedule your appointment at Sandy Beauty Haven.
+                    </p>
+
+                    {/* Category Tabs */}
+                    <div style={{
+                      display: 'flex',
+                      gap: '0.5rem',
+                      overflowX: 'auto',
+                      paddingBottom: '0.5rem',
+                      marginBottom: '1.25rem',
+                      scrollbarWidth: 'none'
+                    }}>
+                      {bookingCategories.map((cat) => {
+                        const isSelected = bookingCategory === cat;
+                        return (
                           <button
+                            key={cat}
                             type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleToggleService(s);
-                            }}
+                            onClick={() => setBookingCategory(cat)}
                             style={{
-                              padding: '0.45rem 0.85rem',
+                              padding: '0.45rem 1rem',
+                              borderRadius: 'var(--radius-sm)',
                               fontSize: '0.75rem',
                               fontWeight: 600,
-                              borderRadius: 'var(--radius-sm)',
-                              border: '1px solid',
-                              borderColor: isSelected ? 'var(--color-rose)' : 'var(--color-espresso)',
-                              backgroundColor: isSelected ? 'var(--color-rose)' : 'var(--color-surface)',
-                              color: isSelected ? '#FFFFFF' : 'var(--color-espresso)',
                               cursor: 'pointer',
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.35rem',
+                              whiteSpace: 'nowrap',
+                              border: '1px solid',
+                              borderColor: isSelected ? 'var(--color-espresso)' : 'var(--color-border)',
+                              backgroundColor: isSelected ? 'var(--color-espresso)' : 'var(--color-surface)',
+                              color: isSelected ? 'var(--color-ivory)' : 'var(--color-espresso)',
                               transition: 'all var(--transition-fast)'
                             }}
                           >
-                            {isSelected ? (
-                              <>
-                                <Check size={13} />
-                                In Cart
-                              </>
-                            ) : (
-                              <>
-                                <Plus size={13} />
-                                Add to Cart
-                              </>
-                            )}
+                            {cat}
                           </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                        );
+                      })}
+                    </div>
 
-                <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                  <button
-                    type="button"
-                    onClick={handleNextStep}
-                    className="btn btn-primary"
-                    style={{ width: 'clamp(200px, 100%, 260px)' }}
-                  >
-                    Next: Date & Time ({selectedServices.length}) →
-                  </button>
-                </div>
+                    {/* Services List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '520px', overflowY: 'auto', paddingRight: '0.35rem' }}>
+                      {displayedServices.map((s) => (
+                        <div
+                          key={s.id}
+                          onClick={() => handleToggleService(s)}
+                          style={{
+                            padding: '1.05rem 1.25rem',
+                            borderRadius: 'var(--radius-sm)',
+                            border: '1px solid var(--color-border)',
+                            backgroundColor: 'var(--color-surface)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            transition: 'all var(--transition-fast)'
+                          }}
+                        >
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                              <span style={{ fontWeight: 600, fontSize: '0.925rem', color: 'var(--color-espresso)' }}>{s.name}</span>
+                              <span className="badge" style={{ fontSize: '0.675rem' }}>{s.category}</span>
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
+                              <span>{s.duration} mins</span>
+                              <span>•</span>
+                              <span>Deposit: £{s.deposit}</span>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                                £{s.price}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleService(s);
+                              }}
+                              className="btn btn-primary"
+                              style={{ padding: '0.45rem 0.95rem', fontSize: '0.75rem' }}
+                            >
+                              Select Treatment
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             )}
-
+            
             {/* ============================================================== */}
             {/* STEP 2: DATE & TIME */}
             {/* ============================================================== */}
@@ -1683,7 +1788,7 @@ export const BookingPage: React.FC = () => {
           </div>
 
           {/* Right Column: Live Booking Summary Tray / Sidebar (Shown on Steps 1, 2, 3 only) */}
-          {step !== 4 && (
+          {step !== 4 && step !== 1 && (
             <div style={{
               backgroundColor: 'var(--color-surface)',
               border: '1px solid var(--color-border)',

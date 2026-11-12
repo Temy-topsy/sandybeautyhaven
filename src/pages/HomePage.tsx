@@ -227,28 +227,29 @@ export const HomePage: React.FC = () => {
           <ChevronRight size={18} />
         </button>
 
-        {/* Slide Counter & Dots Indicator (Clean Minimalist Luxury Aesthetic) */}
+        {/* Slide Counter & Dots Indicator (Uniform & Pixel-Perfect Product Design) */}
         <div
           style={{
             position: 'absolute',
             bottom: '1.25rem',
             left: '50%',
             transform: 'translateX(-50%)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.65rem',
+            gap: '0.75rem',
             zIndex: 10,
-            background: 'rgba(20, 15, 14, 0.45)',
-            backdropFilter: 'blur(6px)',
+            background: 'rgba(20, 15, 14, 0.55)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             padding: '0.35rem 0.85rem',
-            borderRadius: '20px',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid rgba(255, 255, 255, 0.15)'
           }}
         >
-          <span style={{ fontSize: '0.72rem', letterSpacing: '0.12em', color: '#EDE5DF', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.75rem', letterSpacing: '0.08em', color: '#EDE5DF', fontWeight: 600 }}>
             0{currentSlide + 1} / 0{slides.length}
           </span>
-          <div style={{ display: 'flex', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
             {slides.map((s, index) => (
               <button
                 key={s.id}
@@ -256,14 +257,14 @@ export const HomePage: React.FC = () => {
                 onClick={() => setCurrentSlide(index)}
                 aria-label={`Jump to slide ${index + 1}`}
                 style={{
-                  width: currentSlide === index ? '18px' : '6px',
-                  height: '4px',
-                  borderRadius: '2px',
+                  width: currentSlide === index ? '16px' : '6px',
+                  height: '3px',
+                  borderRadius: '1px',
                   backgroundColor: currentSlide === index ? 'var(--color-rose)' : 'rgba(255, 255, 255, 0.35)',
                   border: 'none',
                   padding: 0,
                   cursor: 'pointer',
-                  transition: 'all 0.25s ease'
+                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               />
             ))}
@@ -278,13 +279,49 @@ export const HomePage: React.FC = () => {
             <span className="section-eyebrow">Treatment Menu</span>
             <h2 className="section-title">Signature Studio Services</h2>
             <p style={{ maxWidth: '540px', margin: '0.65rem auto 0', color: 'var(--color-taupe)', fontSize: '0.925rem' }}>
-              Bespoke lash sets and precision brow enhancements by Sandy. Select a treatment below to book your appointment.
+              Bespoke lash sets and precision brow enhancements by Sandy. Select a treatment below to view details and book.
             </p>
           </div>
 
+          {/* Mobile 2-Column Side-by-Side Visual Grid (Honey Bee Beautiful Style: No Price, Minimal, Tap for Details) */}
+          <div className="mobile-services-grid">
+            {featuredServices.map((service) => (
+              <Link
+                key={service.id}
+                to={`/services/${service.slug}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  borderRadius: 'var(--radius-sm)',
+                  overflow: 'hidden',
+                  backgroundColor: 'var(--color-surface)',
+                  border: '1px solid var(--color-border-subtle)',
+                  boxShadow: 'var(--shadow-subtle)'
+                }}
+              >
+                <div style={{ aspectRatio: '1/1', overflow: 'hidden', position: 'relative' }}>
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+                <div style={{ padding: '0.75rem 0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-espresso)', lineHeight: 1.25 }}>
+                    {service.name}
+                  </span>
+                  <span style={{ color: 'var(--color-rose)', fontSize: '0.95rem', flexShrink: 0 }}>→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Desktop Full Editorial Cards with Prices & Direct Booking */}
           <div
+            className="desktop-services-grid"
             style={{
-              display: 'grid',
               gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
               gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
               marginBottom: '3rem'

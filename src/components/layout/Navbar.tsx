@@ -61,7 +61,7 @@ export const Navbar: React.FC = () => {
             alignItems: 'center'
           }}
         >
-          {/* Brand Logo Only (Clean Quiet-Luxury Monogram - Zero Border Artifacts) */}
+          {/* Brand Logo Only (Bold & Clearly Visible on Mobile & Desktop) */}
           <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'start' }}>
             <Link
               to="/"
@@ -72,8 +72,8 @@ export const Navbar: React.FC = () => {
                 src="/sandy logo.png"
                 alt="Sandy Beauty Haven Logo"
                 style={{
-                  width: '40px',
-                  height: '40px',
+                  width: '44px',
+                  height: '44px',
                   objectFit: 'contain',
                   borderRadius: '50%',
                   border: 'none',
@@ -154,101 +154,133 @@ export const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Mobile Drawer Navigation */}
+      {/* Full-Screen Mobile Navigation (Honey Bee Beautiful Refined Layout) */}
       {mobileMenuOpen && (
         <div
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(36, 29, 28, 0.4)',
-            zIndex: 101,
+            inset: 0,
+            width: '100vw',
+            height: '100dvh',
+            backgroundColor: 'var(--color-ivory)',
+            zIndex: 1000,
             display: 'flex',
-            justifyContent: 'flex-end'
+            flexDirection: 'column',
+            overflowY: 'auto'
           }}
-          onClick={() => setMobileMenuOpen(false)}
         >
+          {/* Top Bar with Close X and Centered Bold Logo */}
           <div
             style={{
-              width: '85%',
-              maxWidth: '360px',
-              height: '100%',
-              backgroundColor: 'var(--color-ivory)',
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '1.5rem',
-              boxShadow: 'var(--shadow-modal)',
-              overflowY: 'auto'
+              height: 'var(--header-height)',
+              padding: '0 1.5rem',
+              display: 'grid',
+              gridTemplateColumns: '40px 1fr 40px',
+              alignItems: 'center',
+              borderBottom: '1px solid var(--color-border)'
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <img
-                  src="/sandy logo.png"
-                  alt="Sandy Beauty Haven Logo"
-                  style={{ width: '38px', height: '38px', borderRadius: '50%' }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                aria-label="Close menu"
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  padding: '0.5rem',
-                  cursor: 'pointer',
-                  color: 'var(--color-espresso)'
-                }}
-              >
-                <X size={24} />
-              </button>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                padding: '0.4rem',
+                cursor: 'pointer',
+                color: 'var(--color-espresso)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <X size={24} />
+            </button>
+
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <img
+                src="/sandy logo.png"
+                alt="Sandy Beauty Haven Logo"
+                style={{ width: '46px', height: '46px', objectFit: 'contain', borderRadius: '50%' }}
+              />
             </div>
 
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '2rem' }}>
-              {navLinks.map((link) => (
+            <div />
+          </div>
+
+          {/* Full-Screen Clean Navigation Links */}
+          <nav style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: '0.5rem' }}>
+            {navLinks.map((link) => {
+              const active = isActive(link.path);
+              return (
                 <Link
                   key={link.path}
                   to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
                   style={{
-                    padding: '0.75rem 1rem',
-                    borderRadius: 'var(--radius-sm)',
-                    fontSize: '1rem',
-                    fontWeight: 500,
-                    color: isActive(link.path) ? 'var(--color-espresso)' : 'var(--color-taupe)',
-                    backgroundColor: isActive(link.path) ? 'var(--color-surface-warm)' : 'transparent'
+                    padding: '1.15rem 1.75rem',
+                    fontSize: '1.1rem',
+                    fontWeight: active ? 600 : 500,
+                    letterSpacing: '0.02em',
+                    color: 'var(--color-espresso)',
+                    backgroundColor: active ? 'var(--color-surface-warm)' : 'transparent',
+                    borderBottom: '1px solid var(--color-border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
                   }}
                 >
-                  {link.name}
+                  <span>{link.name}</span>
+                  {active && <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-rose)' }} />}
                 </Link>
-              ))}
-            </nav>
+              );
+            })}
+          </nav>
 
-            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <Link
-                to="/schedule"
-                className="btn btn-primary"
-                style={{ width: '100%', textAlign: 'center' }}
-              >
-                <Calendar size={16} />
-                Book Appointment
-              </Link>
-              <div style={{
-                paddingTop: '1rem',
-                borderTop: '1px solid var(--color-border)',
+          {/* Bottom Booking Action & Studio Location Details */}
+          <div
+            style={{
+              padding: '1.5rem 1.75rem',
+              marginTop: 'auto',
+              borderTop: '1px solid var(--color-border)',
+              backgroundColor: 'var(--color-surface)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1rem'
+            }}
+          >
+            <Link
+              to="/schedule"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '0.95rem',
                 fontSize: '0.85rem',
+                textAlign: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem'
+              }}
+            >
+              <Calendar size={16} />
+              Book Appointment
+            </Link>
+
+            <div
+              style={{
+                fontSize: '0.825rem',
                 color: 'var(--color-taupe)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '0.4rem'
-              }}>
-                <p style={{ margin: 0 }}>101 Easter Road, Edinburgh</p>
-                <p style={{ margin: 0 }}>+44 07733777956</p>
-                <p style={{ margin: 0 }}>Mon–Sat: 9am – 5pm</p>
-              </div>
+                gap: '0.3rem',
+                textAlign: 'center'
+              }}
+            >
+              <p style={{ margin: 0, fontWeight: 500, color: 'var(--color-espresso)' }}>101 Easter Road, Edinburgh</p>
+              <p style={{ margin: 0 }}>Mon–Sat: 9am – 5pm • +44 07733777956</p>
             </div>
           </div>
         </div>
