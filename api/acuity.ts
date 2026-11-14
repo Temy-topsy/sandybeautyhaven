@@ -209,7 +209,10 @@ export default async function handler(req: any, res: any) {
       remainingBalance
     } = booking;
 
-    if (isAcuityConfigured) {
+    // Safe Sandbox Mode: Prevent test bookings from polluting Sandy's real calendar or notifying her
+    const isLiveSyncEnabled = process.env.ACUITY_LIVE_SYNC === 'true';
+
+    if (isAcuityConfigured && isLiveSyncEnabled) {
       try {
         const authHeader = 'Basic ' + Buffer.from(`${userId}:${apiKey}`).toString('base64');
         const acuityUrl = 'https://acuityscheduling.com/api/v1/appointments';
@@ -254,12 +257,12 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    // Graceful response when running in demo/fallback mode
+    // Default Sandbox Response: Sandy is NOT contacted, her live calendar is untouched
     res.status(200).json({
       success: true,
-      source: 'studio-calendar',
-      appointmentId: `SBH-ACU-${Date.now()}`,
-      message: 'Appointment successfully registered in studio scheduling pipeline'
+      source: 'studio-sandbox',
+      appointmentId: `SBH-SIM-${Date.now()}`,
+      message: 'Booking completed in safe sandbox mode. Sandy live calendar remains untouched.'
     });
     return;
   }
