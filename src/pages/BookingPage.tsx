@@ -642,30 +642,28 @@ export const BookingPage: React.FC = () => {
                               <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
                                 £{svc.price}
                               </span>
-                              {selectedServices.length > 1 && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    removeService(svc.id);
-                                    showToast(`Removed "${svc.name}"`);
-                                  }}
-                                  title="Remove treatment"
-                                  style={{
-                                    background: 'none',
-                                    border: '1px solid var(--color-border)',
-                                    borderRadius: 'var(--radius-sm)',
-                                    padding: '0.4rem',
-                                    cursor: 'pointer',
-                                    color: 'var(--color-taupe)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    transition: 'all var(--transition-fast)'
-                                  }}
-                                >
-                                  <Trash2 size={15} />
-                                </button>
-                              )}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  removeService(svc.id);
+                                  showToast(`Removed "${svc.name}"`);
+                                }}
+                                title="Remove treatment"
+                                style={{
+                                  background: 'none',
+                                  border: '1px solid var(--color-border)',
+                                  borderRadius: 'var(--radius-sm)',
+                                  padding: '0.4rem',
+                                  cursor: 'pointer',
+                                  color: 'var(--color-taupe)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  transition: 'all var(--transition-fast)'
+                                }}
+                              >
+                                <Trash2 size={15} />
+                              </button>
                             </div>
                           </div>
                         ))}

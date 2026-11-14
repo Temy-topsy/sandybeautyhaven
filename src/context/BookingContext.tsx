@@ -74,7 +74,8 @@ const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedServices, setSelectedServices] = useState<ServiceItem[]>(() => {
-    return [SERVICES[1]]; // default to Hybrid Lash Extensions
+    // Default to empty cart so clients choose their desired treatment freely
+    return [];
   });
 
   const [selectedStaff, setSelectedStaff] = useState<string>('Sandy (Master Artist & Founder)');
@@ -112,17 +113,13 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const removeService = (serviceId: number) => {
-    setSelectedServices((prev) => {
-      if (prev.length <= 1) return prev; // keep at least 1
-      return prev.filter((s) => s.id !== serviceId);
-    });
+    setSelectedServices((prev) => prev.filter((s) => s.id !== serviceId));
   };
 
   const toggleService = (service: ServiceItem) => {
     setSelectedServices((prev) => {
       const exists = prev.some((s) => s.id === service.id);
       if (exists) {
-        if (prev.length <= 1) return prev; // keep at least 1
         return prev.filter((s) => s.id !== service.id);
       }
       return [...prev, service];
@@ -130,7 +127,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const clearServices = () => {
-    setSelectedServices([SERVICES[0]]);
+    setSelectedServices([]);
   };
 
   const isServiceSelected = (serviceId: number) => {
@@ -210,7 +207,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const resetBooking = () => {
-    setSelectedServices([SERVICES[1]]);
+    setSelectedServices([]);
     setSelectedDate(() => {
       const d = new Date();
       d.setDate(d.getDate() + 1);
