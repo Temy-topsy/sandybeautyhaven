@@ -5,6 +5,7 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
+  ArrowLeft,
   Plus,
   Check,
   Trash2,
@@ -150,7 +151,6 @@ export const BookingPage: React.FC = () => {
           if (!isCancelled && data.dates && Array.isArray(data.dates)) {
             const dateStrings = data.dates.map((d: any) => d.date);
             setLiveAvailableDates(dateStrings);
-            if (data.source) setAvailabilitySource(data.source);
             // If currently selected date is not in the live available dates, auto-select first available
             if (dateStrings.length > 0 && (!selectedDate || !dateStrings.includes(selectedDate))) {
               setSelectedDate(dateStrings[0]);
@@ -204,8 +204,6 @@ export const BookingPage: React.FC = () => {
 
   // Dynamic available appointment slots from Acuity Scheduling
   const [dynamicTimes, setDynamicTimes] = useState<string[]>([]);
-  const [isLoadingTimes, setIsLoadingTimes] = useState<boolean>(false);
-  const [availabilitySource, setAvailabilitySource] = useState<'acuity-live' | 'studio-calendar'>('studio-calendar');
 
   const defaultTimes = useMemo(() => [
     '09:30 AM',
@@ -220,7 +218,6 @@ export const BookingPage: React.FC = () => {
     let isCancelled = false;
     const fetchSlots = async () => {
       if (!selectedDate) return;
-      setIsLoadingTimes(true);
       try {
         const appointmentTypeId = selectedServices[0]?.id || 69886073;
         const res = await fetch(`/api/acuity?action=times&date=${selectedDate}&appointmentTypeID=${appointmentTypeId}`);
@@ -228,14 +225,11 @@ export const BookingPage: React.FC = () => {
           const data = await res.json();
           if (!isCancelled && data.times && Array.isArray(data.times) && data.times.length > 0) {
             setDynamicTimes(data.times.map((t: any) => t.label || t.time));
-            if (data.source) setAvailabilitySource(data.source);
             return;
           }
         }
       } catch (err) {
         console.warn('Could not fetch Acuity slots, using studio calendar slots', err);
-      } finally {
-        if (!isCancelled) setIsLoadingTimes(false);
       }
       if (!isCancelled) {
         setDynamicTimes(defaultTimes);
@@ -629,6 +623,31 @@ export const BookingPage: React.FC = () => {
             minWidth: 0,
             width: '100%'
           }}>
+
+            {/* Quick Top Back Button (iPhone & Mobile Friendly) */}
+            {step > 1 && (
+              <div style={{ marginBottom: '1.25rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--color-border-subtle)' }}>
+                <button
+                  type="button"
+                  onClick={handlePrevStep}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--color-espresso)',
+                    fontSize: '0.825rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    padding: '0.2rem 0'
+                  }}
+                >
+                  <ArrowLeft size={16} style={{ color: 'var(--color-rose)' }} />
+                  <span>Go back to {step === 2 ? 'Treatment Selection' : step === 3 ? 'Date & Time' : 'Your Details'}</span>
+                </button>
+              </div>
+            )}
 
             {/* ============================================================== */}
             {/* STEP 1: STREAMLINED SELECTION & ADD-ONS */}
@@ -1063,32 +1082,10 @@ export const BookingPage: React.FC = () => {
 
                 {/* Time Slots Grid */}
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                    <h4 style={{ fontSize: '0.925rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <Clock size={16} style={{ color: 'var(--color-rose)' }} />
-                      Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                    </h4>
-                    <span style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      fontSize: '0.725rem',
-                      color: 'var(--color-taupe)',
-                      backgroundColor: 'var(--color-surface)',
-                      padding: '0.2rem 0.55rem',
-                      borderRadius: 'var(--radius-full)',
-                      border: '1px solid var(--color-border)'
-                    }}>
-                      <span style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        backgroundColor: '#2E7D32',
-                        display: 'inline-block'
-                      }} />
-                      {isLoadingTimes ? 'Syncing calendar...' : availabilitySource === 'acuity-live' ? 'Acuity Calendar Synced' : 'Live Studio Availability'}
-                    </span>
-                  </div>
+                  <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Clock size={16} style={{ color: 'var(--color-rose)' }} />
+                    Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                  </h4>
 
                   {timeSlots.length === 0 ? (
                     <div style={{
@@ -1475,9 +1472,6 @@ export const BookingPage: React.FC = () => {
                       }}>
                         Choose What To Pay
                       </h3>
-                      <span style={{ fontSize: '0.725rem', color: 'var(--color-taupe)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600 }}>
-                        Tap Option to Select
-                      </span>
                     </div>
 
                     <div style={{

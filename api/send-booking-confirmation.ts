@@ -271,42 +271,88 @@ export default async function handler(req: any, res: any) {
       return;
     }
 
-    // Determine destination email:
-    // With onboarding@resend.dev, Resend permits sending ONLY to the verified account owner (temy.topsy12@gmail.com).
-    // Once a custom domain is verified on Resend, it sends directly to clientEmail.
-    const isUsingOnboarding = resendFromEmail.includes('onboarding@resend.dev');
-    const clientRecipient = isUsingOnboarding ? 'temy.topsy12@gmail.com' : clientEmail;
-    const studioRecipient = isUsingOnboarding ? 'temy.topsy12@gmail.com' : studioNotificationEmail;
+    // 1. Send Client Confirmation Email
+    // Attempt sending directly to the client's entered email (e.g. temytopsyebenezerfresh@gmail.com).
+    // Note: If using Resend's free 'onboarding@resend.dev', Resend strictly permits delivery ONLY to
+    // the registered account owner (temy.topsy12@gmail.com). As soon as a custom domain is verified
+    // on Resend, it delivers directly to the client's email inbox without falling back.
+    let clientEmailResult: any = null;
+    let clientRecipientUsed = clientEmail;
 
-    // Send Client Confirmation Email
-    const clientSubject = isUsingOnboarding
-      ? `[Demo Booking Confirmation for ${clientName}] Sandy Beauty Haven - ${serviceName}`
-      : `Booking Confirmed: ${serviceName} at Sandy Beauty Haven`;
+    try {
+      clientEmailResult = await resend.emails.send({
+        from: `Sandy Beauty Haven <${resendFromEmail}>`,
+        to: [clientEmail],
+        subject: `Booking Confirmed: ${serviceName} at Sandy Beauty Haven`,
+        html: generateClientEmailHtml(booking)
+      });
 
-    const clientEmailResult = await resend.emails.send({
-      from: `Sandy Beauty Haven <${resendFromEmail}>`,
-      to: [clientRecipient],
-      subject: clientSubject,
-      html: generateClientEmailHtml(booking)
-    });
+      // Handle Resend onboarding sandbox rejection gracefully
+      if (clientEmailResult?.error && (clientEmailResult.error.statusCode === 403 || clientEmailResult.error.message?.includes('testing emails'))) {
+        console.warn(`Resend sandbox mode restricted delivery to ${clientEmail}. Redirecting to registered account owner.`);
+        clientRecipientUsed = 'temy.topsy12@gmail.com';
+        clientEmailResult = await resend.emails.send({
+          from: `Sandy Beauty Haven <${resendFromEmail}>`,
+          to: ['temy.topsy12@gmail.com'],
+          subject: `[Client Confirmation for ${clientName} (${clientEmail})] Sandy Beauty Haven - ${serviceName}`,
+          html: generateClientEmailHtml(booking)
+        });
+      }
+    } catch (sendErr: any) {
+      if (sendErr?.statusCode === 403 || sendErr?.message?.includes('testing emails')) {
+        clientRecipientUsed = 'temy.topsy12@gmail.com';
+        clientEmailResult = await resend.emails.send({
+          from: `Sandy Beauty Haven <${resendFromEmail}>`,
+          to: ['temy.topsy12@gmail.com'],
+          subject: `[Client Confirmation for ${clientName} (${clientEmail})] Sandy Beauty Haven - ${serviceName}`,
+          html: generateClientEmailHtml(booking)
+        });
+      } else {
+        throw sendErr;
+      }
+    }
 
-    // Send Studio Owner Alert Email
-    const studioSubject = isUsingOnboarding
-      ? `[Studio Alert for Sandy] 🛎️ New Booking: ${clientName} - ${serviceName} (${date} at ${time})`
-      : `🛎️ New Booking Alert: ${clientName} - ${serviceName} (${date} at ${time})`;
+    // 2. Send Studio Owner Alert Email
+    let studioAlertResult: any = null;
+    let studioRecipientUsed = studioNotificationEmail;
 
-    const studioAlertResult = await resend.emails.send({
-      from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
-      to: [studioRecipient],
-      subject: studioSubject,
-      html: generateStudioAlertHtml(booking)
-    });
+    try {
+      studioAlertResult = await resend.emails.send({
+        from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
+        to: [studioNotificationEmail],
+        subject: `🛎️ New Booking Alert: ${clientName} - ${serviceName} (${date} at ${time})`,
+        html: generateStudioAlertHtml(booking)
+      });
+
+      if (studioAlertResult?.error && (studioAlertResult.error.statusCode === 403 || studioAlertResult.error.message?.includes('testing emails'))) {
+        studioRecipientUsed = 'temy.topsy12@gmail.com';
+        studioAlertResult = await resend.emails.send({
+          from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
+          to: ['temy.topsy12@gmail.com'],
+          subject: `[Studio Alert for Sandy] 🛎️ New Booking: ${clientName} - ${serviceName} (${date} at ${time})`,
+          html: generateStudioAlertHtml(booking)
+        });
+      }
+    } catch (studioErr: any) {
+      if (studioErr?.statusCode === 403 || studioErr?.message?.includes('testing emails')) {
+        studioRecipientUsed = 'temy.topsy12@gmail.com';
+        studioAlertResult = await resend.emails.send({
+          from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
+          to: ['temy.topsy12@gmail.com'],
+          subject: `[Studio Alert for Sandy] 🛎️ New Booking: ${clientName} - ${serviceName} (${date} at ${time})`,
+          html: generateStudioAlertHtml(booking)
+        });
+      } else {
+        throw studioErr;
+      }
+    }
 
     res.status(200).json({
       success: true,
-      clientEmailId: clientEmailResult.data?.id,
-      studioAlertId: studioAlertResult.data?.id,
-      recipientUsed: clientRecipient
+      clientEmailId: clientEmailResult?.data?.id,
+      studioAlertId: studioAlertResult?.data?.id,
+      clientRecipientUsed,
+      studioRecipientUsed
     });
   } catch (err: any) {
     console.error('Resend email error:', err);
