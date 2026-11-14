@@ -683,37 +683,44 @@ export const BookingPage: React.FC = () => {
                           <div
                             key={svc.id}
                             style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              padding: '1rem 1.15rem',
+                              padding: '1rem',
                               backgroundColor: 'var(--color-blush-light)',
                               border: '1.5px solid var(--color-rose)',
                               borderRadius: 'var(--radius-sm)',
-                              gap: '1rem'
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: '0.65rem'
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
                               <img
                                 src={svc.image}
                                 alt={svc.name}
-                                style={{ width: '52px', height: '52px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
+                                style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
                               />
-                              <div style={{ minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.25rem' }}>
-                                  <span style={{ fontWeight: 700, fontSize: '0.975rem', color: 'var(--color-espresso)' }}>{svc.name}</span>
-                                  <span className="badge" style={{ fontSize: '0.675rem' }}>{svc.category}</span>
+                              <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
+                                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-espresso)', lineHeight: 1.3 }}>
+                                    {svc.name}
+                                  </span>
+                                  <span className="badge" style={{ fontSize: '0.65rem', flexShrink: 0, padding: '0.2rem 0.55rem' }}>
+                                    {svc.category}
+                                  </span>
                                 </div>
-                                <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                                  <span>{svc.duration} mins</span>
-                                  <span>•</span>
-                                  <span>Deposit: £{svc.deposit}</span>
+                                <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginTop: '0.2rem' }}>
+                                  {svc.duration} mins • Deposit: £{svc.deposit}
                                 </div>
                               </div>
                             </div>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
-                              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                            <div style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              paddingTop: '0.55rem',
+                              borderTop: '1px solid rgba(163, 111, 114, 0.25)'
+                            }}>
+                              <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.3rem', fontWeight: 700, color: 'var(--color-espresso)' }}>
                                 £{svc.price}
                               </span>
                               <button
@@ -727,16 +734,19 @@ export const BookingPage: React.FC = () => {
                                   background: 'none',
                                   border: '1px solid var(--color-border)',
                                   borderRadius: 'var(--radius-sm)',
-                                  padding: '0.4rem',
+                                  padding: '0.4rem 0.65rem',
                                   cursor: 'pointer',
-                                  color: 'var(--color-taupe)',
+                                  color: 'var(--color-espresso)',
                                   display: 'flex',
                                   alignItems: 'center',
-                                  justifyContent: 'center',
+                                  gap: '0.35rem',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 500,
                                   transition: 'all var(--transition-fast)'
                                 }}
                               >
-                                <Trash2 size={15} />
+                                <Trash2 size={13} style={{ color: 'var(--color-error)' }} />
+                                <span>Remove</span>
                               </button>
                             </div>
                           </div>
@@ -772,7 +782,16 @@ export const BookingPage: React.FC = () => {
                           type="button"
                           onClick={handleNextStep}
                           className="btn btn-primary"
-                          style={{ width: '100%', padding: '0.9rem', fontSize: '0.95rem', letterSpacing: '0.04em' }}
+                          style={{
+                            width: '100%',
+                            padding: '0.95rem 1rem',
+                            fontSize: '0.875rem',
+                            whiteSpace: 'normal',
+                            textAlign: 'center',
+                            lineHeight: 1.35,
+                            letterSpacing: '0.04em',
+                            boxSizing: 'border-box'
+                          }}
                         >
                           Next: Choose Date & Time ({selectedServices.length}) →
                         </button>
@@ -822,57 +841,59 @@ export const BookingPage: React.FC = () => {
                       </div>
 
                       {/* Additional Services List (Compact Add-on Cards) */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '380px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '420px', overflowY: 'auto', paddingRight: '0.25rem' }}>
                         {displayedServices
                           .filter((s) => !isServiceSelected(s.id))
                           .map((s) => (
                             <div
                               key={s.id}
                               style={{
-                                padding: '0.85rem 1rem',
+                                padding: '1rem',
                                 borderRadius: 'var(--radius-sm)',
                                 border: '1px solid var(--color-border)',
                                 backgroundColor: 'var(--color-surface)',
                                 display: 'flex',
-                                justifyContent: 'space-between',
-                                alignItems: 'center',
-                                gap: '0.75rem'
+                                flexDirection: 'column',
+                                gap: '0.65rem'
                               }}
                             >
-                              <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.2rem', flexWrap: 'wrap' }}>
-                                  <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--color-espresso)' }}>{s.name}</span>
-                                  <span className="badge" style={{ fontSize: '0.65rem' }}>{s.category}</span>
-                                </div>
-                                <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)' }}>
-                                  {s.duration} mins • Deposit: £{s.deposit}
-                                </div>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
+                                <span style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--color-espresso)', lineHeight: 1.35 }}>
+                                  {s.name}
+                                </span>
+                                <span className="badge" style={{ fontSize: '0.65rem', flexShrink: 0, padding: '0.2rem 0.55rem' }}>
+                                  {s.category}
+                                </span>
                               </div>
-
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexShrink: 0 }}>
-                                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.05rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
+                              <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)' }}>
+                                {s.duration} mins • Deposit: £{s.deposit}
+                              </div>
+                              <div style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                paddingTop: '0.55rem',
+                                borderTop: '1px solid var(--color-border)'
+                              }}>
+                                <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--color-espresso)' }}>
                                   £{s.price}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={() => handleToggleService(s)}
+                                  className="btn btn-secondary"
                                   style={{
-                                    padding: '0.4rem 0.75rem',
+                                    padding: '0.45rem 0.85rem',
                                     fontSize: '0.75rem',
                                     fontWeight: 600,
                                     borderRadius: 'var(--radius-sm)',
-                                    border: '1px solid var(--color-espresso)',
-                                    backgroundColor: 'var(--color-surface)',
-                                    color: 'var(--color-espresso)',
-                                    cursor: 'pointer',
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    gap: '0.25rem',
-                                    transition: 'all var(--transition-fast)'
+                                    gap: '0.35rem'
                                   }}
                                 >
                                   <Plus size={13} />
-                                  Add
+                                  Add Treatment
                                 </button>
                               </div>
                             </div>
@@ -925,41 +946,51 @@ export const BookingPage: React.FC = () => {
                     </div>
 
                     {/* Services List */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', maxHeight: '520px', overflowY: 'auto', paddingRight: '0.35rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', maxHeight: '560px', overflowY: 'auto', paddingRight: '0.35rem' }}>
                       {displayedServices.map((s) => (
                         <div
                           key={s.id}
                           onClick={() => handleToggleService(s)}
                           style={{
-                            padding: '1.05rem 1.25rem',
+                            padding: '1.15rem',
                             borderRadius: 'var(--radius-sm)',
                             border: '1px solid var(--color-border)',
                             backgroundColor: 'var(--color-surface)',
                             cursor: 'pointer',
                             display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            gap: '1rem',
+                            flexDirection: 'column',
+                            gap: '0.75rem',
                             transition: 'all var(--transition-fast)'
                           }}
                         >
-                          <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
-                              <span style={{ fontWeight: 600, fontSize: '0.925rem', color: 'var(--color-espresso)' }}>{s.name}</span>
-                              <span className="badge" style={{ fontSize: '0.675rem' }}>{s.category}</span>
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
-                              <span>{s.duration} mins</span>
-                              <span>•</span>
-                              <span>Deposit: £{s.deposit}</span>
-                            </div>
+                          {/* Row 1: Title and Category Badge */}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem' }}>
+                            <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-espresso)', lineHeight: 1.35 }}>
+                              {s.name}
+                            </span>
+                            <span className="badge" style={{ fontSize: '0.65rem', flexShrink: 0, padding: '0.25rem 0.6rem' }}>
+                              {s.category}
+                            </span>
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                                £{s.price}
-                              </div>
+                          {/* Row 2: Duration and Deposit info */}
+                          <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <span>{s.duration} mins</span>
+                            <span>•</span>
+                            <span>Deposit: £{s.deposit}</span>
+                          </div>
+
+                          {/* Row 3: Dedicated Action Bar (Price & Select Button) */}
+                          <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            paddingTop: '0.65rem',
+                            borderTop: '1px solid var(--color-border)',
+                            marginTop: '0.15rem'
+                          }}>
+                            <div style={{ fontFamily: 'var(--font-serif)', fontSize: '1.35rem', fontWeight: 700, color: 'var(--color-espresso)' }}>
+                              £{s.price}
                             </div>
                             <button
                               type="button"
@@ -968,7 +999,12 @@ export const BookingPage: React.FC = () => {
                                 handleToggleService(s);
                               }}
                               className="btn btn-primary"
-                              style={{ padding: '0.45rem 0.95rem', fontSize: '0.75rem' }}
+                              style={{
+                                padding: '0.55rem 1.15rem',
+                                fontSize: '0.775rem',
+                                letterSpacing: '0.04em',
+                                whiteSpace: 'nowrap'
+                              }}
                             >
                               Select Treatment
                             </button>

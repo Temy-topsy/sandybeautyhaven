@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Elements,
   PaymentElement,
@@ -27,12 +27,18 @@ const CheckoutForm: React.FC<{
   const stripe = useStripe();
   const elements = useElements();
   const [submitting, setSubmitting] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const paymentElementOptions = useMemo(() => ({
+    layout: 'accordion' as const
+  }), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements) {
+    if (!stripe || !elements || !isReady) {
+      setErrorMessage('Please wait for payment fields to finish loading before confirming.');
       return;
     }
 
@@ -69,15 +75,52 @@ const CheckoutForm: React.FC<{
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-      {/* Stripe Interactive Payment Element (Card, Apple Pay, Google Pay) */}
-      <div style={{ marginBottom: '1.5rem', minHeight: '180px' }}>
+      {/* Stripe Interactive Payment Element with Dedicated Loading Skeleton */}
+      <div style={{ position: 'relative', minHeight: '160px', marginBottom: '1.25rem' }}>
+        {!isReady && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#FFFFFF',
+              zIndex: 2,
+              gap: '0.65rem',
+              padding: '1.5rem',
+              textAlign: 'center'
+            }}
+          >
+            <div
+              style={{
+                width: '24px',
+                height: '24px',
+                border: '2px solid var(--color-border)',
+                borderTopColor: 'var(--color-rose)',
+                borderRadius: '50%',
+                animation: 'spin 0.75s linear infinite'
+              }}
+            />
+            <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
+              Loading secure card inputs...
+            </span>
+          </div>
+        )}
+
         <PaymentElement
-          options={{
-            layout: 'tabs',
-            wallets: {
-              applePay: 'auto',
-              googlePay: 'auto'
-            }
+          options={paymentElementOptions}
+          onReady={() => setIsReady(true)}
+          onLoadError={(event: any) => {
+            console.error('PaymentElement load error:', event);
+            setErrorMessage(
+              event?.error?.message ||
+              'Unable to load card payment fields. Please check your network connection.'
+            );
           }}
         />
       </div>
@@ -118,26 +161,32 @@ const CheckoutForm: React.FC<{
         <span>256-bit TLS encrypted • Bank-grade SCA 3D-secure checkout</span>
       </div>
 
-      {/* Submit CTA */}
+      {/* Submit CTA - Responsive and strictly guarded */}
       <button
         type="submit"
-        disabled={!stripe || submitting}
+        disabled={!stripe || !elements || !isReady || submitting}
         className="btn btn-rose"
         style={{
           width: '100%',
-          padding: '1.1rem 1.5rem',
-          fontSize: '0.925rem',
+          padding: '0.95rem 1.25rem',
+          fontSize: '0.875rem',
+          whiteSpace: 'normal',
+          textAlign: 'center',
+          lineHeight: 1.35,
           letterSpacing: '0.04em',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '0.65rem',
-          cursor: !stripe || submitting ? 'not-allowed' : 'pointer',
-          opacity: submitting ? 0.75 : 1,
-          borderRadius: 'var(--radius-sm)'
+          cursor: !stripe || !elements || !isReady || submitting ? 'not-allowed' : 'pointer',
+          opacity: !isReady ? 0.65 : submitting ? 0.75 : 1,
+          borderRadius: 'var(--radius-sm)',
+          boxSizing: 'border-box'
         }}
       >
-        {submitting ? (
+        {!isReady ? (
+          <span>Loading Payment Methods...</span>
+        ) : submitting ? (
           <>
             <span
               style={{
@@ -154,13 +203,13 @@ const CheckoutForm: React.FC<{
           </>
         ) : (
           <>
-            <ShieldCheck size={16} />
+            <ShieldCheck size={16} style={{ flexShrink: 0 }} />
             <span>
               {paymentChoice === 'full'
                 ? `Pay £${amount.toFixed(2)} in Full & Confirm`
                 : `Pay £${amount.toFixed(2)} Deposit & Secure Slot`}
             </span>
-            <ArrowRight size={15} />
+            <ArrowRight size={15} style={{ flexShrink: 0 }} />
           </>
         )}
       </button>
@@ -175,22 +224,7 @@ export const StripePaymentWrapper: React.FC<StripePaymentFormProps> = ({
   onSuccess,
   onError
 }) => {
-  if (!stripePromise) {
-    return (
-      <div style={{
-        padding: '1.5rem',
-        backgroundColor: 'var(--color-warning-bg)',
-        border: '1px solid var(--color-warning)',
-        borderRadius: 'var(--radius-sm)',
-        color: 'var(--color-warning)',
-        fontSize: '0.85rem'
-      }}>
-        <strong>Stripe Setup Notice:</strong> Publishable key is missing in environment variables.
-      </div>
-    );
-  }
-
-  const options: StripeElementsOptions = {
+  const options = useMemo<StripeElementsOptions>(() => ({
     clientSecret,
     appearance: {
       theme: 'stripe',
@@ -202,40 +236,24 @@ export const StripePaymentWrapper: React.FC<StripePaymentFormProps> = ({
         fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         borderRadius: '3px',
         spacingUnit: '4.5px'
-      },
-      rules: {
-        '.Input': {
-          border: '1px solid #E8E0D7',
-          boxShadow: 'none',
-          padding: '11px 14px',
-          fontSize: '14px',
-          transition: 'border-color 0.18s ease'
-        },
-        '.Input:focus': {
-          borderColor: '#A36F72',
-          boxShadow: '0 0 0 1px #A36F72'
-        },
-        '.Label': {
-          fontSize: '12px',
-          fontWeight: '500',
-          textTransform: 'uppercase',
-          letterSpacing: '0.06em',
-          color: '#70645F',
-          marginBottom: '6px'
-        },
-        '.Tab': {
-          border: '1px solid #E8E0D7',
-          backgroundColor: '#FAF7F2',
-          color: '#221B1A'
-        },
-        '.Tab--selected': {
-          border: '1px solid #A36F72',
-          backgroundColor: '#FFFFFF',
-          color: '#A36F72'
-        }
       }
     }
-  };
+  }), [clientSecret]);
+
+  if (!stripePromise) {
+    return (
+      <div style={{
+        padding: '1.5rem',
+        backgroundColor: 'var(--color-warning-bg)',
+        border: '1px solid var(--color-warning)',
+        borderRadius: 'var(--radius-sm)',
+        color: 'var(--color-warning)',
+        fontSize: '0.85rem'
+      }}>
+        <strong>Stripe Setup Notice:</strong> Publishable key is missing.
+      </div>
+    );
+  }
 
   return (
     <Elements stripe={stripePromise} options={options} key={clientSecret}>
