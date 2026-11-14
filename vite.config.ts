@@ -8,7 +8,7 @@ function apiDevMiddleware() {
       server.middlewares.use(async (req: any, res: any, next: any) => {
         const url = req.url?.split('?')[0];
 
-        if (url === '/api/create-payment-intent' || url === '/api/send-booking-confirmation') {
+        if (url === '/api/create-payment-intent' || url === '/api/send-booking-confirmation' || url === '/api/acuity') {
           // Populate env vars into process.env so API handlers can access them
           const env = loadEnv('development', process.cwd(), '');
           for (const key of Object.keys(env)) {
@@ -28,11 +28,18 @@ function apiDevMiddleware() {
               // ignore json parse error
             }
 
+            const parsedUrl = new URL(req.url, 'http://localhost');
+            const queryObj: Record<string, string> = {};
+            parsedUrl.searchParams.forEach((v, k) => {
+              queryObj[k] = v;
+            });
+
             const mockReq = {
               method: req.method,
               headers: req.headers,
               body: parsedBody,
-              query: {}
+              query: queryObj,
+              url: req.url
             };
 
             const mockRes = {
@@ -59,6 +66,9 @@ function apiDevMiddleware() {
                 await handler(mockReq, mockRes);
               } else if (url === '/api/send-booking-confirmation') {
                 const handler = (await import('./api/send-booking-confirmation.ts')).default;
+                await handler(mockReq, mockRes);
+              } else if (url === '/api/acuity') {
+                const handler = (await import('./api/acuity.ts')).default;
                 await handler(mockReq, mockRes);
               }
             } catch (err: any) {

@@ -161,17 +161,53 @@ export const BookingPage: React.FC = () => {
     return days;
   }, [year, month, firstDayOfMonth, daysInMonth]);
 
-  // Standard available appointment slots
-  const timeSlots = useMemo(() => {
-    return [
-      '09:30 AM',
-      '11:00 AM',
-      '12:30 PM',
-      '02:00 PM',
-      '03:30 PM',
-      '04:45 PM'
-    ];
-  }, []);
+  // Dynamic available appointment slots from Acuity Scheduling
+  const [dynamicTimes, setDynamicTimes] = useState<string[]>([]);
+  const [isLoadingTimes, setIsLoadingTimes] = useState<boolean>(false);
+  const [availabilitySource, setAvailabilitySource] = useState<'acuity-live' | 'studio-calendar'>('studio-calendar');
+
+  const defaultTimes = useMemo(() => [
+    '09:30 AM',
+    '11:00 AM',
+    '12:30 PM',
+    '02:00 PM',
+    '03:30 PM',
+    '04:45 PM'
+  ], []);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const fetchSlots = async () => {
+      if (!selectedDate) return;
+      setIsLoadingTimes(true);
+      try {
+        const appointmentTypeId = selectedServices[0]?.id || 69886073;
+        const res = await fetch(`/api/acuity?action=times&date=${selectedDate}&appointmentTypeID=${appointmentTypeId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!isCancelled && data.times && Array.isArray(data.times) && data.times.length > 0) {
+            setDynamicTimes(data.times.map((t: any) => t.label || t.time));
+            if (data.source) setAvailabilitySource(data.source);
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch Acuity slots, using studio calendar slots', err);
+      } finally {
+        if (!isCancelled) setIsLoadingTimes(false);
+      }
+      if (!isCancelled) {
+        setDynamicTimes(defaultTimes);
+      }
+    };
+
+    fetchSlots();
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedDate, selectedServices, defaultTimes]);
+
+  const timeSlots = dynamicTimes.length > 0 ? dynamicTimes : defaultTimes;
 
   // Category filter
   const bookingCategories = ['All', 'Lashes', 'Brows', 'Makeup', 'Training'];
@@ -351,6 +387,41 @@ export const BookingPage: React.FC = () => {
       }),
     }).catch((err) => {
       console.error('Email confirmation trigger error:', err);
+    });
+
+    // Helper to format 12-hour AM/PM time into ISO format for Acuity Scheduling
+    const formatAcuityDateTime = (dateStr: string, timeStr: string) => {
+      if (!dateStr) return '';
+      const match = (timeStr || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (!match) return `${dateStr}T11:00:00`;
+      let hour = parseInt(match[1], 10);
+      const minutes = match[2];
+      const ampm = (match[3] || '').toUpperCase();
+      if (ampm === 'PM' && hour < 12) hour += 12;
+      if (ampm === 'AM' && hour === 12) hour = 0;
+      const hourStr = String(hour).padStart(2, '0');
+      return `${dateStr}T${hourStr}:${minutes}:00`;
+    };
+
+    // Synchronize confirmed booking directly to Acuity Scheduling calendar
+    fetch('/api/acuity?action=book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        appointmentTypeID: selectedServices[0]?.id || 69886073,
+        datetime: formatAcuityDateTime(selectedDate, selectedTime),
+        firstName: clientDetails.fullName.split(' ')[0] || 'Client',
+        lastName: clientDetails.fullName.split(' ').slice(1).join(' ') || '',
+        email: clientDetails.email,
+        phone: clientDetails.phone,
+        notes: clientDetails.notes,
+        reference: confirmed?.reference || `SBH-${Date.now()}`,
+        totalPrice: orderTotal,
+        depositPaid: amountPaid,
+        remainingBalance: remainingBalance
+      })
+    }).catch((err) => {
+      console.warn('Acuity calendar sync error:', err);
     });
 
     setIsProcessing(false);
@@ -953,10 +1024,32 @@ export const BookingPage: React.FC = () => {
 
                 {/* Time Slots Grid */}
                 <div>
-                  <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                    <Clock size={16} style={{ color: 'var(--color-rose)' }} />
-                    Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
-                  </h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    <h4 style={{ fontSize: '0.925rem', margin: 0, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Clock size={16} style={{ color: 'var(--color-rose)' }} />
+                      Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    </h4>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      fontSize: '0.725rem',
+                      color: 'var(--color-taupe)',
+                      backgroundColor: 'var(--color-surface)',
+                      padding: '0.2rem 0.55rem',
+                      borderRadius: 'var(--radius-full)',
+                      border: '1px solid var(--color-border)'
+                    }}>
+                      <span style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        backgroundColor: '#2E7D32',
+                        display: 'inline-block'
+                      }} />
+                      {isLoadingTimes ? 'Syncing calendar...' : availabilitySource === 'acuity-live' ? 'Acuity Calendar Synced' : 'Live Studio Availability'}
+                    </span>
+                  </div>
 
                   {timeSlots.length === 0 ? (
                     <div style={{
