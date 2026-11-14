@@ -30,7 +30,16 @@ export default async function handler(req: any, res: any) {
   const stripe = new Stripe(stripeSecretKey);
 
   try {
-    const { amount, currency = 'gbp', bookingDetails, customer } = req.body || {};
+    let payload = req.body || {};
+    if (typeof payload === 'string') {
+      try {
+        payload = JSON.parse(payload);
+      } catch {
+        // payload remains raw
+      }
+    }
+
+    const { amount, currency = 'gbp', bookingDetails, customer } = payload;
 
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {

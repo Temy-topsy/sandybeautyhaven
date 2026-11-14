@@ -184,7 +184,14 @@ export default async function handler(req: any, res: any) {
 
   // 3. Book Live Appointment in Acuity (after Stripe payment)
   if (action === 'book' || (req.method === 'POST' && !action)) {
-    const booking = req.body || {};
+    let booking = req.body || {};
+    if (typeof booking === 'string') {
+      try {
+        booking = JSON.parse(booking);
+      } catch {
+        // keep as is
+      }
+    }
     const {
       appointmentTypeID: bookedTypeId,
       datetime,

@@ -267,7 +267,14 @@ export default async function handler(req: any, res: any) {
   const resend = new Resend(resendApiKey);
 
   try {
-    const booking = req.body || {};
+    let booking = req.body || {};
+    if (typeof booking === 'string') {
+      try {
+        booking = JSON.parse(booking);
+      } catch {
+        // keep as is
+      }
+    }
     const { clientEmail, clientName, serviceName, date, time } = booking;
 
     if (!clientEmail || !clientName) {

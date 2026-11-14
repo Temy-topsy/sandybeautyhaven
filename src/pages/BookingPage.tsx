@@ -332,6 +332,7 @@ export const BookingPage: React.FC = () => {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
+  const [retryNonce, setRetryNonce] = useState(0);
 
   const amountToCharge = paymentChoice === 'full'
     ? orderTotal
@@ -341,12 +342,16 @@ export const BookingPage: React.FC = () => {
     if (step !== 4) return;
 
     let isMounted = true;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
+
     setStripeLoading(true);
     setStripeError(null);
 
     fetch('/api/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         amount: amountToCharge,
         currency: 'gbp',
@@ -366,6 +371,7 @@ export const BookingPage: React.FC = () => {
       }),
     })
       .then(async (res) => {
+        clearTimeout(timeoutId);
         const data = await res.json();
         if (!res.ok) {
           throw new Error(data.error || 'Failed to initialize payment session');
@@ -376,17 +382,23 @@ export const BookingPage: React.FC = () => {
         }
       })
       .catch((err) => {
+        clearTimeout(timeoutId);
         if (isMounted) {
           console.error('Stripe init error:', err);
-          setStripeError(err.message);
+          const errorMsg = err.name === 'AbortError'
+            ? 'Connection timed out while loading Stripe checkout. Please check your network and tap retry.'
+            : (err.message || 'Unable to connect to Stripe checkout.');
+          setStripeError(errorMsg);
           setStripeLoading(false);
         }
       });
 
     return () => {
       isMounted = false;
+      clearTimeout(timeoutId);
+      controller.abort();
     };
-  }, [step, paymentChoice, tipAmount, orderTotal, depositNowDisplay, remainingLaterDisplay]);
+  }, [step, paymentChoice, tipAmount, orderTotal, depositNowDisplay, remainingLaterDisplay, retryNonce]);
 
   const handleStripeSuccess = (paymentIntentId: string) => {
     setIsProcessing(true);
@@ -1938,7 +1950,7 @@ export const BookingPage: React.FC = () => {
                               type="button"
                               onClick={() => {
                                 setStripeError(null);
-                                setStripeLoading(true);
+                                setRetryNonce((prev) => prev + 1);
                               }}
                               className="btn btn-secondary"
                               style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
