@@ -15,15 +15,39 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
+  let stripeSecretKey = (process.env.STRIPE_SECRET_KEY || '').trim();
+  // Sanitize: strip quotes, spaces, and non-printable unicode characters
+  stripeSecretKey = stripeSecretKey.replace(/^["']|["']$/g, '').trim();
+  stripeSecretKey = stripeSecretKey.replace(/[^\x20-\x7E]/g, '').trim();
+
+  if (req.method === 'GET') {
+    const isConfigured = Boolean(stripeSecretKey && (stripeSecretKey.startsWith('sk_test_') || stripeSecretKey.startsWith('sk_live_')));
+    res.status(200).json({
+      status: 'ok',
+      endpoint: '/api/create-payment-intent',
+      stripeConfigured: isConfigured,
+      keyPrefix: stripeSecretKey ? `${stripeSecretKey.slice(0, 8)}...` : 'MISSING',
+      message: isConfigured
+        ? 'Stripe secret key is properly configured.'
+        : 'STRIPE_SECRET_KEY is missing or invalid in Vercel. It must start with sk_test_ or sk_live_.'
+    });
+    return;
+  }
+
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method Not Allowed' });
     return;
   }
 
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-
   if (!stripeSecretKey) {
-    res.status(500).json({ error: 'STRIPE_SECRET_KEY environment variable is not configured.' });
+    res.status(500).json({ error: 'STRIPE_SECRET_KEY environment variable is not configured in Vercel.' });
+    return;
+  }
+
+  if (!stripeSecretKey.startsWith('sk_test_') && !stripeSecretKey.startsWith('sk_live_')) {
+    res.status(500).json({
+      error: `Invalid STRIPE_SECRET_KEY format in Vercel. The key must start with 'sk_test_' or 'sk_live_', but starts with '${stripeSecretKey.slice(0, 6)}...'. Please check Vercel Settings → Environment Variables.`
+    });
     return;
   }
 
