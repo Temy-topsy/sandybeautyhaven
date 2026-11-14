@@ -253,7 +253,7 @@ export default async function handler(req: any, res: any) {
 
   const resendApiKey = process.env.RESEND_API_KEY || '';
   const resendFromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-  const studioNotificationEmail = process.env.STUDIO_NOTIFICATION_EMAIL || 'temy.topsy12@gmail.com';
+  const studioNotificationEmail = process.env.STUDIO_NOTIFICATION_EMAIL || 'temytopsyebenezerfresh@gmail.com';
 
   if (!resendApiKey) {
     res.status(500).json({ error: 'RESEND_API_KEY environment variable is not configured.' });
@@ -291,10 +291,14 @@ export default async function handler(req: any, res: any) {
     });
 
     // Send Studio Owner Alert Email
+    const studioSubject = isUsingOnboarding
+      ? `[Studio Alert for Sandy (${studioNotificationEmail})] 🛎️ New Booking: ${clientName} - ${serviceName}`
+      : `🛎️ New Booking Alert: ${clientName} - ${serviceName} (${date} at ${time})`;
+
     const studioAlertResult = await resend.emails.send({
       from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
       to: [studioRecipient],
-      subject: `🛎️ New Booking Alert: ${clientName} - ${serviceName} (${date} at ${time})`,
+      subject: studioSubject,
       html: generateStudioAlertHtml(booking)
     });
 
