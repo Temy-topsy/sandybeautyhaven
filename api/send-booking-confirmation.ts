@@ -121,12 +121,16 @@ function generateClientEmailHtml(booking: any) {
                 </ul>
               </div>
 
-              <!-- Action Button: Directions -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 30px;">
+              <!-- Action Buttons: 1-Click View Booking & Directions -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 25px;">
                 <tr>
                   <td align="center">
-                    <a href="https://maps.google.com/?q=101+Easter+Road+Edinburgh+EH7+5PP" target="_blank" style="display: inline-block; background-color: #A36F72; color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 3px; letter-spacing: 0.04em;">
-                      Get Directions to 101 Easter Road →
+                    <a href="https://sandybeautyhaven.com/my-booking?ref=${reference}" target="_blank" style="display: inline-block; background-color: #221B1A; color: #FAF7F2; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 3px; letter-spacing: 0.04em; margin-bottom: 8px;">
+                      View &amp; Manage Your Appointment (1-Click) →
+                    </a>
+                    <br>
+                    <a href="https://maps.google.com/?q=101+Easter+Road+Edinburgh+EH7+5PP" target="_blank" style="display: inline-block; color: #A36F72; font-size: 12px; font-weight: 600; text-decoration: none; padding: 6px 12px;">
+                      📍 Get Directions to 101 Easter Road
                     </a>
                   </td>
                 </tr>

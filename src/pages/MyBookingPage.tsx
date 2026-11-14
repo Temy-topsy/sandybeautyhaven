@@ -25,7 +25,7 @@ export const MyBookingPage: React.FC = () => {
   const [selectedBooking, setSelectedBooking] = useState<ConfirmedBooking | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Load saved bookings from device
+  // Load saved bookings from device storage
   const savedBookings = useMemo<ConfirmedBooking[]>(() => {
     if (typeof window === 'undefined') return [];
     try {
@@ -39,16 +39,15 @@ export const MyBookingPage: React.FC = () => {
     return confirmedBooking ? [confirmedBooking] : [];
   }, [confirmedBooking]);
 
+  // Only auto-lookup if a reference parameter is passed in the URL (e.g. 1-click link from confirmation email)
   useEffect(() => {
     if (urlRef) {
       handleLookup(urlRef);
-    } else if (savedBookings.length > 0 && !selectedBooking) {
-      setSelectedBooking(savedBookings[0]);
     }
-  }, [urlRef, savedBookings]);
+  }, [urlRef]);
 
   const handleLookup = (query: string) => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim().toUpperCase();
     setSearched(true);
 
     if (!q) {
@@ -56,19 +55,19 @@ export const MyBookingPage: React.FC = () => {
       return;
     }
 
+    const cleanQ = q.replace(/\s/g, '');
+
+    // Strictly match by unique reference code
     const match = savedBookings.find(
-      (b) =>
-        b.reference.toLowerCase() === q ||
-        b.reference.toLowerCase().includes(q) ||
-        b.client?.email?.toLowerCase() === q
+      (b) => b.reference.toUpperCase().replace(/\s/g, '') === cleanQ
     );
 
     if (match) {
       setSelectedBooking(match);
-    } else if (q.startsWith('sbh') || q.length >= 4) {
-      // Quick fallback display for valid reference format
+    } else if (cleanQ.startsWith('SBH') || cleanQ.length >= 6) {
+      // Standard reference format fallback for simulated demo references
       setSelectedBooking({
-        reference: query.toUpperCase(),
+        reference: cleanQ,
         service: SERVICES[0],
         services: [SERVICES[0]],
         staff: 'Sandy (Founder & Specialist)',
@@ -99,7 +98,7 @@ export const MyBookingPage: React.FC = () => {
   const handleCopyReference = (ref: string) => {
     navigator.clipboard.writeText(ref);
     setCopied(true);
-    showToast('Reference copied');
+    showToast('Reference code copied');
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -131,18 +130,20 @@ END:VCALENDAR`;
   };
 
   return (
-    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '80vh', padding: 'clamp(2rem, 5vw, 3.5rem) 1.5rem' }}>
-      <div style={{ maxWidth: '580px', margin: '0 auto' }}>
+    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '80vh', padding: 'clamp(2.5rem, 6vw, 4.5rem) 1.5rem' }}>
+      <div style={{ maxWidth: '560px', margin: '0 auto' }}>
 
         {/* Minimal Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <span className="section-eyebrow" style={{ marginBottom: '0.25rem' }}>Reservation</span>
-          <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.2rem)', margin: 0 }}>
+          <span className="section-eyebrow" style={{ marginBottom: '0.35rem', letterSpacing: '0.14em' }}>
+            RESERVATION
+          </span>
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(2rem, 5vw, 2.5rem)', margin: 0, fontWeight: 400 }}>
             My Appointment
           </h1>
         </div>
 
-        {/* Sleek Search Bar */}
+        {/* Minimal Search Form */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -150,42 +151,59 @@ END:VCALENDAR`;
           }}
           style={{
             display: 'flex',
-            gap: '0.4rem',
+            alignItems: 'center',
             backgroundColor: '#FFFFFF',
             border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '0.3rem',
-            marginBottom: '1.5rem',
+            borderRadius: '4px',
+            padding: '0.35rem 0.4rem 0.35rem 0.85rem',
+            marginBottom: '0.75rem',
             boxShadow: 'var(--shadow-subtle)'
           }}
         >
           <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center' }}>
-            <Search size={16} style={{ position: 'absolute', left: '0.75rem', color: 'var(--color-taupe)' }} />
+            <Search size={16} style={{ color: 'var(--color-taupe)', marginRight: '0.65rem', flexShrink: 0 }} />
             <input
               type="text"
-              placeholder="Search reference (SBH-...) or email"
+              placeholder="Search reference (SBH-...)"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: '100%',
-                padding: '0.65rem 0.65rem 0.65rem 2.25rem',
+                padding: '0.65rem 0',
                 border: 'none',
                 outline: 'none',
-                fontSize: '0.85rem',
-                backgroundColor: 'transparent'
+                fontSize: '0.875rem',
+                backgroundColor: 'transparent',
+                color: 'var(--color-espresso)'
               }}
             />
           </div>
           <button
             type="submit"
-            className="btn btn-primary"
-            style={{ padding: '0.65rem 1.15rem', fontSize: '0.8rem' }}
+            style={{
+              padding: '0.7rem 1.4rem',
+              fontSize: '0.8rem',
+              fontWeight: 700,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              backgroundColor: '#221B1A',
+              color: '#FAF7F2',
+              border: 'none',
+              borderRadius: '3px',
+              cursor: 'pointer',
+              flexShrink: 0,
+              transition: 'all var(--transition-fast)'
+            }}
           >
-            Find
+            FIND
           </button>
         </form>
 
-        {/* Clean Appointment Card */}
+        <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'var(--color-taupe)', margin: '0 0 2rem 0' }}>
+          Enter the unique reference code from your booking confirmation (e.g. <code>SBH-884920</code>).
+        </p>
+
+        {/* Verified Booking Card (Shown on Search or 1-Click Link) */}
         {selectedBooking ? (
           <div style={{
             backgroundColor: '#FFFFFF',
@@ -194,7 +212,7 @@ END:VCALENDAR`;
             boxShadow: 'var(--shadow-subtle)',
             overflow: 'hidden'
           }}>
-            {/* Card Header Strip */}
+            {/* Strip */}
             <div style={{
               backgroundColor: 'var(--color-blush-light)',
               padding: '0.9rem 1.25rem',
@@ -226,7 +244,7 @@ END:VCALENDAR`;
               </div>
             </div>
 
-            {/* Card Content */}
+            {/* Content */}
             <div style={{ padding: '1.5rem' }}>
               <div style={{ marginBottom: '1.25rem' }}>
                 <h2 style={{ fontSize: '1.35rem', margin: '0 0 0.25rem 0', color: 'var(--color-espresso)' }}>
@@ -237,7 +255,7 @@ END:VCALENDAR`;
                 </div>
               </div>
 
-              {/* Schedule & Location Pills */}
+              {/* Date & Location */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
@@ -279,7 +297,7 @@ END:VCALENDAR`;
                 </div>
               </div>
 
-              {/* Financial Pill */}
+              {/* Financial Status */}
               <div style={{
                 backgroundColor: 'var(--color-surface)',
                 border: '1px solid var(--color-border)',
@@ -306,7 +324,7 @@ END:VCALENDAR`;
                 </div>
               </div>
 
-              {/* Quick Actions (2 Buttons Only) */}
+              {/* 2 Simple Action Buttons */}
               <div style={{ display: 'flex', gap: '0.65rem', marginBottom: '1.25rem' }}>
                 <button
                   type="button"
@@ -328,7 +346,7 @@ END:VCALENDAR`;
                 </a>
               </div>
 
-              {/* Minimal Footer Note */}
+              {/* Support */}
               <div style={{ textAlign: 'center', fontSize: '0.775rem', color: 'var(--color-taupe)', paddingTop: '0.85rem', borderTop: '1px solid var(--color-border-subtle)' }}>
                 Need to reschedule? Call Sandy at <a href="tel:+447733777956" style={{ color: 'var(--color-rose)', textDecoration: 'none', fontWeight: 600 }}>07733 777956</a>
               </div>
@@ -345,7 +363,7 @@ END:VCALENDAR`;
             <AlertCircle size={22} style={{ color: 'var(--color-taupe)', margin: '0 auto 0.75rem auto' }} />
             <h3 style={{ fontSize: '1.1rem', margin: '0 0 0.35rem 0' }}>No Booking Found</h3>
             <p style={{ fontSize: '0.825rem', color: 'var(--color-taupe)', marginBottom: '1.25rem' }}>
-              Check your confirmation reference code (e.g. SBH-...) or email address.
+              We could not find an appointment with reference &ldquo;<strong>{searchQuery}</strong>&rdquo;. Please check the code in your confirmation email.
             </p>
             <Link to="/schedule" className="btn btn-primary" style={{ fontSize: '0.8rem' }}>
               Book an Appointment
