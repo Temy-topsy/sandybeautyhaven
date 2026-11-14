@@ -12,6 +12,9 @@
  * yet entered her Acuity API credentials.
  */
 
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
+
 interface AcuityDateSlot {
   date: string;
 }

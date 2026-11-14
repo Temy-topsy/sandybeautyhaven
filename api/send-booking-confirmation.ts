@@ -1,3 +1,4 @@
+import process from 'node:process';
 import { Resend } from 'resend';
 
 function generateClientEmailHtml(booking: any) {

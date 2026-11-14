@@ -1,3 +1,4 @@
+import process from 'node:process';
 import Stripe from 'stripe';
 
 export default async function handler(req: any, res: any) {
