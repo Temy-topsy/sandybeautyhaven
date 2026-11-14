@@ -624,27 +624,29 @@ export const BookingPage: React.FC = () => {
             width: '100%'
           }}>
 
-            {/* Quick Top Back Button (iPhone & Mobile Friendly) */}
+            {/* Minimal Top Back Button (iPhone & Mobile Friendly) */}
             {step > 1 && (
-              <div style={{ marginBottom: '1.25rem', paddingBottom: '0.85rem', borderBottom: '1px solid var(--color-border-subtle)' }}>
+              <div style={{ marginBottom: '1rem' }}>
                 <button
                   type="button"
                   onClick={handlePrevStep}
+                  aria-label="Go back"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '0.45rem',
+                    justifyContent: 'center',
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: 'var(--radius-sm)',
                     background: 'none',
-                    border: 'none',
+                    border: '1px solid var(--color-border)',
                     color: 'var(--color-espresso)',
-                    fontSize: '0.825rem',
-                    fontWeight: 600,
                     cursor: 'pointer',
-                    padding: '0.2rem 0'
+                    transition: 'all var(--transition-fast)'
                   }}
+                  title="Go back"
                 >
-                  <ArrowLeft size={16} style={{ color: 'var(--color-rose)' }} />
-                  <span>Go back to {step === 2 ? 'Treatments' : step === 3 ? 'Date & Time' : 'Your Details'}</span>
+                  <ArrowLeft size={16} />
                 </button>
               </div>
             )}
