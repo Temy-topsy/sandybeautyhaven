@@ -41,6 +41,7 @@ declare module 'lucide-react' {
   export const Users: LucideIcon;
   export const PackageCheck: LucideIcon;
   export const Search: LucideIcon;
+  export const Copy: LucideIcon;
   export const Filter: LucideIcon;
   export const Share2: LucideIcon;
   export const HelpCircle: LucideIcon;

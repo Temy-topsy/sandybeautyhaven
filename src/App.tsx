@@ -22,6 +22,7 @@ const ReviewsPage = lazy(() => import('./pages/ReviewsPage').then(m => ({ defaul
 const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
 const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
 const FaqPage = lazy(() => import('./pages/FaqPage').then(m => ({ default: m.FaqPage })));
+const MyBookingPage = lazy(() => import('./pages/MyBookingPage').then(m => ({ default: m.MyBookingPage })));
 
 // Policies
 const PolicyLayout = lazy(() => import('./pages/policies/PolicyLayout').then(m => ({ default: m.PolicyLayout })));
@@ -96,6 +97,9 @@ const MainLayout: React.FC = () => {
             <Route path="/book" element={<BookingPage />} />
             <Route path="/checkout" element={<BookingPage />} />
             <Route path="/booking-confirmed" element={<BookingConfirmationPage />} />
+            <Route path="/my-booking" element={<MyBookingPage />} />
+            <Route path="/find-booking" element={<MyBookingPage />} />
+            <Route path="/lookup-booking" element={<MyBookingPage />} />
             <Route path="/training" element={<TrainingPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/reviews" element={<ReviewsPage />} />

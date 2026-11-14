@@ -244,6 +244,22 @@ export const Navbar: React.FC = () => {
             Book Appointment
           </Link>
 
+          <Link
+            to="/my-booking"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{
+              display: 'block',
+              textAlign: 'center',
+              fontSize: '0.8rem',
+              color: 'var(--color-taupe)',
+              textDecoration: 'underline',
+              marginTop: '0.5rem',
+              marginBottom: '1rem'
+            }}
+          >
+            Find or View My Booking →
+          </Link>
+
           <div
             style={{
               fontSize: '0.825rem',

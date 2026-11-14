@@ -321,6 +321,13 @@ END:VCALENDAR`;
               Add to Calendar (.ics)
             </button>
             <Link
+              to={`/my-booking?ref=${booking.reference}`}
+              className="btn btn-secondary"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}
+            >
+              View in Client Portal →
+            </Link>
+            <Link
               to="/services"
               className="btn btn-secondary"
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 180px' }}

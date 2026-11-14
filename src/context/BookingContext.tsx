@@ -195,6 +195,17 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     setConfirmedBooking(booking);
+
+    try {
+      if (typeof window !== 'undefined') {
+        const stored = JSON.parse(localStorage.getItem('sbh_saved_bookings') || '[]');
+        const updated = [booking, ...stored.filter((b: ConfirmedBooking) => b.reference !== booking.reference)];
+        localStorage.setItem('sbh_saved_bookings', JSON.stringify(updated.slice(0, 20)));
+      }
+    } catch {
+      // ignore storage limitations
+    }
+
     return booking;
   };
 

@@ -95,6 +95,7 @@ export const Footer: React.FC = () => {
               </span>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.875rem' }}>
                 <li><Link to="/services" style={{ color: 'var(--color-noir-muted)' }} className="footer-link">Services</Link></li>
+                <li><Link to="/my-booking" style={{ color: 'var(--color-noir-muted)' }} className="footer-link">Find My Booking</Link></li>
                 <li><Link to="/training" style={{ color: 'var(--color-noir-muted)' }} className="footer-link">1-on-1 Training</Link></li>
                 <li><Link to="/gallery" style={{ color: 'var(--color-noir-muted)' }} className="footer-link">Gallery</Link></li>
                 <li><Link to="/reviews" style={{ color: 'var(--color-noir-muted)' }} className="footer-link">Reviews</Link></li>
