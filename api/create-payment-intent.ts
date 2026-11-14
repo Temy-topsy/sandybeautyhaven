@@ -1,9 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'http';
 import Stripe from 'stripe';
-
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-
-const stripe = new Stripe(stripeSecretKey);
 
 export default async function handler(req: any, res: any) {
   // CORS Headers
@@ -25,10 +20,14 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+
   if (!stripeSecretKey) {
     res.status(500).json({ error: 'STRIPE_SECRET_KEY environment variable is not configured.' });
     return;
   }
+
+  const stripe = new Stripe(stripeSecretKey);
 
   try {
     const { amount, currency = 'gbp', bookingDetails, customer } = req.body || {};

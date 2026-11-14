@@ -1,77 +1,76 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig, loadEnv } from 'vite'
-import Stripe from 'stripe'
 
-function stripeDevMiddleware() {
+function apiDevMiddleware() {
   return {
-    name: 'stripe-dev-middleware',
+    name: 'api-dev-middleware',
     configureServer(server: any) {
       server.middlewares.use(async (req: any, res: any, next: any) => {
-        if (req.url === '/api/create-payment-intent' && req.method === 'POST') {
+        const url = req.url?.split('?')[0];
+
+        if (url === '/api/create-payment-intent' || url === '/api/send-booking-confirmation') {
+          // Populate env vars into process.env so API handlers can access them
+          const env = loadEnv('development', process.cwd(), '');
+          for (const key of Object.keys(env)) {
+            process.env[key] = env[key];
+          }
+
           let body = '';
           req.on('data', (chunk: any) => {
             body += chunk;
           });
+
           req.on('end', async () => {
+            let parsedBody = {};
             try {
-              const env = loadEnv('development', process.cwd(), '');
-              const secretKey = env.STRIPE_SECRET_KEY || process.env.STRIPE_SECRET_KEY;
+              if (body) parsedBody = JSON.parse(body);
+            } catch {
+              // ignore json parse error
+            }
 
-              if (!secretKey) {
-                res.statusCode = 500;
+            const mockReq = {
+              method: req.method,
+              headers: req.headers,
+              body: parsedBody,
+              query: {}
+            };
+
+            const mockRes = {
+              setHeader(k: string, v: string) {
+                res.setHeader(k, v);
+                return this;
+              },
+              status(code: number) {
+                res.statusCode = code;
+                return this;
+              },
+              json(data: any) {
                 res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ error: 'STRIPE_SECRET_KEY not set in .env' }));
-                return;
+                res.end(JSON.stringify(data));
+              },
+              end() {
+                res.end();
               }
+            };
 
-              const stripe = new Stripe(secretKey);
-              const data = JSON.parse(body || '{}');
-              const { amount, currency = 'gbp', bookingDetails, customer } = data;
-
-              const numericAmount = parseFloat(amount);
-              if (isNaN(numericAmount) || numericAmount <= 0) {
-                res.statusCode = 400;
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ error: 'Invalid or missing payment amount' }));
-                return;
+            try {
+              if (url === '/api/create-payment-intent') {
+                const handler = (await import('./api/create-payment-intent.ts')).default;
+                await handler(mockReq, mockRes);
+              } else if (url === '/api/send-booking-confirmation') {
+                const handler = (await import('./api/send-booking-confirmation.ts')).default;
+                await handler(mockReq, mockRes);
               }
-
-              const amountInPence = Math.round(numericAmount * 100);
-
-              const paymentIntent = await stripe.paymentIntents.create({
-                amount: amountInPence,
-                currency: currency.toLowerCase(),
-                automatic_payment_methods: { enabled: true },
-                description: `Sandy Beauty Haven - ${bookingDetails?.serviceName || 'Bespoke Beauty Treatment'}`,
-                receipt_email: customer?.email || undefined,
-                metadata: {
-                  clientName: customer?.fullName || '',
-                  clientPhone: customer?.phone || '',
-                  clientEmail: customer?.email || '',
-                  serviceName: bookingDetails?.serviceName || '',
-                  appointmentDate: bookingDetails?.date || '',
-                  appointmentTime: bookingDetails?.time || '',
-                  paymentChoice: bookingDetails?.paymentChoice || 'deposit',
-                  depositAmount: bookingDetails?.depositAmount ? `£${bookingDetails.depositAmount}` : '£50.00',
-                  remainingBalance: bookingDetails?.remainingBalance ? `£${bookingDetails.remainingBalance}` : '£0.00'
-                },
-              });
-
-              res.statusCode = 200;
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({
-                clientSecret: paymentIntent.client_secret,
-                id: paymentIntent.id,
-              }));
             } catch (err: any) {
-              console.error('Local Stripe Dev Error:', err);
+              console.error(`Dev API Error [${url}]:`, err);
               res.statusCode = 500;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: err.message || 'Payment intent creation failed' }));
+              res.end(JSON.stringify({ error: err.message || 'API processing error' }));
             }
           });
           return;
         }
+
         next();
       });
     }
@@ -80,7 +79,7 @@ function stripeDevMiddleware() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), stripeDevMiddleware()],
+  plugins: [react(), apiDevMiddleware()],
   build: {
     target: 'esnext',
     cssMinify: true,

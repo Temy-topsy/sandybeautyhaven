@@ -322,12 +322,35 @@ export const BookingPage: React.FC = () => {
     const amountPaid = amountToCharge;
     const remainingBalance = paymentChoice === 'full' ? 0 : remainingLaterDisplay;
 
-    completeBooking({
+    const confirmed = completeBooking({
       paymentChoice,
       amountPaid,
       remainingBalance,
       tip: tipAmount,
       paymentIntentId,
+    });
+
+    // Send automated email confirmation via Resend
+    fetch('/api/send-booking-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reference: confirmed?.reference || `SBH-${Date.now()}`,
+        serviceName: selectedServices.map((s) => s.name).join(', '),
+        date: selectedDate || '',
+        time: selectedTime || '',
+        clientName: clientDetails.fullName,
+        clientEmail: clientDetails.email,
+        clientPhone: clientDetails.phone,
+        totalPrice: orderTotal,
+        amountPaid,
+        remainingBalance,
+        paymentChoice,
+        tip: tipAmount,
+        notes: clientDetails.notes,
+      }),
+    }).catch((err) => {
+      console.error('Email confirmation trigger error:', err);
     });
 
     setIsProcessing(false);
@@ -454,6 +477,7 @@ export const BookingPage: React.FC = () => {
                     </span>
                   </div>
                 );
+
               })}
             </div>
 
@@ -507,9 +531,6 @@ export const BookingPage: React.FC = () => {
                         <div>
                           <h2 style={{ fontSize: '1.25rem', margin: '0.2rem 0 0 0' }}>Confirm Your Selection</h2>
                         </div>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--color-taupe)' }}>
-                          Est. Duration: {totalDuration} mins
-                        </span>
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.25rem' }}>
