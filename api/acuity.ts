@@ -140,14 +140,16 @@ export default async function handler(req: any, res: any) {
           const times = (await response.json()) as Array<{ time: string }>;
           const formattedTimes = times.map((t) => {
             const timeDate = new Date(t.time);
-            const hours = timeDate.getHours();
-            const minutes = timeDate.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const formattedHour = hours % 12 || 12;
-            const formattedMin = minutes < 10 ? `0${minutes}` : minutes;
+            // Format time strictly in Sandy's studio timezone (Europe/London)
+            const label = timeDate.toLocaleTimeString('en-US', {
+              timeZone: 'Europe/London',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            });
             return {
               time: t.time,
-              label: `${formattedHour}:${formattedMin} ${ampm}`
+              label
             };
           });
 

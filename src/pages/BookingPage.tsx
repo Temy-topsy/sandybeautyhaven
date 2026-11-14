@@ -131,9 +131,46 @@ export const BookingPage: React.FC = () => {
   const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 is Sunday
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
+  // Live available dates from Acuity Scheduling
+  const [liveAvailableDates, setLiveAvailableDates] = useState<string[] | null>(null);
+
+  const monthParam = useMemo(() => {
+    const mStr = String(month + 1).padStart(2, '0');
+    return `${year}-${mStr}`;
+  }, [year, month]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const fetchDates = async () => {
+      try {
+        const appointmentTypeId = selectedServices[0]?.id || 69886073;
+        const res = await fetch(`/api/acuity?action=dates&month=${monthParam}&appointmentTypeID=${appointmentTypeId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (!isCancelled && data.dates && Array.isArray(data.dates)) {
+            const dateStrings = data.dates.map((d: any) => d.date);
+            setLiveAvailableDates(dateStrings);
+            if (data.source) setAvailabilitySource(data.source);
+            // If currently selected date is not in the live available dates, auto-select first available
+            if (dateStrings.length > 0 && (!selectedDate || !dateStrings.includes(selectedDate))) {
+              setSelectedDate(dateStrings[0]);
+            }
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch Acuity dates', err);
+      }
+    };
+    fetchDates();
+    return () => {
+      isCancelled = true;
+    };
+  }, [monthParam, selectedServices, selectedDate, setSelectedDate]);
+
   // Generate date slots for current month
   const calendarDays = useMemo(() => {
-    const days: Array<{ dayNumber: number; dateString: string; isSunday: boolean; isPast: boolean } | null> = [];
+    const days: Array<{ dayNumber: number; dateString: string; isSunday: boolean; isPast: boolean; isAvailable: boolean } | null> = [];
 
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(null);
@@ -149,17 +186,21 @@ export const BookingPage: React.FC = () => {
       const monthStr = String(month + 1).padStart(2, '0');
       const dayStr = String(d).padStart(2, '0');
       const dateString = `${year}-${monthStr}-${dayStr}`;
+      const isAvailable = liveAvailableDates
+        ? liveAvailableDates.includes(dateString)
+        : (!isSunday && !isPast);
 
       days.push({
         dayNumber: d,
         dateString,
         isSunday,
-        isPast
+        isPast,
+        isAvailable
       });
     }
 
     return days;
-  }, [year, month, firstDayOfMonth, daysInMonth]);
+  }, [year, month, firstDayOfMonth, daysInMonth, liveAvailableDates]);
 
   // Dynamic available appointment slots from Acuity Scheduling
   const [dynamicTimes, setDynamicTimes] = useState<string[]>([]);
@@ -980,7 +1021,7 @@ export const BookingPage: React.FC = () => {
                       return <div key={`empty-${index}`} style={{ height: '42px' }} />;
                     }
 
-                    const isDisabled = cd.isSunday || cd.isPast;
+                    const isDisabled = cd.isPast || !cd.isAvailable;
                     const isSelected = selectedDate === cd.dateString;
 
                     return (
