@@ -644,7 +644,7 @@ export const BookingPage: React.FC = () => {
                   }}
                 >
                   <ArrowLeft size={16} style={{ color: 'var(--color-rose)' }} />
-                  <span>Go back to {step === 2 ? 'Treatment Selection' : step === 3 ? 'Date & Time' : 'Your Details'}</span>
+                  <span>Go back to {step === 2 ? 'Treatments' : step === 3 ? 'Date & Time' : 'Your Details'}</span>
                 </button>
               </div>
             )}
