@@ -284,7 +284,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'For clients who love bold, pitch-black, glamorous lashes with maximum density. Handcrafted multi-lash fans (5D-8D) create a dense, fluffy, seamless lash line that turns heads. Fully customized to your eye shape.',
-    image: '/public/lashes inspo img.jpg',
+    image: '/lashes inspo img.jpg',
     features: [
       'High density 5D–8D handmade fans',
       'Dramatic dark eyeliner effect',
@@ -478,7 +478,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 20,
     popular: true,
     description: 'A soft, radiant makeup look that enhances your natural bone structure and glow. Perfect for birthdays, brunches, graduations, family dinners, and modern daytime glamour. Includes complimentary strip lashes if desired.',
-    image: '/public/settings inspo img2.jpg',
+    image: '/settings inspo img2.jpg',
     features: [
       'Flawless skin tint or radiant foundation',
       'Soft neutral eye blending & subtle contour',
@@ -502,7 +502,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 120,
     deposit: 25,
     description: 'A show-stopping, full-coverage glam with sculpted cheekbones, defined dramatic eyes (cut crease, smokey, or winged), highlight, and an immaculate long-lasting finish. Perfect for weddings, red carpets, milestones, and parties.',
-    image: '/public/settings inspo img.jpg',
+    image: '/settings inspo img.jpg',
     features: [
       'Full coverage waterproof sculpting',
       'Detailed eye artistry (smokey, shimmer, or winged)',

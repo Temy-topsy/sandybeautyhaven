@@ -302,12 +302,12 @@ export const CartDrawer: React.FC = () => {
                     Explore our salon-grade virgin hair bundles, reusable press-on nails, plumping lip glazes, and lash care products.
                   </p>
                   <Link
-                    to="/shop"
+                    to="/services"
                     onClick={handleCloseAndReset}
                     className="btn btn-primary"
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', width: '100%', justifyContent: 'center' }}
                   >
-                    Explore Products <ArrowRight size={15} />
+                    Explore Treatments <ArrowRight size={15} />
                   </Link>
                 </div>
               ) : (
