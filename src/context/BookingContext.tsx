@@ -25,6 +25,7 @@ export interface ConfirmedBooking {
   totalDuration: number;
   paymentChoice?: 'full' | 'deposit';
   tip?: number;
+  paymentIntentId?: string;
   bookedAt: string;
 }
 
@@ -54,6 +55,7 @@ interface BookingContextType {
     amountPaid?: number;
     remainingBalance?: number;
     tip?: number;
+    paymentIntentId?: string;
   }) => ConfirmedBooking;
   resetBooking: () => void;
 }
@@ -160,6 +162,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     amountPaid?: number;
     remainingBalance?: number;
     tip?: number;
+    paymentIntentId?: string;
   }): ConfirmedBooking => {
     const primaryService = selectedServices[0] || SERVICES[0];
     const randNum = Math.floor(1000 + Math.random() * 9000);
@@ -187,6 +190,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       totalDuration,
       paymentChoice: choice,
       tip: params?.tip || 0,
+      paymentIntentId: params?.paymentIntentId,
       bookedAt: new Date().toISOString()
     };
 

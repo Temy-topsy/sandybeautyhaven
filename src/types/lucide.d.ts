@@ -16,6 +16,7 @@ declare module 'lucide-react' {
   export const Phone: LucideIcon;
   export const Mail: LucideIcon;
   export const ShieldCheck: LucideIcon;
+  export const Lock: LucideIcon;
   export const Star: LucideIcon;
   export const Check: LucideIcon;
   export const CheckCircle2: LucideIcon;

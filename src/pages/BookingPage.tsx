@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Calendar as CalendarIcon,
   Clock,
-  CreditCard,
   ChevronLeft,
   ChevronRight,
   Plus,
@@ -17,6 +16,7 @@ import {
 import { SERVICES } from '../data/services';
 import { useBooking } from '../context/BookingContext';
 import { useToast } from '../context/ToastContext';
+import { StripePaymentWrapper } from '../components/booking/StripePaymentForm';
 
 // Crisp SVG Card Brand Badges matching Acuity
 const VisaIcon: React.FC = () => (
@@ -48,20 +48,6 @@ const MastercardIcon: React.FC = () => (
     <circle cx="22" cy="11" r="6" fill="#F79E1B" fillOpacity="0.85" />
   </svg>
 );
-
-const COUNTRIES = [
-  'Nigeria',
-  'United Kingdom',
-  'United States',
-  'Canada',
-  'Ireland',
-  'Ghana',
-  'Kenya',
-  'South Africa',
-  'Germany',
-  'France',
-  'Other'
-];
 
 // Helper to format date & time identically to Acuity (e.g. October 16th, 2026 at 10:00 AM BST)
 const formatAcuityDateTime = (dateStr: string, timeStr: string) => {
@@ -137,23 +123,6 @@ export const BookingPage: React.FC = () => {
   const [couponCode, setCouponCode] = useState<string>('');
   const [couponDiscount, setCouponDiscount] = useState<number>(0);
   const [couponError, setCouponError] = useState<string>('');
-
-  const [cardFirstName, setCardFirstName] = useState<string>('Sanusi');
-  const [cardLastName, setCardLastName] = useState<string>('Odunayo');
-  const [cardSubMethod, setCardSubMethod] = useState<'card' | 'gpay'>('card');
-  const [cardNumber, setCardNumber] = useState<string>('1234 1234 1234 1234');
-  const [cardExpiry, setCardExpiry] = useState<string>('MM / YY');
-  const [cardCvc, setCardCvc] = useState<string>('CVC');
-  const [cardCountry, setCardCountry] = useState<string>('Nigeria');
-
-  // Synchronize cardholder name when client details update
-  useEffect(() => {
-    if (clientDetails.fullName.trim()) {
-      const parts = clientDetails.fullName.trim().split(' ');
-      setCardFirstName(parts[0] || '');
-      setCardLastName(parts.slice(1).join(' ') || '');
-    }
-  }, [clientDetails.fullName]);
 
   // Calendar calculations
   const year = currentMonth.getFullYear();
@@ -288,28 +257,81 @@ export const BookingPage: React.FC = () => {
     }
   };
 
-  const handleCompletePayment = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsProcessing(true);
+  // Stripe Payment State & Intent Generation
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [stripeError, setStripeError] = useState<string | null>(null);
 
-    setTimeout(() => {
-      const amountPaid = paymentChoice === 'full'
-        ? orderTotal
-        : (depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0));
-      const remainingBalance = paymentChoice === 'full'
-        ? 0
-        : remainingLaterDisplay;
+  const amountToCharge = paymentChoice === 'full'
+    ? orderTotal
+    : (depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0));
 
-      completeBooking({
-        paymentChoice,
-        amountPaid,
-        remainingBalance,
-        tip: tipAmount
+  useEffect(() => {
+    if (step !== 4) return;
+
+    let isMounted = true;
+    setStripeLoading(true);
+    setStripeError(null);
+
+    fetch('/api/create-payment-intent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: amountToCharge,
+        currency: 'gbp',
+        bookingDetails: {
+          serviceName: selectedServices.map((s) => s.name).join(', '),
+          date: selectedDate || '',
+          time: selectedTime || '',
+          paymentChoice,
+          depositAmount: depositNowDisplay,
+          remainingBalance: remainingLaterDisplay,
+        },
+        customer: {
+          fullName: clientDetails.fullName,
+          email: clientDetails.email,
+          phone: clientDetails.phone,
+        },
+      }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to initialize payment session');
+        }
+        if (isMounted) {
+          setClientSecret(data.clientSecret);
+          setStripeLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          console.error('Stripe init error:', err);
+          setStripeError(err.message);
+          setStripeLoading(false);
+        }
       });
 
-      setIsProcessing(false);
-      navigate('/booking-confirmed');
-    }, 1200);
+    return () => {
+      isMounted = false;
+    };
+  }, [step, paymentChoice, tipAmount, orderTotal, depositNowDisplay, remainingLaterDisplay]);
+
+  const handleStripeSuccess = (paymentIntentId: string) => {
+    setIsProcessing(true);
+    const amountPaid = amountToCharge;
+    const remainingBalance = paymentChoice === 'full' ? 0 : remainingLaterDisplay;
+
+    completeBooking({
+      paymentChoice,
+      amountPaid,
+      remainingBalance,
+      tip: tipAmount,
+      paymentIntentId,
+    });
+
+    setIsProcessing(false);
+    navigate('/booking-confirmed');
   };
 
   const stepLabels = ['Select Treatments', 'Date & Time', 'Your Details', 'Payment'];
@@ -1287,281 +1309,8 @@ export const BookingPage: React.FC = () => {
                   />
                 </div>
 
-                <form onSubmit={handleCompletePayment}>
-                  {/* Section 1: Payment information Card */}
-                  <div style={{ marginBottom: '2.25rem' }}>
-                    <h3 style={{
-                      fontFamily: 'var(--font-serif)',
-                      fontSize: '1.35rem',
-                      color: 'var(--color-espresso)',
-                      marginBottom: '1rem',
-                      fontWeight: 600
-                    }}>
-                      Payment Details
-                    </h3>
-
-                    <div style={{
-                      backgroundColor: 'var(--color-surface)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: 'clamp(1.25rem, 4vw, 1.75rem)',
-                      boxShadow: 'var(--shadow-subtle)'
-                    }}>
-                      {/* Top Row: Credit or debit card + Card Logos */}
-                      <div style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '1.25rem',
-                        flexWrap: 'wrap',
-                        gap: '0.5rem'
-                      }}>
-                        <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-espresso)' }}>
-                          Credit or debit card
-                        </span>
-                        <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
-                          <VisaIcon />
-                          <AmexIcon />
-                          <DiscoverIcon />
-                          <MastercardIcon />
-                        </div>
-                      </div>
-
-                      {/* First name */}
-                      <div style={{ marginBottom: '1.1rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.35rem' }}>
-                          First name *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={cardFirstName}
-                          onChange={(e) => setCardFirstName(e.target.value)}
-                          style={{
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            padding: '0.8rem 0.95rem',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: 'var(--radius-sm)',
-                            backgroundColor: 'var(--color-surface)',
-                            fontSize: '0.9rem',
-                            color: 'var(--color-espresso)',
-                            outline: 'none',
-                            transition: 'border-color var(--transition-fast)'
-                          }}
-                        />
-                      </div>
-
-                      {/* Last name */}
-                      <div style={{ marginBottom: '1.25rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.35rem' }}>
-                          Last name *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={cardLastName}
-                          onChange={(e) => setCardLastName(e.target.value)}
-                          style={{
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            padding: '0.8rem 0.95rem',
-                            border: '1px solid var(--color-border)',
-                            borderRadius: 'var(--radius-sm)',
-                            backgroundColor: 'var(--color-surface)',
-                            fontSize: '0.9rem',
-                            color: 'var(--color-espresso)',
-                            outline: 'none',
-                            transition: 'border-color var(--transition-fast)'
-                          }}
-                        />
-                      </div>
-
-                      {/* Card details */}
-                      <div style={{ marginBottom: '1rem' }}>
-                        <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-espresso)', marginBottom: '0.45rem' }}>
-                          Payment Method *
-                        </label>
-
-                        {/* Segmented method toggle: Card / Google Pay */}
-                        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
-                          <button
-                            type="button"
-                            onClick={() => setCardSubMethod('card')}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.45rem',
-                              padding: '0.7rem 1.15rem',
-                              borderRadius: 'var(--radius-sm)',
-                              border: '1px solid',
-                              borderColor: cardSubMethod === 'card' ? 'var(--color-espresso)' : 'var(--color-border)',
-                              backgroundColor: cardSubMethod === 'card' ? 'var(--color-surface-warm)' : 'var(--color-surface)',
-                              color: 'var(--color-espresso)',
-                              fontWeight: 600,
-                              fontSize: '0.825rem',
-                              cursor: 'pointer',
-                              transition: 'all var(--transition-fast)'
-                            }}
-                          >
-                            <CreditCard size={14} style={{ color: 'var(--color-rose)' }} />
-                            Card
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setCardSubMethod('gpay')}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              gap: '0.45rem',
-                              padding: '0.7rem 1.15rem',
-                              borderRadius: 'var(--radius-sm)',
-                              border: '1px solid',
-                              borderColor: cardSubMethod === 'gpay' ? 'var(--color-espresso)' : 'var(--color-border)',
-                              backgroundColor: cardSubMethod === 'gpay' ? 'var(--color-surface-warm)' : 'var(--color-surface)',
-                              color: 'var(--color-espresso)',
-                              fontWeight: 600,
-                              fontSize: '0.825rem',
-                              cursor: 'pointer',
-                              transition: 'all var(--transition-fast)'
-                            }}
-                          >
-                            <span style={{ fontWeight: 800, color: '#4285F4' }}>G</span>
-                            <span>Pay</span>
-                            <span style={{ color: 'var(--color-taupe)', fontWeight: 500 }}>(Google Pay)</span>
-                          </button>
-                        </div>
-
-                        {cardSubMethod === 'card' ? (
-                          <>
-                            {/* Card number input with brand icon */}
-                            <div style={{ position: 'relative', marginBottom: '0.85rem' }}>
-                              <input
-                                type="text"
-                                required
-                                value={cardNumber}
-                                onChange={(e) => setCardNumber(e.target.value)}
-                                placeholder="1234 1234 1234 1234"
-                                style={{
-                                  width: '100%',
-                                  boxSizing: 'border-box',
-                                  padding: '0.8rem 3.5rem 0.8rem 0.95rem',
-                                  border: '1px solid var(--color-border)',
-                                  borderRadius: 'var(--radius-sm)',
-                                  backgroundColor: 'var(--color-surface)',
-                                  fontSize: '0.9rem',
-                                  color: 'var(--color-espresso)',
-                                  outline: 'none'
-                                }}
-                              />
-                              <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
-                                <DiscoverIcon />
-                              </div>
-                            </div>
-
-                            {/* Expiry & CVC row */}
-                            <div style={{
-                              display: 'grid',
-                              gridTemplateColumns: '1fr 1fr',
-                              gap: '0.85rem',
-                              marginBottom: '0.85rem'
-                            }}>
-                              <div>
-                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
-                                  Expiration date
-                                </label>
-                                <input
-                                  type="text"
-                                  required
-                                  value={cardExpiry}
-                                  onChange={(e) => setCardExpiry(e.target.value)}
-                                  placeholder="MM / YY"
-                                  style={{
-                                    width: '100%',
-                                    boxSizing: 'border-box',
-                                    padding: '0.8rem 0.95rem',
-                                    border: '1px solid var(--color-border)',
-                                    borderRadius: 'var(--radius-sm)',
-                                    backgroundColor: 'var(--color-surface)',
-                                    fontSize: '0.9rem',
-                                    color: 'var(--color-espresso)',
-                                    outline: 'none'
-                                  }}
-                                />
-                              </div>
-                              <div>
-                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
-                                  Security code (CVC)
-                                </label>
-                                <div style={{ position: 'relative' }}>
-                                  <input
-                                    type="text"
-                                    required
-                                    value={cardCvc}
-                                    onChange={(e) => setCardCvc(e.target.value)}
-                                    placeholder="CVC"
-                                    style={{
-                                      width: '100%',
-                                      boxSizing: 'border-box',
-                                      padding: '0.8rem 2.5rem 0.8rem 0.95rem',
-                                      border: '1px solid var(--color-border)',
-                                      borderRadius: 'var(--radius-sm)',
-                                      backgroundColor: 'var(--color-surface)',
-                                      fontSize: '0.9rem',
-                                      color: 'var(--color-espresso)',
-                                      outline: 'none'
-                                    }}
-                                  />
-                                  <CreditCard size={15} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-taupe)' }} />
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Country dropdown */}
-                            <div>
-                              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-taupe)', marginBottom: '0.25rem' }}>
-                                Country / Region
-                              </label>
-                              <select
-                                value={cardCountry}
-                                onChange={(e) => setCardCountry(e.target.value)}
-                                style={{
-                                  width: '100%',
-                                  boxSizing: 'border-box',
-                                  padding: '0.8rem 0.95rem',
-                                  border: '1px solid var(--color-border)',
-                                  borderRadius: 'var(--radius-sm)',
-                                  backgroundColor: 'var(--color-surface)',
-                                  fontSize: '0.9rem',
-                                  color: 'var(--color-espresso)',
-                                  outline: 'none',
-                                  cursor: 'pointer'
-                                }}
-                              >
-                                {COUNTRIES.map((c) => (
-                                  <option key={c} value={c}>{c}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </>
-                        ) : (
-                          <div style={{
-                            padding: '1.25rem',
-                            backgroundColor: 'var(--color-surface-subtle)',
-                            borderRadius: 'var(--radius-sm)',
-                            border: '1px dashed var(--color-border)',
-                            textAlign: 'center',
-                            fontSize: '0.85rem',
-                            color: 'var(--color-taupe)'
-                          }}>
-                            Google Pay biometric authentication will be prompted when you click <strong>Pay & Confirm</strong>.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Section 2: Choose what to pay */}
+                <div>
+                  {/* Section 1: Choose what to pay */}
                   <div style={{ marginBottom: '2.25rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem', flexWrap: 'wrap', gap: '0.5rem' }}>
                       <h3 style={{
@@ -1981,27 +1730,87 @@ export const BookingPage: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* PAY & CONFIRM Button - Quiet Luxury Branding */}
-                    <button
-                      type="submit"
-                      disabled={isProcessing}
-                      className="btn btn-primary"
-                      style={{
-                        width: '100%',
-                        padding: '1.2rem 1.5rem',
-                        fontSize: '0.925rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.08em',
-                        textTransform: 'uppercase',
-                        cursor: isProcessing ? 'not-allowed' : 'pointer'
-                      }}
-                    >
-                      {isProcessing
-                        ? 'Processing Secure Booking...'
-                        : paymentChoice === 'full'
-                          ? `Pay £${orderTotal.toFixed(2)} in Full & Confirm`
-                          : `Pay Deposit £${(depositNowDisplay + (paymentChoice === 'deposit' ? tipAmount : 0)).toFixed(2)} & Confirm`}
-                    </button>
+                    {/* Section 4: Secure Stripe Interactive Payment Details */}
+                    <div style={{ marginTop: '2rem', marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        <h3 style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: '1.35rem',
+                          color: 'var(--color-espresso)',
+                          margin: 0,
+                          fontWeight: 600
+                        }}>
+                          Payment Details
+                        </h3>
+                        <div style={{ display: 'flex', gap: '0.35rem', alignItems: 'center' }}>
+                          <VisaIcon />
+                          <MastercardIcon />
+                          <AmexIcon />
+                          <DiscoverIcon />
+                        </div>
+                      </div>
+
+                      <div style={{
+                        backgroundColor: 'var(--color-surface)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 'var(--radius-sm)',
+                        padding: 'clamp(1.25rem, 4vw, 1.75rem)',
+                        boxShadow: 'var(--shadow-subtle)'
+                      }}>
+                        {stripeLoading && (
+                          <div style={{ padding: '2.5rem 1rem', textAlign: 'center', color: 'var(--color-taupe)' }}>
+                            <div
+                              style={{
+                                width: '28px',
+                                height: '28px',
+                                border: '2px solid var(--color-border)',
+                                borderTopColor: 'var(--color-rose)',
+                                borderRadius: '50%',
+                                margin: '0 auto 1rem auto',
+                                animation: 'spin 0.75s linear infinite'
+                              }}
+                            />
+                            <p style={{ fontSize: '0.875rem' }}>Initializing secure Stripe checkout...</p>
+                          </div>
+                        )}
+
+                        {stripeError && (
+                          <div style={{
+                            padding: '1.25rem',
+                            backgroundColor: 'var(--color-error-bg)',
+                            border: '1px solid rgba(163, 55, 55, 0.2)',
+                            borderRadius: 'var(--radius-sm)',
+                            color: 'var(--color-error)',
+                            fontSize: '0.85rem',
+                            textAlign: 'center'
+                          }}>
+                            <p style={{ marginBottom: '0.75rem' }}>{stripeError}</p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setStripeError(null);
+                                setStripeLoading(true);
+                              }}
+                              className="btn btn-secondary"
+                              style={{ fontSize: '0.75rem', padding: '0.4rem 0.85rem' }}
+                            >
+                              Retry Connection
+                            </button>
+                          </div>
+                        )}
+
+                        {!stripeLoading && clientSecret && (
+                          <StripePaymentWrapper
+                            clientSecret={clientSecret}
+                            amount={amountToCharge}
+                            paymentChoice={paymentChoice}
+                            isProcessing={isProcessing}
+                            onSuccess={handleStripeSuccess}
+                            onError={(msg) => setStripeError(msg)}
+                          />
+                        )}
+                      </div>
+                    </div>
 
                     <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
                       <button
@@ -2020,7 +1829,7 @@ export const BookingPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </form>
+                </div>
               </div>
             )}
           </div>
