@@ -64,7 +64,7 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    const { amount, currency = 'gbp', bookingDetails, customer } = payload;
+    const { amount, currency = 'gbp', bookingDetails, customer, paymentIntentId } = payload;
 
     const numericAmount = parseFloat(amount);
     if (isNaN(numericAmount) || numericAmount <= 0) {
@@ -75,6 +75,36 @@ export default async function handler(req: any, res: any) {
     // Convert amount to pence (e.g. £50.00 -> 5000)
     const amountInPence = Math.round(numericAmount * 100);
 
+    const metadata = {
+      clientName: customer?.fullName || '',
+      clientPhone: customer?.phone || '',
+      clientEmail: customer?.email || '',
+      serviceName: bookingDetails?.serviceName || '',
+      appointmentDate: bookingDetails?.date || '',
+      appointmentTime: bookingDetails?.time || '',
+      paymentChoice: bookingDetails?.paymentChoice || 'deposit',
+      depositAmount: bookingDetails?.depositAmount ? `£${bookingDetails.depositAmount}` : '£50.00',
+      remainingBalance: bookingDetails?.remainingBalance ? `£${bookingDetails.remainingBalance}` : '£0.00'
+    };
+
+    // If existing paymentIntentId is provided, update amount and metadata in-place
+    // This allows instant tip/total adjustments without remounting the Stripe iframe
+    if (paymentIntentId) {
+      try {
+        const updatedIntent = await stripe.paymentIntents.update(paymentIntentId, {
+          amount: amountInPence,
+          metadata
+        });
+        res.status(200).json({
+          clientSecret: updatedIntent.client_secret,
+          id: updatedIntent.id,
+        });
+        return;
+      } catch (updateErr) {
+        console.warn('PaymentIntent update failed, falling back to creating new intent:', updateErr);
+      }
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountInPence,
       currency: currency.toLowerCase(),
@@ -83,17 +113,7 @@ export default async function handler(req: any, res: any) {
       },
       description: `Sandy Beauty Haven - ${bookingDetails?.serviceName || 'Bespoke Beauty Treatment'}`,
       receipt_email: customer?.email || undefined,
-      metadata: {
-        clientName: customer?.fullName || '',
-        clientPhone: customer?.phone || '',
-        clientEmail: customer?.email || '',
-        serviceName: bookingDetails?.serviceName || '',
-        appointmentDate: bookingDetails?.date || '',
-        appointmentTime: bookingDetails?.time || '',
-        paymentChoice: bookingDetails?.paymentChoice || 'deposit',
-        depositAmount: bookingDetails?.depositAmount ? `£${bookingDetails.depositAmount}` : '£50.00',
-        remainingBalance: bookingDetails?.remainingBalance ? `£${bookingDetails.remainingBalance}` : '£0.00'
-      },
+      metadata,
     });
 
     res.status(200).json({

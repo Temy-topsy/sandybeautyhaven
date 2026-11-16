@@ -22,7 +22,7 @@ export const BookingConfirmationPage: React.FC = () => {
       price: 60,
       duration: 115,
       deposit: 15,
-      image: '/appointments/hybrid-lashes-luxury.jpg'
+      image: '/appointments/hybrid-lashes-luxury.webp'
     },
     services: [
       {
@@ -31,7 +31,7 @@ export const BookingConfirmationPage: React.FC = () => {
         price: 60,
         duration: 115,
         deposit: 15,
-        image: '/appointments/hybrid-lashes-luxury.jpg'
+        image: '/appointments/hybrid-lashes-luxury.webp'
       }
     ],
     staff: 'Sandy Beauty',
@@ -64,17 +64,52 @@ export const BookingConfirmationPage: React.FC = () => {
     year: 'numeric'
   });
 
+  const serviceNames = servicesList.map((s) => s.name).join(' + ');
+
+  const getCalendarDateRange = () => {
+    let startHours = 11;
+    let startMinutes = 0;
+    if (booking.time) {
+      const match = booking.time.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+      if (match) {
+        let h = parseInt(match[1], 10);
+        const m = parseInt(match[2], 10);
+        const ampm = match[3]?.toUpperCase();
+        if (ampm === 'PM' && h < 12) h += 12;
+        if (ampm === 'AM' && h === 12) h = 0;
+        startHours = h;
+        startMinutes = m;
+      }
+    }
+    const [y, m, d] = (booking.date || '2026-11-23').split('-').map(Number);
+    const startDt = new Date(Date.UTC(y, m - 1, d, startHours, startMinutes, 0));
+    const durationMins = booking.totalDuration || 90;
+    const endDt = new Date(startDt.getTime() + durationMins * 60 * 1000);
+    const formatIcs = (dt: Date) => dt.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    return {
+      startIcs: formatIcs(startDt),
+      endIcs: formatIcs(endDt)
+    };
+  };
+
+  const { startIcs, endIcs } = getCalendarDateRange();
+
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('SANDY BEAUTY HAVEN: ' + serviceNames.toUpperCase())}&dates=${startIcs}/${endIcs}&details=${encodeURIComponent(`Appointment for ${booking.client.fullName} with ${booking.staff} at Sandy Beauty Haven. Ref: ${booking.reference}. 101 Easter Road, Edinburgh EH7 5PP. Contact: +44 07733777956.`)}&location=${encodeURIComponent('101 Easter Road, Edinburgh, EH7 5PP')}`;
+
   const downloadIcsCalendar = () => {
-    const serviceNames = servicesList.map((s) => s.name).join(' + ');
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Sandy Beauty Haven//Appointment//EN
+CALSCALE:GREGORIAN
+METHOD:REQUEST
 BEGIN:VEVENT
-SUMMARY:${serviceNames} - Sandy Beauty Haven
-DESCRIPTION:Appointment for ${serviceNames} with ${booking.staff}. Ref: ${booking.reference}. Location: 101 Easter Road, Edinburgh.
+UID:sbh-${booking.reference}@sandybeautyhaven.com
+DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'}
+DTSTART:${startIcs}
+DTEND:${endIcs}
+SUMMARY:SANDY BEAUTY HAVEN: ${serviceNames.toUpperCase()}
+DESCRIPTION:Appointment confirmed for ${booking.client.fullName} (${serviceNames}). Ref: ${booking.reference}. Studio: 101 Easter Road, Edinburgh EH7 5PP. Contact: +44 07733777956.
 LOCATION:101 Easter Road, Edinburgh, EH7 5PP
-DTSTART:${booking.date.replace(/-/g, '')}T100000Z
-DTEND:${booking.date.replace(/-/g, '')}T120000Z
 STATUS:CONFIRMED
 END:VEVENT
 END:VCALENDAR`;
@@ -83,7 +118,7 @@ END:VCALENDAR`;
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `SandyBeautyHaven-${booking.reference}.ics`);
+    link.setAttribute('download', 'Appointment1.ics');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -307,6 +342,79 @@ END:VCALENDAR`;
               • A 10-minute grace window applies; after 10 minutes, appointments may be cancelled.<br />
               • Rescheduling requires at least <strong>48 hours notice</strong> to transfer deposits.
             </p>
+          </div>
+
+          {/* Acuity-Style Direct Calendar & Reschedule Buttons */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.65rem',
+            maxWidth: '380px',
+            margin: '0 auto 2.5rem'
+          }}>
+            <Link
+              to={`/my-booking?ref=${booking.reference}`}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '0.85rem 1rem',
+                backgroundColor: '#ED7087',
+                color: '#FFFFFF',
+                borderRadius: '4px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textAlign: 'center',
+                textDecoration: 'none',
+                boxShadow: '0 2px 6px rgba(237, 112, 135, 0.25)',
+                boxSizing: 'border-box'
+              }}
+            >
+              Change/Cancel Appointment
+            </Link>
+
+            <button
+              type="button"
+              onClick={downloadIcsCalendar}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '0.85rem 1rem',
+                backgroundColor: '#ED7087',
+                color: '#FFFFFF',
+                borderRadius: '4px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textAlign: 'center',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(237, 112, 135, 0.25)',
+                boxSizing: 'border-box'
+              }}
+            >
+              Add to iCal/Outlook Calendar
+            </button>
+
+            <a
+              href={googleCalendarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '0.85rem 1rem',
+                backgroundColor: '#ED7087',
+                color: '#FFFFFF',
+                borderRadius: '4px',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                textAlign: 'center',
+                textDecoration: 'none',
+                boxShadow: '0 2px 6px rgba(237, 112, 135, 0.25)',
+                boxSizing: 'border-box'
+              }}
+            >
+              Add to Google Calendar
+            </a>
           </div>
 
           {/* Action CTAs */}

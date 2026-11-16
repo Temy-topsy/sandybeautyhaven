@@ -11,21 +11,21 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: 'gal-1',
     title: 'Precision Editorial Lash Mapping',
     category: 'Lashes',
-    image: '/appointments/bespoke-lashes-luxury.jpg',
+    image: '/appointments/bespoke-lashes-luxury.webp',
     description: 'Bespoke lash extension artistry tailored to compliment natural eye contour and lash density.'
   },
   {
     id: 'gal-2',
     title: 'Textured Fluffy Hybrid Set',
     category: 'Lashes',
-    image: '/appointments/hybrid-lashes-luxury.jpg',
+    image: '/appointments/hybrid-lashes-luxury.webp',
     description: 'A seamless mixture of classic singles and handmade volume fans for an effortless, dimensional finish.'
   },
   {
     id: 'gal-3',
     title: 'Wispy Kardashian Strip-Lash Look',
     category: 'Lashes',
-    image: '/appointments/wispy-lashes-luxury.jpg',
+    image: '/appointments/wispy-lashes-luxury.webp',
     description: 'Alternating spike lengths and volume fans delivering a textured, Kim K flutter.'
   },
   {
@@ -39,14 +39,14 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: 'gal-5',
     title: 'Combo Brows Microblading & Microshading',
     category: 'Brows',
-    image: '/appointments/combo-brows-luxury.jpg',
+    image: '/appointments/combo-brows-luxury.webp',
     description: 'Crisp front hair strokes blended with soft powdered shading lasting 2 to 3 years.'
   },
   {
     id: 'gal-6',
     title: 'Refined Brow Touch-Up & Shape',
     category: 'Brows',
-    image: '/appointments/ombre-powder-brows-luxury.jpg',
+    image: '/appointments/ombre-powder-brows-luxury.webp',
     description: 'Annual color boost and razor sculpting to keep brows crisp, symmetrical, and fresh.'
   },
   {

@@ -651,7 +651,7 @@ export const CartDrawer: React.FC = () => {
                   <input
                     type="tel"
                     required
-                    placeholder="e.g. 07733777956 or +44..."
+                    placeholder="e.g. 07123 456789 or +44 7123 456789"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     className="form-input"

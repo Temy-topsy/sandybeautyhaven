@@ -332,6 +332,7 @@ export const BookingPage: React.FC = () => {
 
   // Stripe Payment State & Intent Generation
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [stripeLoading, setStripeLoading] = useState(false);
   const [stripeError, setStripeError] = useState<string | null>(null);
   const [retryNonce, setRetryNonce] = useState(0);
@@ -347,7 +348,12 @@ export const BookingPage: React.FC = () => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout
 
-    setStripeLoading(true);
+    // Only show full loading skeleton on initial mount or manual retry
+    // When adjusting tip options, update in-place without unmounting card inputs
+    const isInitialLoad = !clientSecret;
+    if (isInitialLoad) {
+      setStripeLoading(true);
+    }
     setStripeError(null);
 
     fetch('/api/create-payment-intent', {
@@ -357,6 +363,7 @@ export const BookingPage: React.FC = () => {
       body: JSON.stringify({
         amount: amountToCharge,
         currency: 'gbp',
+        paymentIntentId: paymentIntentId || undefined,
         bookingDetails: {
           serviceName: selectedServices.map((s) => s.name).join(', '),
           date: selectedDate || '',
@@ -379,7 +386,12 @@ export const BookingPage: React.FC = () => {
           throw new Error(data.error || 'Failed to initialize payment session');
         }
         if (isMounted) {
-          setClientSecret(data.clientSecret);
+          if (data.id) {
+            setPaymentIntentId(data.id);
+          }
+          if (data.clientSecret && data.clientSecret !== clientSecret) {
+            setClientSecret(data.clientSecret);
+          }
           setStripeLoading(false);
         }
       })
@@ -1256,7 +1268,7 @@ export const BookingPage: React.FC = () => {
                     id="phone"
                     type="tel"
                     className="form-input"
-                    placeholder="e.g. 07733777956 or +44 7..."
+                    placeholder="e.g. 07123 456789 or +44 7123 456789"
                     value={clientDetails.phone}
                     onChange={(e) => setClientDetails({ ...clientDetails, phone: e.target.value })}
                     style={{ width: '100%', boxSizing: 'border-box' }}
@@ -1889,7 +1901,7 @@ export const BookingPage: React.FC = () => {
                             type="number"
                             min="0"
                             step="1"
-                            placeholder="Custom tip amount"
+                            placeholder="e.g. 5.00"
                             value={customTipInput}
                             onChange={(e) => setCustomTipInput(e.target.value)}
                             style={{

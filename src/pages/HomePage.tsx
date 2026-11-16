@@ -51,7 +51,7 @@ export const HomePage: React.FC = () => {
       description: 'Bespoke lightweight sets tailored for long-lasting, damage-free retention.',
       btnText: 'Explore Treatments',
       btnLink: '/services',
-      image: '/appointments/hybrid-lashes-luxury.jpg'
+      image: '/appointments/hybrid-lashes-luxury.webp'
     }
   ];
 

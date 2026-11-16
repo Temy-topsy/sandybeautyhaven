@@ -214,7 +214,7 @@ export const ContactPage: React.FC = () => {
                   <input
                     id="c-phone"
                     type="tel"
-                    placeholder="e.g. 07733777956"
+                    placeholder="e.g. 07123 456789 or +44 7123 456789"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="form-input"

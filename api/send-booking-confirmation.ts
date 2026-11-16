@@ -1,5 +1,58 @@
 import process from 'node:process';
+import { Buffer } from 'node:buffer';
 import { Resend } from 'resend';
+
+function computeCalendarDates(dateStr: string, timeStr: string) {
+  let startHours = 11;
+  let startMinutes = 0;
+  if (timeStr) {
+    const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)?/i);
+    if (match) {
+      let h = parseInt(match[1], 10);
+      const m = parseInt(match[2], 10);
+      const ampm = match[3]?.toUpperCase();
+      if (ampm === 'PM' && h < 12) h += 12;
+      if (ampm === 'AM' && h === 12) h = 0;
+      startHours = h;
+      startMinutes = m;
+    }
+  }
+
+  const [y, m, d] = (dateStr || '2026-11-23').split('-').map(Number);
+  const startDt = new Date(Date.UTC(y, m - 1, d, startHours, startMinutes, 0));
+  const endDt = new Date(startDt.getTime() + 90 * 60 * 1000);
+  const formatIcs = (dt: Date) => dt.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  return {
+    startIcs: formatIcs(startDt),
+    endIcs: formatIcs(endDt)
+  };
+}
+
+function generateIcsContent(booking: any): string {
+  const { reference, serviceName, date, time, clientName } = booking;
+  const { startIcs, endIcs } = computeCalendarDates(date, time);
+  const nowIcs = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Sandy Beauty Haven//Appointment Booking//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    `UID:sbh-${reference}@sandybeautyhaven.com`,
+    `DTSTAMP:${nowIcs}`,
+    `DTSTART:${startIcs}`,
+    `DTEND:${endIcs}`,
+    `SUMMARY:SANDY BEAUTY HAVEN: ${(serviceName || 'Lash Treatment').toUpperCase()}`,
+    `DESCRIPTION:Appointment confirmed for ${clientName}. Reference: ${reference}. Studio: 101 Easter Road, Edinburgh EH7 5PP. Contact: +44 07733777956.`,
+    'LOCATION:101 Easter Road, Edinburgh, EH7 5PP',
+    'STATUS:CONFIRMED',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+}
 
 function generateClientEmailHtml(booking: any) {
   const {
@@ -14,6 +67,9 @@ function generateClientEmailHtml(booking: any) {
     paymentChoice,
     tip = 0
   } = booking;
+
+  const { startIcs, endIcs } = computeCalendarDates(date, time);
+  const googleCalendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('SANDY BEAUTY HAVEN: ' + (serviceName || 'Lash Treatment').toUpperCase())}&dates=${startIcs}/${endIcs}&details=${encodeURIComponent(`Appointment with Sandy at Sandy Beauty Haven. Ref: ${reference}. Location: 101 Easter Road, Edinburgh EH7 5PP. Phone: +44 07733777956.`)}&location=${encodeURIComponent('101 Easter Road, Edinburgh, EH7 5PP')}`;
 
   return `
 <!DOCTYPE html>
@@ -122,20 +178,45 @@ function generateClientEmailHtml(booking: any) {
                 </ul>
               </div>
 
-              <!-- Action Buttons: 1-Click View Booking & Directions -->
+              <!-- Acuity-Style 3 Action Buttons -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin-bottom: 25px;">
                 <tr>
                   <td align="center">
-                    <a href="https://sandybeautyhaven.com/my-booking?ref=${reference}" target="_blank" style="display: inline-block; background-color: #221B1A; color: #FAF7F2; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 24px; border-radius: 3px; letter-spacing: 0.04em; margin-bottom: 8px;">
-                      View &amp; Manage Your Appointment (1-Click) →
-                    </a>
-                    <br>
+                    <table role="presentation" width="100%" style="max-width: 320px;" cellspacing="0" cellpadding="0">
+                      <tr>
+                        <td align="center" style="padding-bottom: 10px;">
+                          <a href="https://sandybeautyhaven.com/my-booking?ref=${reference}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background-color: #ED7087; color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 18px; border-radius: 4px; text-align: center; letter-spacing: 0.02em;">
+                            Change/Cancel Appointment
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-bottom: 10px;">
+                          <a href="https://sandybeautyhaven.com/my-booking?ref=${reference}&action=download-ics" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background-color: #ED7087; color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 18px; border-radius: 4px; text-align: center; letter-spacing: 0.02em;">
+                            Add to iCal/Outlook Calendar
+                          </a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding-bottom: 16px;">
+                          <a href="${googleCalendarUrl}" target="_blank" style="display: block; width: 100%; box-sizing: border-box; background-color: #ED7087; color: #FFFFFF; font-size: 13px; font-weight: 600; text-decoration: none; padding: 12px 18px; border-radius: 4px; text-align: center; letter-spacing: 0.02em;">
+                            Add to Google Calendar
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+
                     <a href="https://maps.google.com/?q=101+Easter+Road+Edinburgh+EH7+5PP" target="_blank" style="display: inline-block; color: #A36F72; font-size: 12px; font-weight: 600; text-decoration: none; padding: 6px 12px;">
                       📍 Get Directions to 101 Easter Road
                     </a>
                   </td>
                 </tr>
               </table>
+
+              <!-- Attachment Card preview -->
+              <div style="background-color: #FAF7F2; border: 1px solid #E8E0D7; border-radius: 4px; padding: 10px 14px; font-size: 12px; color: #70645F; text-align: center; margin-bottom: 20px;">
+                📎 <strong>Appointment1.ics</strong> attached for 1-click import into Google, Apple &amp; Outlook Calendars.
+              </div>
 
               <p style="margin: 0; font-size: 13px; color: #70645F; line-height: 1.6; text-align: center;">
                 Need to speak with Sandy directly? Call <a href="tel:+447733777956" style="color: #A36F72; text-decoration: none; font-weight: 600;">+44 07733777956</a> or reply to this confirmation.
@@ -291,12 +372,22 @@ export default async function handler(req: any, res: any) {
     let clientEmailResult: any = null;
     let clientRecipientUsed = clientEmail;
 
+    const icsContent = generateIcsContent(booking);
+    const clientAttachments = [
+      {
+        filename: 'Appointment1.ics',
+        content: Buffer.from(icsContent, 'utf-8'),
+        contentType: 'text/calendar; method=REQUEST; charset=UTF-8'
+      }
+    ];
+
     try {
       clientEmailResult = await resend.emails.send({
         from: `Sandy Beauty Haven <${resendFromEmail}>`,
         to: [clientEmail],
         subject: `Booking Confirmed: ${serviceName} at Sandy Beauty Haven`,
-        html: generateClientEmailHtml(booking)
+        html: generateClientEmailHtml(booking),
+        attachments: clientAttachments
       });
 
       // Handle Resend onboarding sandbox rejection gracefully
@@ -307,7 +398,8 @@ export default async function handler(req: any, res: any) {
           from: `Sandy Beauty Haven <${resendFromEmail}>`,
           to: ['temy.topsy12@gmail.com'],
           subject: `[Client Confirmation for ${clientName} (${clientEmail})] Sandy Beauty Haven - ${serviceName}`,
-          html: generateClientEmailHtml(booking)
+          html: generateClientEmailHtml(booking),
+          attachments: clientAttachments
         });
       }
     } catch (sendErr: any) {
@@ -317,7 +409,8 @@ export default async function handler(req: any, res: any) {
           from: `Sandy Beauty Haven <${resendFromEmail}>`,
           to: ['temy.topsy12@gmail.com'],
           subject: `[Client Confirmation for ${clientName} (${clientEmail})] Sandy Beauty Haven - ${serviceName}`,
-          html: generateClientEmailHtml(booking)
+          html: generateClientEmailHtml(booking),
+          attachments: clientAttachments
         });
       } else {
         throw sendErr;
@@ -333,7 +426,8 @@ export default async function handler(req: any, res: any) {
         from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
         to: [studioNotificationEmail],
         subject: `🛎️ New Booking Alert: ${clientName} - ${serviceName} (${date} at ${time})`,
-        html: generateStudioAlertHtml(booking)
+        html: generateStudioAlertHtml(booking),
+        attachments: clientAttachments
       });
 
       if (studioAlertResult?.error && (studioAlertResult.error.statusCode === 403 || studioAlertResult.error.message?.includes('testing emails'))) {
@@ -342,7 +436,8 @@ export default async function handler(req: any, res: any) {
           from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
           to: ['temy.topsy12@gmail.com'],
           subject: `[Studio Alert for Sandy] 🛎️ New Booking: ${clientName} - ${serviceName} (${date} at ${time})`,
-          html: generateStudioAlertHtml(booking)
+          html: generateStudioAlertHtml(booking),
+          attachments: clientAttachments
         });
       }
     } catch (studioErr: any) {
@@ -352,7 +447,8 @@ export default async function handler(req: any, res: any) {
           from: `Sandy Beauty Haven Alerts <${resendFromEmail}>`,
           to: ['temy.topsy12@gmail.com'],
           subject: `[Studio Alert for Sandy] 🛎️ New Booking: ${clientName} - ${serviceName} (${date} at ${time})`,
-          html: generateStudioAlertHtml(booking)
+          html: generateStudioAlertHtml(booking),
+          attachments: clientAttachments
         });
       } else {
         throw studioErr;
