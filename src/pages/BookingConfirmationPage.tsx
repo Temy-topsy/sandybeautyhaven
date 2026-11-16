@@ -22,7 +22,7 @@ export const BookingConfirmationPage: React.FC = () => {
       price: 60,
       duration: 115,
       deposit: 15,
-      image: '/appointments/hybrid-lashes.jpg'
+      image: '/appointments/hybrid-lashes-luxury.jpg'
     },
     services: [
       {
@@ -31,7 +31,7 @@ export const BookingConfirmationPage: React.FC = () => {
         price: 60,
         duration: 115,
         deposit: 15,
-        image: '/appointments/hybrid-lashes.jpg'
+        image: '/appointments/hybrid-lashes-luxury.jpg'
       }
     ],
     staff: 'Sandy Beauty',

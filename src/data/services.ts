@@ -51,7 +51,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 50,
     popular: true,
     description: 'Our signature Ombré Brow technique creates a soft, powdered gradient look, similar to a perfectly filled-in brow with makeup. Lighter at the bulb and gently darkening towards the tail, enhancing your natural shape with flawless definition.',
-    image: '/appointments/combo-brows.jpg',
+    image: '/appointments/ombre-powder-brows-luxury.jpg',
     features: [
       'Long-lasting results for 2–3 years',
       'Wake up with perfect, ready-to-go brows daily',
@@ -84,7 +84,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 50,
     popular: true,
     description: 'Our Combo Brows combine delicate microbladed hair-like strokes in the front with soft powder shading through the body and tail. Creates realistic texture paired with structured definition for a polished finish.',
-    image: '/appointments/combo-brows.jpg',
+    image: '/appointments/combo-brows-luxury.jpg',
     features: [
       'Realistic front hair strokes + defined shaded tail',
       'Long-lasting results for 2–3 years',
@@ -141,7 +141,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 30,
     deposit: 15,
     description: 'Perfect for busy clients who want gorgeous lashes in 30 minutes or less. Ideal for last-minute appointments, holidays, special occasions, date nights, or a quick beauty refresh. Enjoy a lightweight lash look lasting 7–10 days with proper care.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/classic-lashes-luxury.png',
     features: [
       'Completed in only 30 minutes',
       'Lasts 7–10 days with proper care',
@@ -170,7 +170,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'A single individual eyelash extension applied one-to-one to each natural lash. Enhances your lash line with timeless elegance, natural length, and delicate curl tailored to your eye shape.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/classic-lashes-luxury.png',
     features: [
       '1:1 individual lash placement',
       'Natural, clean, mascara-effect finish',
@@ -199,7 +199,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 90,
     deposit: 15,
     description: 'A darker, denser take on the classic technique using ultra-fine flat lashes that wrap around the natural lash to give the appearance of a thicker, bolder single-lash line without extra weight.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/mega-classic-luxury.png',
     features: [
       'Deep black pigment line',
       'Flat lash technology for enhanced bonding surface',
@@ -228,7 +228,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'A harmonious blend of classic individual extensions and handmade volume fans. Creates a textured, fluffy, multidimensional lash look that gives both definition and soft volume. Our most requested set!',
-    image: '/appointments/hybrid-lashes.jpg',
+    image: '/appointments/hybrid-lashes-luxury.jpg',
     features: [
       '50% classic individual lashes + 50% volume fans',
       'Textured, fluffy, dimensional appearance',
@@ -256,7 +256,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 120,
     deposit: 15,
     description: 'Crafted using lightweight 2D-3D handmade volume fans. Offers noticeable fullness, soft featheriness, and a delicate fluff while keeping the overall aesthetic soft, sophisticated, and lightweight.',
-    image: '/appointments/hybrid-lashes.jpg',
+    image: '/appointments/light-volume-lashes-luxury.jpg',
     features: [
       'Handcrafted 2D–3D fans',
       'Soft cashmere-like touch',
@@ -284,7 +284,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'For clients who love bold, pitch-black, glamorous lashes with maximum density. Handcrafted multi-lash fans (5D-8D) create a dense, fluffy, seamless lash line that turns heads. Fully customized to your eye shape.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/mega-volume-lashes-luxury.jpg',
     features: [
       'High density 5D–8D handmade fans',
       'Dramatic dark eyeliner effect',
@@ -312,7 +312,7 @@ export const SERVICES: ServiceItem[] = [
     deposit: 15,
     popular: true,
     description: 'The iconic Kim Kardashian / strip-lash aesthetic! Features alternating closed volume spikes and shorter fluffy volume fans to create a textured, staggered, and fluttery look that replicates your favorite strip lash style.',
-    image: '/appointments/wispy-set.jpg',
+    image: '/appointments/wispy-lashes-luxury.jpg',
     features: [
       'Staggered spike mapping for iconic textured drama',
       'Replicates luxury strip lashes with 24/7 durability',
@@ -339,7 +339,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 180,
     deposit: 15,
     description: 'Completely tailored to your vision. Choose your desired length (including 16mm+), styling maps (Cat eye, Doll eye, Squirrel, Anime, Fox eye), mixed curls, or colored lash accents. Includes full consultation.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/bespoke-lashes-luxury.jpg',
     features: [
       '100% bespoke mapping and design',
       'Lengths up to 16mm–20mm accommodated',
@@ -368,7 +368,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 60,
     deposit: 15,
     description: 'Maintenance infill for Classic lash sets originally completed at Sandy Beauty Haven. Removes outgrown lashes and places fresh extensions on new growth to restore initial fullness.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/classic-lashes-luxury.png',
     features: [
       'Restores set to 100% fullness',
       'Removes overgrown extensions safely',
@@ -392,7 +392,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 60,
     deposit: 15,
     description: 'Maintenance infill for our signature Hybrid sets. Replaces shed fans and single lashes, cleans up outgrown attachments, and restores lush fluffiness.',
-    image: '/appointments/hybrid-lashes.jpg',
+    image: '/appointments/hybrid-lashes-luxury.jpg',
     features: [
       'Refills both volume fans and classic single lashes',
       'Keeps texture balanced and fluffy',
@@ -412,7 +412,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 90,
     deposit: 15,
     description: 'Restores volume and light Russian sets to total density. 90 minutes of dedicated hand-fanning and placement across all mature natural lash growth.',
-    image: '/lashes inspo img.jpg',
+    image: '/appointments/light-volume-lashes-luxury.jpg',
     features: [
       'Comprehensive 90-minute fill',
       'Handcrafted fans applied to fresh growth',
@@ -432,7 +432,7 @@ export const SERVICES: ServiceItem[] = [
     duration: 90,
     deposit: 15,
     description: 'Infill for Mega Volume and Wispy sets. Rebuilds dense fan layers and replaces spike accents so your dramatic look stays completely unbroken.',
-    image: '/appointments/wispy-set.jpg',
+    image: '/appointments/mega-volume-lashes-luxury.jpg',
     features: [
       'Restores ultra-dark lash line',
       'Re-fans 5D-8D density',
