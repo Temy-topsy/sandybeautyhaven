@@ -53,12 +53,37 @@ const PageLoader = () => (
   </div>
 );
 
-// Scroll to top on every route transition
+// Route SEO Title Manager and Scroll to Top on every route transition
 const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const titleMap: Record<string, string> = {
+      '/': 'Sandy Beauty Haven | Luxury Lash Extensions & Brows in Edinburgh, Scotland UK',
+      '/services': 'Beauty Treatments & Price Menu | Sandy Beauty Haven Edinburgh',
+      '/training': 'CPD-Accredited 3-Day Lash Academy Course in Edinburgh | Sandy Beauty Haven',
+      '/booking': 'Book Appointment Online | Sandy Beauty Haven 101 Easter Road',
+      '/gallery': 'Client Lash & Brow Results Gallery | Sandy Beauty Haven',
+      '/reviews': 'Client Reviews & 5-Star Testimonials | Sandy Beauty Haven Edinburgh',
+      '/about': 'About Sandy | Premier Lash Artist & Educator in Edinburgh',
+      '/contact': 'Contact & Studio Location | Sandy Beauty Haven 101 Easter Road',
+      '/faq': 'Frequently Asked Questions | Sandy Beauty Haven Edinburgh',
+      '/my-booking': 'Manage My Appointment | Sandy Beauty Haven',
+      '/policies/booking': 'Booking Policy | Sandy Beauty Haven',
+      '/policies/cancellation': 'Cancellation & Rescheduling Policy | Sandy Beauty Haven',
+      '/policies/refund': 'Refund Policy | Sandy Beauty Haven',
+      '/policies/privacy': 'Privacy Policy | Sandy Beauty Haven',
+      '/policies/terms': 'Terms & Conditions | Sandy Beauty Haven',
+      '/policies/cookies': 'Cookie Policy | Sandy Beauty Haven'
+    };
+
+    if (titleMap[pathname]) {
+      document.title = titleMap[pathname];
+    } else if (pathname.startsWith('/services/')) {
+      document.title = 'Treatment Details | Sandy Beauty Haven Edinburgh';
+    }
   }, [pathname]);
 
   return null;
