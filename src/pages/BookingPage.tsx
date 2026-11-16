@@ -129,7 +129,9 @@ export const BookingPage: React.FC = () => {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
 
-  const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 is Sunday
+  // Monday-first calendar calculations matching UK / Acuity standard (Mon = 0, ..., Sun = 6)
+  const firstDayOfMonthRaw = new Date(year, month, 1).getDay();
+  const firstDayIndex = (firstDayOfMonthRaw + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   // Live available dates from Acuity Scheduling
@@ -172,7 +174,7 @@ export const BookingPage: React.FC = () => {
   const calendarDays = useMemo(() => {
     const days: Array<{ dayNumber: number; dateString: string; isSunday: boolean; isPast: boolean; isAvailable: boolean } | null> = [];
 
-    for (let i = 0; i < firstDayOfMonth; i++) {
+    for (let i = 0; i < firstDayIndex; i++) {
       days.push(null);
     }
 
@@ -200,7 +202,7 @@ export const BookingPage: React.FC = () => {
     }
 
     return days;
-  }, [year, month, firstDayOfMonth, daysInMonth, liveAvailableDates]);
+  }, [year, month, firstDayIndex, daysInMonth, liveAvailableDates]);
 
   // Dynamic available appointment slots from Acuity Scheduling
   const [dynamicTimes, setDynamicTimes] = useState<string[]>([]);
@@ -1079,7 +1081,7 @@ export const BookingPage: React.FC = () => {
                   textAlign: 'center',
                   marginBottom: '1.75rem'
                 }}>
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
                     <div key={d} style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-taupe)', padding: '0.35rem 0' }}>
                       {d}
                     </div>
@@ -1159,9 +1161,9 @@ export const BookingPage: React.FC = () => {
                             type="button"
                             onClick={() => setSelectedTime(time)}
                             style={{
-                              padding: '0.7rem 0.5rem',
+                              padding: '0.65rem 0.5rem',
                               borderRadius: 'var(--radius-sm)',
-                              fontSize: '0.8rem',
+                              fontSize: '0.825rem',
                               fontWeight: isSelected ? 600 : 500,
                               textAlign: 'center',
                               border: '1px solid',
@@ -1169,10 +1171,22 @@ export const BookingPage: React.FC = () => {
                               backgroundColor: isSelected ? 'var(--color-rose)' : 'var(--color-surface)',
                               color: isSelected ? '#FFFFFF' : 'var(--color-espresso)',
                               cursor: 'pointer',
-                              transition: 'all var(--transition-fast)'
+                              transition: 'all var(--transition-fast)',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '2px'
                             }}
                           >
-                            {time}
+                            <span>{time}</span>
+                            <span style={{
+                              fontSize: '0.68rem',
+                              opacity: isSelected ? 0.95 : 0.6,
+                              fontWeight: 400
+                            }}>
+                              1 spot left
+                            </span>
                           </button>
                         );
                       })}

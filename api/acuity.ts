@@ -33,8 +33,8 @@ export default async function handler(req: any, res: any) {
     return;
   }
 
-  const userId = process.env.ACUITY_USER_ID || process.env.ACUITY_OWNER_ID || '';
-  const apiKey = process.env.ACUITY_API_KEY || '';
+  const userId = (process.env.ACUITY_USER_ID || process.env.ACUITY_OWNER_ID || '32207699').trim();
+  const apiKey = (process.env.ACUITY_API_KEY || '').trim();
   const isAcuityConfigured = Boolean(userId && apiKey);
 
   const query = req.query || {};
@@ -60,13 +60,22 @@ export default async function handler(req: any, res: any) {
   if (action === 'status') {
     res.status(200).json({
       connected: isAcuityConfigured,
-      userId: userId ? `${userId.substring(0, 3)}...` : null,
+      userId: userId || null,
+      hasApiKey: Boolean(apiKey),
+      liveSyncEnabled: process.env.ACUITY_LIVE_SYNC === 'true',
       calendarId: SANDY_CALENDAR_ID,
       studioAddress: '101 Easter Road, Edinburgh, EH7 5PP',
-      provider: 'Acuity / Squarespace Scheduling'
+      provider: 'Acuity / Squarespace Scheduling',
+      instructions: isAcuityConfigured
+        ? 'Acuity API is authenticated.'
+        : 'Please set ACUITY_USER_ID and ACUITY_API_KEY in Vercel Environment Variables.'
     });
     return;
   }
+
+  // Determine correct calendar: Makeup with Bukky uses 14343491, Sandy uses 10090257
+  const isMakeupService = appointmentTypeID === '95986858' || appointmentTypeID === '95989069';
+  const targetCalendarId = query.calendarID || (isMakeupService ? 14343491 : SANDY_CALENDAR_ID);
 
   // 1. Fetch Available Dates for a Month
   if (action === 'dates') {
@@ -76,7 +85,7 @@ export default async function handler(req: any, res: any) {
     if (isAcuityConfigured) {
       try {
         const authHeader = 'Basic ' + Buffer.from(`${userId}:${apiKey}`).toString('base64');
-        const acuityUrl = `https://acuityscheduling.com/api/v1/availability/dates?month=${targetMonth}&appointmentTypeID=${typeId}&calendarID=${SANDY_CALENDAR_ID}`;
+        const acuityUrl = `https://acuityscheduling.com/api/v1/availability/dates?month=${targetMonth}&appointmentTypeID=${typeId}&calendarID=${targetCalendarId}`;
         
         const response = await fetch(acuityUrl, {
           headers: {
@@ -98,7 +107,7 @@ export default async function handler(req: any, res: any) {
     }
 
     // High-fidelity fallback based on Sandy's real studio hours:
-    // Open Tuesday through Saturday, Closed Sundays & Mondays
+    // Open Monday through Saturday, Closed Sundays
     const [yStr, mStr] = targetMonth.split('-');
     const year = parseInt(yStr, 10);
     const monthIdx = parseInt(mStr, 10) - 1;
@@ -109,9 +118,9 @@ export default async function handler(req: any, res: any) {
     const availableDates: AcuityDateSlot[] = [];
     for (let day = 1; day <= daysInMonth; day++) {
       const d = new Date(year, monthIdx, day);
-      const dayOfWeek = d.getDay(); // 0 = Sun, 1 = Mon
-      // Sandy is open Tuesday (2) to Saturday (6)
-      if (dayOfWeek !== 0 && dayOfWeek !== 1 && d >= today) {
+      const dayOfWeek = d.getDay(); // 0 = Sun
+      // Open Mon-Sat (1-6), closed Sunday (0)
+      if (dayOfWeek !== 0 && d >= today) {
         const mFormatted = String(monthIdx + 1).padStart(2, '0');
         const dFormatted = String(day).padStart(2, '0');
         availableDates.push({ date: `${year}-${mFormatted}-${dFormatted}` });
@@ -130,7 +139,7 @@ export default async function handler(req: any, res: any) {
     if (isAcuityConfigured) {
       try {
         const authHeader = 'Basic ' + Buffer.from(`${userId}:${apiKey}`).toString('base64');
-        const acuityUrl = `https://acuityscheduling.com/api/v1/availability/times?date=${targetDate}&appointmentTypeID=${typeId}&calendarID=${SANDY_CALENDAR_ID}`;
+        const acuityUrl = `https://acuityscheduling.com/api/v1/availability/times?date=${targetDate}&appointmentTypeID=${typeId}&calendarID=${targetCalendarId}`;
         
         const response = await fetch(acuityUrl, {
           headers: {
