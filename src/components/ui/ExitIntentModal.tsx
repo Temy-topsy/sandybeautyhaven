@@ -101,13 +101,10 @@ export const ExitIntentModal: React.FC = () => {
             src="/sandy logo.png"
             alt="Sandy Beauty Haven"
             style={{
-              width: '50px',
-              height: '50px',
-              borderRadius: '50%',
-              objectFit: 'contain',
-              border: '1px solid var(--color-border)',
-              backgroundColor: '#FFFFFF',
-              boxShadow: 'var(--shadow-subtle)'
+              height: '48px',
+              width: 'auto',
+              maxWidth: '160px',
+              objectFit: 'contain'
             }}
           />
         </div>

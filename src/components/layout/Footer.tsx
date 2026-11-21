@@ -25,9 +25,15 @@ export const Footer: React.FC = () => {
           <div style={{ maxWidth: '380px' }}>
             <Link to="/" style={{ display: 'inline-block', marginBottom: '1.25rem' }}>
               <img
-                src="/sandy logo.png"
+                src="/sandy logo light.png"
                 alt="Sandy Beauty Haven"
-                style={{ width: '46px', height: '46px', borderRadius: '50%', padding: '2px' }}
+                style={{
+                  height: '48px',
+                  width: 'auto',
+                  maxWidth: '160px',
+                  objectFit: 'contain',
+                  filter: 'drop-shadow(0 2px 10px rgba(0, 0, 0, 0.35))'
+                }}
               />
             </Link>
             <p style={{ color: 'var(--color-noir-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>

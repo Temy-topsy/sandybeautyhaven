@@ -73,7 +73,7 @@ export const Navbar: React.FC = () => {
             alignItems: 'center'
           }}
         >
-          {/* Brand Logo Only (Bold & Clearly Visible on Mobile & Desktop) */}
+          {/* Brand Logo (New 3D SBH Luxury Brandmark) */}
           <div style={{ display: 'flex', alignItems: 'center', justifySelf: 'start' }}>
             <Link
               to="/"
@@ -81,16 +81,19 @@ export const Navbar: React.FC = () => {
               aria-label="Sandy Beauty Haven Home"
             >
               <img
-                src="/sandy logo.png"
+                src={isTransparent ? "/sandy logo light.png" : "/sandy logo.png"}
                 alt="Sandy Beauty Haven Logo"
                 style={{
-                  width: '44px',
-                  height: '44px',
+                  height: 'clamp(40px, 5.5vw, 48px)',
+                  width: 'auto',
+                  maxWidth: '165px',
                   objectFit: 'contain',
-                  borderRadius: '50%',
                   border: 'none',
                   outline: 'none',
-                  display: 'block'
+                  display: 'block',
+                  filter: isTransparent
+                    ? 'drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5))'
+                    : 'drop-shadow(0 1px 4px rgba(0, 0, 0, 0.12))'
                 }}
               />
             </Link>
@@ -193,7 +196,13 @@ export const Navbar: React.FC = () => {
             <img
               src="/sandy logo.png"
               alt="Sandy Beauty Haven Logo"
-              style={{ width: '46px', height: '46px', objectFit: 'contain', borderRadius: '50%' }}
+              style={{
+                height: '52px',
+                width: 'auto',
+                maxWidth: '170px',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 1px 4px rgba(0, 0, 0, 0.12))'
+              }}
             />
           </div>
 

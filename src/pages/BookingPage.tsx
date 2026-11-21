@@ -1526,8 +1526,9 @@ export const BookingPage: React.FC = () => {
                     src="/sandy logo.png"
                     alt="Sandy Beauty Haven"
                     style={{
-                      width: '76px',
-                      height: '76px',
+                      height: '56px',
+                      width: 'auto',
+                      maxWidth: '190px',
                       objectFit: 'contain',
                       margin: '0 auto',
                       display: 'block'

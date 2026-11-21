@@ -77,7 +77,12 @@ export const ServiceDetailPage: React.FC = () => {
               <img
                 src={service.image}
                 alt={service.name}
-                style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }}
+                style={{
+                  width: '100%',
+                  maxHeight: '480px',
+                  objectFit: 'cover',
+                  objectPosition: service.imagePosition || 'center 20%'
+                }}
               />
             </div>
 

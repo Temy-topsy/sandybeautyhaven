@@ -29,8 +29,8 @@ export const HomePage: React.FC = () => {
     {
       id: 1,
       tag: 'Sandy Beauty Haven • Edinburgh',
-      title: 'Flawless Lashes, Crafted for You.',
-      description: 'Specialized lash extensions & bespoke styling at 101 Easter Road.',
+      title: 'Luxury Lashes, Brows & Beauty in Edinburgh',
+      description: 'Expert lash extensions, brows, makeup & beauty treatments in the heart of Edinburgh.',
       btnText: 'Book Appointment',
       btnLink: '/schedule',
       image: '/lashes inspo img.jpg'
@@ -110,20 +110,6 @@ export const HomePage: React.FC = () => {
               }}
             >
               <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1rem' }}>
-                <span
-                  style={{
-                    fontSize: '0.725rem',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.18em',
-                    color: '#F2E8E4',
-                    display: 'inline-block',
-                    marginBottom: '0.75rem',
-                    fontWeight: 600
-                  }}
-                >
-                  {slide.tag}
-                </span>
-
                 <h1
                   style={{
                     color: '#FFFFFF',
@@ -142,7 +128,7 @@ export const HomePage: React.FC = () => {
                     color: '#EFE8E1',
                     fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
                     lineHeight: 1.55,
-                    maxWidth: '480px',
+                    maxWidth: '520px',
                     margin: '0 auto 1.75rem auto'
                   }}
                 >
@@ -274,7 +260,7 @@ export const HomePage: React.FC = () => {
       <section className="section" style={{ borderBottom: '1px solid var(--color-border-subtle)' }}>
         <div className="container">
           <div className="section-header" style={{ marginBottom: 'clamp(2rem, 4.5vw, 3.5rem)', textAlign: 'center' }}>
-            <span className="section-eyebrow">Treatment Menu</span>
+            <span className="section-eyebrow">Explore Our Services</span>
             <h2 className="section-title">Signature Studio Services</h2>
             <p style={{ maxWidth: '540px', margin: '0.65rem auto 0', color: 'var(--color-taupe)', fontSize: '0.925rem' }}>
               Bespoke lash sets and precision brow enhancements by Sandy. Select a treatment below to view details and book.
@@ -305,7 +291,12 @@ export const HomePage: React.FC = () => {
                     alt={service.name}
                     loading="lazy"
                     decoding="async"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: service.imagePosition || 'center 20%'
+                    }}
                   />
                 </div>
                 <div style={{ padding: '0.75rem 0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem' }}>
@@ -335,7 +326,12 @@ export const HomePage: React.FC = () => {
                     alt={service.name}
                     loading="lazy"
                     decoding="async"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: service.imagePosition || 'center 20%'
+                    }}
                   />
                   <span
                     className="badge badge-rose"
@@ -404,7 +400,7 @@ export const HomePage: React.FC = () => {
 
           <div style={{ textAlign: 'center' }}>
             <Link to="/services" className="btn btn-secondary" style={{ padding: '0.95rem 2.25rem' }}>
-              Explore Full Treatment Menu
+              Explore Our Services
               <ArrowRight size={15} />
             </Link>
           </div>
@@ -516,9 +512,6 @@ export const HomePage: React.FC = () => {
                   <span style={{ fontSize: '0.75rem', color: 'var(--color-noir-muted)', display: 'block' }}>
                     Reserve with <strong>£100 deposit</strong>
                   </span>
-                  <span style={{ fontSize: '0.675rem', color: 'var(--color-blush)' }}>
-                    Remaining £500 balance due in studio on Day 1
-                  </span>
                 </div>
               </div>
 
@@ -567,15 +560,17 @@ export const HomePage: React.FC = () => {
                   overflow: 'hidden',
                   border: '1px solid var(--color-border-subtle)',
                   boxShadow: 'var(--shadow-card)',
-                  backgroundColor: 'var(--color-surface)'
+                  backgroundColor: 'var(--color-surface)',
+                  aspectRatio: '3/4',
+                  maxHeight: '460px'
                 }}
               >
                 <img
-                  src="/Sandy pfp.jpg"
-                  alt="Sandy"
+                  src="/Sandy pfp.webp"
+                  alt="Sandy - Founder & Specialist at Sandy Beauty Haven Edinburgh"
                   loading="lazy"
                   decoding="async"
-                  style={{ width: '100%', maxHeight: '420px', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 4%' }}
                 />
               </div>
             </div>

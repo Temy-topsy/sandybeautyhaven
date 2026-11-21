@@ -32,8 +32,22 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     id: 'gal-4',
     title: 'Authentic Client Lashes & Brow Transformations',
     category: 'Brows',
-    image: '/client-results.jpg',
-    description: 'Real client results straight from the studio chair: Ombré powder shading and precision lash work.'
+    image: '/client-results.webp',
+    description: 'Real client results straight from the studio chair: Radiant skin, flawless lashes, and precision sculpted brows.'
+  },
+  {
+    id: 'gal-makeup-1',
+    title: 'Radiant Soft Glam Makeup Artistry',
+    category: 'Makeup',
+    image: '/appointments/soft-glam-makeup.webp',
+    description: 'Fresh, luminous skin tint with soft neutral blending, groomed brows, and effortless elegance.'
+  },
+  {
+    id: 'gal-makeup-2',
+    title: 'Full Glamour & Occasion Artistry',
+    category: 'Makeup',
+    image: '/appointments/full-glam-makeup.webp',
+    description: 'Full-coverage luxury contour, defined eyes, high-impact flutter lashes, and a velvety glow.'
   },
   {
     id: 'gal-5',

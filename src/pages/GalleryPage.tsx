@@ -7,7 +7,7 @@ export const GalleryPage: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('All');
   const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
 
-  const filterOptions = ['All', 'Lashes', 'Brows', 'Studio'];
+  const filterOptions = ['All', 'Lashes', 'Brows', 'Makeup', 'Studio'];
 
   const filteredItems = selectedFilter === 'All'
     ? GALLERY_ITEMS

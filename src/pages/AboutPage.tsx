@@ -38,12 +38,14 @@ export const AboutPage: React.FC = () => {
               overflow: 'hidden',
               border: '1px solid var(--color-border-subtle)',
               boxShadow: 'var(--shadow-card)',
-              backgroundColor: 'var(--color-surface)'
+              backgroundColor: 'var(--color-surface)',
+              aspectRatio: '3/4',
+              maxHeight: '520px'
             }}>
               <img
-                src="/Sandy pfp.jpg"
-                alt="Sandy - Certified Lash & Brow Artist"
-                style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }}
+                src="/Sandy pfp.webp"
+                alt="Sandy - Certified Lash & Brow Artist Edinburgh"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 4%' }}
               />
             </div>
           </div>

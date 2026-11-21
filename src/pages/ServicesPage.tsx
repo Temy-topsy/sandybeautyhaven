@@ -43,7 +43,6 @@ export const ServicesPage: React.FC = () => {
       }}>
         <div className="container">
           <div style={{ maxWidth: '600px' }}>
-            <span className="section-eyebrow">Treatment Menu</span>
             <h1 style={{ marginBottom: '1rem' }}>Services & Pricing</h1>
             <p className="lead" style={{ margin: 0, color: 'var(--color-taupe)' }}>
               Lashes, brows, and certified 1-on-1 training at 101 Easter Road, Edinburgh.
@@ -185,6 +184,7 @@ export const ServicesPage: React.FC = () => {
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
+                        objectPosition: service.imagePosition || 'center 20%',
                         transition: 'transform 0.4s ease'
                       }}
                     />

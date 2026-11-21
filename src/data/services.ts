@@ -9,6 +9,7 @@ export interface ServiceItem {
   deposit: number;
   description: string;
   image: string;
+  imagePosition?: string;
   features: string[];
   preparation: string[];
   aftercare: string[];
@@ -478,7 +479,8 @@ export const SERVICES: ServiceItem[] = [
     deposit: 20,
     popular: true,
     description: 'A soft, radiant makeup look that enhances your natural bone structure and glow. Perfect for birthdays, brunches, graduations, family dinners, and modern daytime glamour. Includes complimentary strip lashes if desired.',
-    image: '/settings inspo img2.jpg',
+    image: '/appointments/soft-glam-makeup.webp',
+    imagePosition: 'center 15%',
     features: [
       'Flawless skin tint or radiant foundation',
       'Soft neutral eye blending & subtle contour',
@@ -502,7 +504,8 @@ export const SERVICES: ServiceItem[] = [
     duration: 120,
     deposit: 25,
     description: 'A show-stopping, full-coverage glam with sculpted cheekbones, defined dramatic eyes (cut crease, smokey, or winged), highlight, and an immaculate long-lasting finish. Perfect for weddings, red carpets, milestones, and parties.',
-    image: '/settings inspo img.jpg',
+    image: '/appointments/full-glam-makeup.webp',
+    imagePosition: 'center 10%',
     features: [
       'Full coverage waterproof sculpting',
       'Detailed eye artistry (smokey, shimmer, or winged)',
@@ -529,7 +532,8 @@ export const SERVICES: ServiceItem[] = [
     deposit: 100,
     popular: true,
     description: 'Kickstart your beauty career with Sandy’s comprehensive 3-Day One-to-One Lash Course in Edinburgh. Designed for complete beginners, you will master lash theory, hygiene & contraindications, consultation, classic lash application, mapping, isolation, infills, removals, pricing, and business scaling. Includes luxury starter kit, manual, live model practice, CPD certificate, and lifetime ongoing mentorship.',
-    image: '/Sandy pfp.jpg',
+    image: '/Sandy pfp.webp',
+    imagePosition: 'center 4%',
     features: [
       '1-on-1 private mentorship directly with Sandy',
       'Fully CPD-Accredited professional certificate',

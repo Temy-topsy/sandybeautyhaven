@@ -166,12 +166,14 @@ export const TrainingPage: React.FC = () => {
                 overflow: 'hidden',
                 border: '1px solid rgba(255,255,255,0.15)',
                 boxShadow: 'var(--shadow-modal)',
-                backgroundColor: 'var(--color-noir)'
+                backgroundColor: 'var(--color-noir)',
+                aspectRatio: '3/4',
+                maxHeight: '520px'
               }}>
                 <img
-                  src="/Sandy pfp.jpg"
+                  src="/Sandy pfp.webp"
                   alt="Sandy - Certified Lash Educator Edinburgh"
-                  style={{ width: '100%', maxHeight: '480px', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 4%' }}
                 />
               </div>
             </div>
@@ -199,9 +201,6 @@ export const TrainingPage: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.15rem', marginBottom: '0.35rem' }}>CPD Certified</h3>
-                <p style={{ fontSize: '0.85rem', margin: 0 }}>
-                  Internationally recognized qualification allowing you to secure beauty therapist insurance and trade discounts.
-                </p>
               </div>
             </div>
 
@@ -217,9 +216,6 @@ export const TrainingPage: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.15rem', marginBottom: '0.35rem' }}>Pro Starter Kit</h3>
-                <p style={{ fontSize: '0.85rem', margin: 0 }}>
-                  A complete, professional-grade kit packed with medical adhesives, hand-calibrated tweezers, and lashes to service your first 20 clients.
-                </p>
               </div>
             </div>
 
@@ -235,9 +231,6 @@ export const TrainingPage: React.FC = () => {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.15rem', marginBottom: '0.35rem' }}>Lifetime Mentorship</h3>
-                <p style={{ fontSize: '0.85rem', margin: 0 }}>
-                  Direct access to Sandy via WhatsApp for ongoing technique critiques, troubleshooting, and advice long after graduation.
-                </p>
               </div>
             </div>
           </div>
@@ -248,7 +241,6 @@ export const TrainingPage: React.FC = () => {
       <section className="section" style={{ borderBottom: '1px solid var(--color-border)' }}>
         <div className="container" style={{ maxWidth: '880px' }}>
           <div className="section-header">
-            <span className="section-eyebrow">Comprehensive Syllabus</span>
             <h2 className="section-title">The 3-Day Course Breakdown</h2>
             <p className="section-description">
               Every hour is structured to build your muscle memory, confidence, and theoretical understanding without feeling rushed.
