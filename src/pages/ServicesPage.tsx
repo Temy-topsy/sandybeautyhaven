@@ -52,12 +52,19 @@ export const ServicesPage: React.FC = () => {
       </div>
 
       <div className="container" style={{ paddingTop: 'clamp(3rem, 5vw, 4.5rem)' }}>
-        {/* Filter and Search Bar */}
+        {/* Filter and Search Bar (Sticky so it stays accessible when scrolling) */}
         <div style={{
+          position: 'sticky',
+          top: 'var(--header-height)',
+          zIndex: 40,
+          backgroundColor: 'var(--color-ivory)',
+          paddingTop: '0.75rem',
+          paddingBottom: '1rem',
+          marginBottom: '2.5rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '1.75rem',
-          marginBottom: '3.5rem'
+          gap: '1.25rem',
+          borderBottom: '1px solid rgba(232, 224, 215, 0.75)'
         }}>
           {/* Search Input */}
           <div style={{ position: 'relative', maxWidth: '440px' }}>
@@ -184,7 +191,7 @@ export const ServicesPage: React.FC = () => {
                         width: '100%',
                         height: '100%',
                         objectFit: 'cover',
-                        objectPosition: service.imagePosition || 'center 20%',
+                        objectPosition: service.imagePosition || 'center center',
                         transition: 'transform 0.4s ease'
                       }}
                     />
@@ -225,7 +232,7 @@ export const ServicesPage: React.FC = () => {
                       <span style={{
                         fontFamily: 'var(--font-serif)',
                         fontSize: '1.5rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         color: 'var(--color-espresso)'
                       }}>
                         £{service.price}

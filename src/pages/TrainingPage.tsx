@@ -299,9 +299,6 @@ export const TrainingPage: React.FC = () => {
             <div>
               <span className="section-eyebrow">Everything You Need To Start</span>
               <h2 style={{ marginBottom: '1.25rem' }}>The Luxury Pro Kit (Value £150+)</h2>
-              <p className="lead" style={{ marginBottom: '1.5rem' }}>
-                We do not supply cheap sample trays. You receive the exact high-performance products and tools Sandy uses daily in her Edinburgh studio.
-              </p>
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr',

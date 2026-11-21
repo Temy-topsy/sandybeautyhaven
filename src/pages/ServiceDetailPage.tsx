@@ -81,7 +81,7 @@ export const ServiceDetailPage: React.FC = () => {
                   width: '100%',
                   maxHeight: '480px',
                   objectFit: 'cover',
-                  objectPosition: service.imagePosition || 'center 20%'
+                  objectPosition: service.imagePosition || 'center center'
                 }}
               />
             </div>

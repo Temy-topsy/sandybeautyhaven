@@ -115,7 +115,7 @@ export const HomePage: React.FC = () => {
                     color: '#FFFFFF',
                     fontSize: 'clamp(2.1rem, 5.5vw, 3.8rem)',
                     fontFamily: 'var(--font-serif)',
-                    fontWeight: 400,
+                    fontWeight: 600,
                     lineHeight: 1.12,
                     marginBottom: '0.85rem'
                   }}
@@ -125,11 +125,13 @@ export const HomePage: React.FC = () => {
 
                 <p
                   style={{
-                    color: '#EFE8E1',
-                    fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
-                    lineHeight: 1.55,
+                    color: '#FFFFFF',
+                    fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+                    lineHeight: 1.6,
                     maxWidth: '520px',
-                    margin: '0 auto 1.75rem auto'
+                    margin: '0 auto 1.75rem auto',
+                    fontWeight: 450,
+                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.4)'
                   }}
                 >
                   {slide.description}
@@ -295,7 +297,7 @@ export const HomePage: React.FC = () => {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: service.imagePosition || 'center 20%'
+                      objectPosition: service.imagePosition || 'center center'
                     }}
                   />
                 </div>
@@ -330,7 +332,7 @@ export const HomePage: React.FC = () => {
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: service.imagePosition || 'center 20%'
+                      objectPosition: service.imagePosition || 'center center'
                     }}
                   />
                   <span
@@ -352,7 +354,7 @@ export const HomePage: React.FC = () => {
                       style={{
                         fontFamily: 'var(--font-serif)',
                         fontSize: '1.35rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         color: 'var(--color-espresso)'
                       }}
                     >
@@ -443,10 +445,6 @@ export const HomePage: React.FC = () => {
               >
                 3-Day Classic & Hybrid Lash Mentorship
               </h2>
-
-              <p style={{ color: 'var(--color-noir-muted)', lineHeight: 1.6, marginBottom: '1.5rem', fontSize: '0.925rem' }}>
-                Designed for ambitious beginners ready to step into a profitable lash career with accredited certification, high-touch 1-on-1 supervision, and zero guesswork.
-              </p>
 
               {/* Value Checklist */}
               <div

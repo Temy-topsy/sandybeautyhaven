@@ -15,8 +15,8 @@
   --color-rose-dark: #825457;
   --color-espresso: #221B1A;
   --color-espresso-light: #3D3332;
-  --color-taupe: #70645F;
-  --color-taupe-light: #9E918B;
+  --color-taupe: #524641;
+  --color-taupe-light: #8A7E78;
   --color-border: #E8E0D7;
   --color-border-subtle: #F0EAE3;
   --color-border-focus: #A36F72;
@@ -109,7 +109,7 @@ body {
 /* Typography Scale */
 h1, h2, h3, h4, .font-serif {
   font-family: var(--font-serif);
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.18;
   color: var(--color-espresso);
   letter-spacing: -0.01em;
@@ -117,17 +117,17 @@ h1, h2, h3, h4, .font-serif {
 
 h1 {
   font-size: clamp(2.5rem, 5.5vw, 4.25rem);
-  font-weight: 400;
+  font-weight: 600;
 }
 
 h2 {
   font-size: clamp(2rem, 3.8vw, 3rem);
-  font-weight: 400;
+  font-weight: 600;
 }
 
 h3 {
   font-size: clamp(1.35rem, 2.2vw, 1.85rem);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 h4 {
