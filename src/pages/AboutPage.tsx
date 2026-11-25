@@ -4,7 +4,7 @@ import { Heart, Award, ShieldCheck, Calendar, MapPin } from 'lucide-react';
 
 export const AboutPage: React.FC = () => {
   return (
-    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '85vh', paddingBottom: '7rem' }}>
+    <div style={{ backgroundColor: 'var(--color-ivory)', minHeight: '85vh', paddingBottom: '7rem', overflowX: 'hidden' }}>
       {/* Header */}
       <div style={{
         backgroundColor: 'var(--color-surface-subtle)',
@@ -27,12 +27,12 @@ export const AboutPage: React.FC = () => {
         {/* Sandy's Bio & Portrait */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 'clamp(3rem, 6vw, 6rem)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+          gap: 'clamp(2rem, 5vw, 5rem)',
           alignItems: 'center',
-          marginBottom: 'clamp(4.5rem, 8vw, 7.5rem)'
+          marginBottom: 'clamp(4rem, 8vw, 7rem)'
         }}>
-          <div>
+          <div style={{ width: '100%' }}>
             <div style={{
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
@@ -40,26 +40,24 @@ export const AboutPage: React.FC = () => {
               boxShadow: 'var(--shadow-card)',
               backgroundColor: 'var(--color-surface)',
               aspectRatio: '3/4',
-              maxHeight: '520px'
+              maxHeight: '520px',
+              width: '100%'
             }}>
               <img
                 src="/Sandy pfp.webp"
                 alt="Sandy - Certified Lash & Brow Artist Edinburgh"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 4%' }}
+                style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', objectPosition: 'center 4%' }}
               />
             </div>
           </div>
 
-          <div style={{ maxWidth: '520px' }}>
+          <div style={{ maxWidth: '520px', width: '100%' }}>
             <span className="section-eyebrow">Sandy</span>
             <h2 style={{ marginBottom: '1.25rem', fontSize: 'clamp(2rem, 3.8vw, 2.75rem)' }}>
               "Crafting lashes and brows that align with your natural aesthetic."
             </h2>
             <p className="lead" style={{ marginBottom: '1.25rem', color: 'var(--color-taupe)' }}>
               With over two years of specialized experience in Edinburgh, Sandy established Sandy Beauty Haven to provide a serene space where clients receive genuinely customized treatments.
-            </p>
-            <p style={{ color: 'var(--color-taupe)', lineHeight: 1.75, marginBottom: '2.5rem' }}>
-              From delicate classic sets to full volume Russian lashes and ombré powder shading, every look is mapped to complement your unique bone structure and protect natural lash health.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
@@ -90,8 +88,8 @@ export const AboutPage: React.FC = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-            gap: 'clamp(2rem, 4vw, 3.5rem)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))',
+            gap: 'clamp(1.75rem, 4vw, 3rem)'
           }}>
             <div>
               <div style={{
@@ -158,11 +156,11 @@ export const AboutPage: React.FC = () => {
         {/* Studio Space Showcase */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: 'clamp(2.5rem, 5vw, 4.5rem)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+          gap: 'clamp(2rem, 5vw, 4.5rem)',
           alignItems: 'center'
         }}>
-          <div>
+          <div style={{ width: '100%' }}>
             <span className="section-eyebrow">The Studio</span>
             <h2 style={{ marginBottom: '1rem', fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)' }}>A Calm Sanctuary</h2>
             <p style={{ color: 'var(--color-taupe)', lineHeight: 1.75, marginBottom: '1.75rem' }}>
@@ -176,22 +174,23 @@ export const AboutPage: React.FC = () => {
               fontWeight: 600,
               color: 'var(--color-espresso)'
             }}>
-              <MapPin size={17} style={{ color: 'var(--color-rose)' }} />
-              101 Easter Road, Edinburgh, EH7 5PP
+              <MapPin size={17} style={{ color: 'var(--color-rose)', flexShrink: 0 }} />
+              <span>101 Easter Road, Edinburgh, EH7 5PP</span>
             </div>
           </div>
 
-          <div>
+          <div style={{ width: '100%' }}>
             <div style={{
               borderRadius: 'var(--radius-md)',
               overflow: 'hidden',
               border: '1px solid var(--color-border-subtle)',
-              boxShadow: 'var(--shadow-card)'
+              boxShadow: 'var(--shadow-card)',
+              width: '100%'
             }}>
               <img
-                src="/inspo design img.jpg"
+                src="/settings inspo img.jpg"
                 alt="Sandy Beauty Haven Interior Ambience"
-                style={{ width: '100%', maxHeight: '380px', objectFit: 'cover' }}
+                style={{ width: '100%', maxHeight: '380px', display: 'block', objectFit: 'cover' }}
               />
             </div>
           </div>
@@ -199,7 +198,7 @@ export const AboutPage: React.FC = () => {
 
         {/* Client Love & Social Proof */}
         <div style={{
-          marginTop: 'clamp(4.5rem, 8vw, 7.5rem)',
+          marginTop: 'clamp(4rem, 8vw, 7rem)',
           paddingTop: 'clamp(3rem, 6vw, 4.5rem)',
           borderTop: '1px solid var(--color-border-subtle)'
         }}>
@@ -209,19 +208,19 @@ export const AboutPage: React.FC = () => {
             alignItems: 'flex-end',
             marginBottom: '2.5rem',
             flexWrap: 'wrap',
-            gap: '1rem'
+            gap: '1.25rem'
           }}>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <span className="section-eyebrow">Client Feedback</span>
               <h2 style={{ margin: 0, fontSize: 'clamp(1.85rem, 3.5vw, 2.5rem)' }}>
                 Trusted by Edinburgh Clients
               </h2>
             </div>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <Link to="/reviews" className="btn btn-secondary" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}>
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+              <Link to="/reviews" className="btn btn-secondary" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                 Read All Reviews →
               </Link>
-              <Link to="/gallery" className="btn btn-subtle" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}>
+              <Link to="/gallery" className="btn btn-subtle" style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
                 View Client Sets →
               </Link>
             </div>
@@ -229,7 +228,7 @@ export const AboutPage: React.FC = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
             gap: '1.5rem'
           }}>
             <div style={{

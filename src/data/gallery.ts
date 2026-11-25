@@ -65,23 +65,16 @@ export const GALLERY_ITEMS: GalleryItem[] = [
   },
   {
     id: 'gal-7',
-    title: 'Serene Sanctuary at 101 Easter Road',
+    title: 'Sandy Beauty Haven Studio Interior',
     category: 'Studio',
-    image: '/inspo design img.jpg',
-    description: 'Our calm, editorial salon environment designed with warm alabaster tones and natural light.'
+    image: '/settings inspo img.jpg',
+    description: 'Our luxury studio interior at 101 Easter Road with warm lighting, arched mirrors, and plush seating.'
   },
   {
     id: 'gal-8',
-    title: 'Minimalist Consultation & Styling Station',
-    category: 'Studio',
-    image: '/settings inspo img.jpg',
-    description: 'Ergonomic treatment suites, arched brass mirrors, and pristine hygiene standards.'
-  },
-  {
-    id: 'gal-9',
-    title: 'Warm Alabaster Beauty Suite',
+    title: '101 Easter Road Studio Storefront',
     category: 'Studio',
     image: '/settings inspo img2.jpg',
-    description: 'Designed for deep relaxation during your lash naps and semi-permanent brow sessions.'
+    description: 'Welcome to Sandy Beauty Haven in the heart of Edinburgh — Lashes, Hair, Beauty & Training.'
   }
 ];
