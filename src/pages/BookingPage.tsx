@@ -50,9 +50,37 @@ const MastercardIcon: React.FC = () => (
   </svg>
 );
 
-// Helper to format date & time identically to Acuity (e.g. October 16th, 2026 at 10:00 AM BST)
+const getUkTodayDateString = (): string => {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/London',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+  } catch {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+};
+
+const getUkTimeZoneAbbr = (dateStr?: string): string => {
+  try {
+    const target = dateStr ? new Date(`${dateStr}T12:00:00Z`) : new Date();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/London',
+      timeZoneName: 'short'
+    }).formatToParts(target);
+    return parts.find((p) => p.type === 'timeZoneName')?.value || 'GMT';
+  } catch {
+    return 'GMT';
+  }
+};
+
+// Helper to format date & time in UK studio time (e.g. November 26th, 2026 at 11:00 AM GMT)
 const formatAcuityDateTime = (dateStr: string, timeStr: string) => {
-  if (!dateStr) return 'October 16th, 2026 at 10:00 AM BST';
+  const tz = getUkTimeZoneAbbr(dateStr);
+  if (!dateStr) return `October 16th, 2026 at 10:00 AM ${tz}`;
   try {
     const [y, m, d] = dateStr.split('-').map(Number);
     const dateObj = new Date(y, m - 1, d);
@@ -71,9 +99,9 @@ const formatAcuityDateTime = (dateStr: string, timeStr: string) => {
         default: return 'th';
       }
     };
-    return `${month} ${day}${nth(day)}, ${y} at ${timeStr || '10:00 AM'} BST`;
+    return `${month} ${day}${nth(day)}, ${y} at ${timeStr || '10:00 AM'} ${tz}`;
   } catch {
-    return `${dateStr} at ${timeStr} BST`;
+    return `${dateStr} at ${timeStr} ${tz}`;
   }
 };
 
@@ -178,16 +206,15 @@ export const BookingPage: React.FC = () => {
       days.push(null);
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const ukTodayStr = getUkTodayDateString();
 
     for (let d = 1; d <= daysInMonth; d++) {
       const dateObj = new Date(year, month, d);
       const isSunday = dateObj.getDay() === 0;
-      const isPast = dateObj < today;
       const monthStr = String(month + 1).padStart(2, '0');
       const dayStr = String(d).padStart(2, '0');
       const dateString = `${year}-${monthStr}-${dayStr}`;
+      const isPast = dateString < ukTodayStr;
       const isAvailable = liveAvailableDates
         ? liveAvailableDates.includes(dateString)
         : (!isSunday && !isPast);
@@ -706,22 +733,36 @@ export const BookingPage: React.FC = () => {
                               gap: '0.65rem'
                             }}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-                              <img
-                                src={svc.image}
-                                alt={svc.name}
-                                style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
-                              />
-                              <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                              <div style={{
+                                width: '100%',
+                                height: '200px',
+                                borderRadius: 'var(--radius-sm)',
+                                overflow: 'hidden',
+                                border: '1px solid rgba(163, 111, 114, 0.2)',
+                                backgroundColor: 'var(--color-surface)'
+                              }}>
+                                <img
+                                  src={svc.image}
+                                  alt={svc.name}
+                                  style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    objectFit: 'cover',
+                                    objectPosition: svc.imagePosition || 'center center'
+                                  }}
+                                />
+                              </div>
+                              <div style={{ minWidth: 0 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
-                                  <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-espresso)', lineHeight: 1.3 }}>
+                                  <span style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-espresso)', lineHeight: 1.3 }}>
                                     {svc.name}
                                   </span>
                                   <span className="badge" style={{ fontSize: '0.65rem', flexShrink: 0, padding: '0.2rem 0.55rem' }}>
                                     {svc.category}
                                   </span>
                                 </div>
-                                <div style={{ fontSize: '0.775rem', color: 'var(--color-taupe)', marginTop: '0.2rem' }}>
+                                <div style={{ fontSize: '0.8rem', color: 'var(--color-taupe)', marginTop: '0.25rem' }}>
                                   {svc.duration} mins • Deposit: £{svc.deposit}
                                 </div>
                               </div>
@@ -1146,9 +1187,14 @@ export const BookingPage: React.FC = () => {
 
                 {/* Time Slots Grid */}
                 <div>
-                  <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <h4 style={{ fontSize: '0.925rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.4rem' }}>
                     <Clock size={16} style={{ color: 'var(--color-rose)' }} />
-                    Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    <span>
+                      Available Slots for {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--color-taupe)' }}>
+                      (UK Time • {getUkTimeZoneAbbr(selectedDate)})
+                    </span>
                   </h4>
 
                   {timeSlots.length === 0 ? (
@@ -2085,21 +2131,40 @@ export const BookingPage: React.FC = () => {
               </h3>
 
               {/* Selected Services in Cart */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.25rem' }}>
                 {selectedServices.map((svc) => (
-                  <div key={svc.id} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <img
-                      src={svc.image}
-                      alt={svc.name}
-                      style={{ width: '48px', height: '48px', borderRadius: 'var(--radius-sm)', objectFit: 'cover', flexShrink: 0 }}
-                    />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={{ margin: 0, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {svc.name}
-                      </h4>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-taupe)' }}>
-                        {svc.duration} mins • £{svc.price}
-                      </p>
+                  <div key={svc.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                    <div style={{
+                      width: '100%',
+                      height: selectedServices.length === 1 ? '185px' : '140px',
+                      borderRadius: 'var(--radius-sm)',
+                      overflow: 'hidden',
+                      border: '1px solid var(--color-border-subtle)',
+                      backgroundColor: 'var(--color-surface-subtle)'
+                    }}>
+                      <img
+                        src={svc.image}
+                        alt={svc.name}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: svc.imagePosition || 'center center'
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.5rem' }}>
+                      <div style={{ minWidth: 0 }}>
+                        <h4 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--color-espresso)', lineHeight: 1.3 }}>
+                          {svc.name}
+                        </h4>
+                        <p style={{ margin: '0.15rem 0 0', fontSize: '0.78rem', color: 'var(--color-taupe)' }}>
+                          {svc.duration} mins
+                        </p>
+                      </div>
+                      <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', fontWeight: 700, color: 'var(--color-espresso)', flexShrink: 0 }}>
+                        £{svc.price}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -2125,7 +2190,7 @@ export const BookingPage: React.FC = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                   <Clock size={14} style={{ color: 'var(--color-rose)' }} />
                   <span>
-                    <strong>Time:</strong> {selectedTime} ({totalDuration} mins total)
+                    <strong>Time:</strong> {selectedTime} {getUkTimeZoneAbbr(selectedDate)} ({totalDuration} mins total)
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

@@ -2,7 +2,7 @@ export interface ServiceItem {
   id: number;
   slug: string;
   name: string;
-  category: 'Lash Extensions' | 'Lash Infills' | 'Brows' | 'Makeup' | 'Extras' | 'Training';
+  category: 'Lash Extensions' | 'Lash Infills' | 'Brows' | 'Hair' | 'Makeup' | 'Extras' | 'Training';
   categoryRaw: string;
   price: number;
   duration: number; // minutes
@@ -520,6 +520,36 @@ export const SERVICES: ServiceItem[] = [
     suitableFor: 'Brides, birthday queens, gala attendees, and photo-heavy evening events.'
   },
 
+  // HAIR (Placeholder — menu expanding soon)
+  {
+    id: 96900001,
+    slug: 'luxury-hair-styling',
+    name: 'Luxury Hair Styling & Wig Install',
+    category: 'Hair',
+    categoryRaw: 'HAIR SERVICES',
+    price: 65,
+    duration: 90,
+    deposit: 20,
+    description: 'Bespoke wig installation, frontal customization, and silk-finish styling tailored to frame your face. Full hair treatment menu launching soon—reach out for custom styling requests.',
+    image: '/appointments/hair-services.webp',
+    imagePosition: 'center center',
+    features: [
+      'Natural melted hairline customization',
+      'Bespoke styling (sleek straight, waves, or curls)',
+      'Protective braid-down preparation',
+      'Long-lasting hold & studio finish'
+    ],
+    preparation: [
+      'Please arrive with clean, product-free hair or freshly washed wig unit.',
+      'Drop off lace units 24 hours prior if customization is required.'
+    ],
+    aftercare: [
+      'Wrap hairline with a silk scarf overnight to preserve melt.',
+      'Avoid heavy oils directly on lace.'
+    ],
+    suitableFor: 'Clients wanting effortless, camera-ready hair styling and seamless wig installs in Edinburgh.'
+  },
+
   // LASH TRAINING
   {
     id: 96654561,
@@ -557,9 +587,11 @@ export const SERVICES: ServiceItem[] = [
 
 export const CATEGORIES = [
   'All Services',
+  'Lashes',
   'Lash Extensions',
   'Lash Infills',
   'Brows',
+  'Hair',
   'Makeup',
   'Extras',
   'Training'

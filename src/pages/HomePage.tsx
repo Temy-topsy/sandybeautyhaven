@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Calendar,
   Star,
@@ -10,19 +10,71 @@ import {
 } from 'lucide-react';
 import { SERVICES } from '../data/services';
 import { REVIEWS } from '../data/reviews';
-import { useBooking } from '../context/BookingContext';
 
 export const HomePage: React.FC = () => {
-  const navigate = useNavigate();
-  const { setSelectedService } = useBooking();
-
-  // Curate top popular services
-  const featuredServices = SERVICES.filter((s) => s.popular).slice(0, 4);
-
-  const handleBookService = (service: (typeof SERVICES)[0]) => {
-    setSelectedService(service);
-    navigate('/schedule');
-  };
+  // 6 Main Service Categories in Studio Hierarchy Order
+  const serviceCategories = [
+    {
+      id: 'lashes',
+      name: 'Lashes',
+      categoryParam: 'Lashes',
+      badge: 'Signature',
+      image: '/appointments/hybrid-lashes-luxury.webp',
+      imagePosition: 'center center',
+      description: 'Classic, hybrid, volume, wispy sets and maintenance infills tailored to your eye shape.',
+      count: SERVICES.filter((s) => s.category === 'Lash Extensions' || s.category === 'Lash Infills').length
+    },
+    {
+      id: 'brows',
+      name: 'Brows',
+      categoryParam: 'Brows',
+      badge: 'Bespoke',
+      image: '/appointments/ombre-powder-brows-luxury.webp',
+      imagePosition: 'center center',
+      description: 'Ombré powder brows, combo brows, and precision African razor brow shaping.',
+      count: SERVICES.filter((s) => s.category === 'Brows').length
+    },
+    {
+      id: 'hair',
+      name: 'Hair',
+      categoryParam: 'Hair',
+      badge: 'Styling',
+      image: '/appointments/hair-services.webp',
+      imagePosition: 'center center',
+      description: 'Luxury wig installations, frontal customization, and silk-finish studio hair styling.',
+      count: SERVICES.filter((s) => s.category === 'Hair').length
+    },
+    {
+      id: 'makeup',
+      name: 'Makeup',
+      categoryParam: 'Makeup',
+      badge: 'Glam',
+      image: '/appointments/full-glam-makeup.webp',
+      imagePosition: 'center center',
+      description: 'Soft radiant daytime glow and full-coverage waterproof glam for special events.',
+      count: SERVICES.filter((s) => s.category === 'Makeup').length
+    },
+    {
+      id: 'extras',
+      name: 'Extras',
+      categoryParam: 'Extras',
+      badge: 'Care & Add-Ons',
+      image: '/appointments/bespoke-lashes-luxury.webp',
+      imagePosition: 'center center',
+      description: 'Gentle lash removals, cleansing lash baths, bottom lashes, and aftercare kits.',
+      count: SERVICES.filter((s) => s.category === 'Extras').length
+    },
+    {
+      id: 'training',
+      name: 'Training',
+      categoryParam: 'Training',
+      badge: 'Academy',
+      image: '/appointments/lash-training.webp',
+      imagePosition: 'center center',
+      description: 'CPD-accredited 1-on-1 beginner lash mentorship with full luxury starter kit.',
+      count: SERVICES.filter((s) => s.category === 'Training').length
+    }
+  ];
 
   // 1. Honey Bee Beautiful Style Horizontal Slider
   const slides = [
@@ -109,7 +161,7 @@ export const HomePage: React.FC = () => {
                 backgroundImage: `linear-gradient(180deg, rgba(20, 15, 14, 0.48) 0%, rgba(20, 15, 14, 0.8) 100%), url("${slide.image}")`
               }}
             >
-              <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1rem' }}>
+              <div className="hero-slider-content" style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1rem' }}>
                 <h1
                   style={{
                     color: '#FFFFFF',
@@ -163,7 +215,7 @@ export const HomePage: React.FC = () => {
           type="button"
           onClick={handlePrevSlide}
           aria-label="Previous slide"
-          className="hero-slider-arrow"
+          className="hero-slider-arrow hero-slider-arrow-prev"
           style={{
             position: 'absolute',
             left: 'clamp(0.75rem, 2.5vw, 2rem)',
@@ -190,7 +242,7 @@ export const HomePage: React.FC = () => {
           type="button"
           onClick={handleNextSlide}
           aria-label="Next slide"
-          className="hero-slider-arrow"
+          className="hero-slider-arrow hero-slider-arrow-next"
           style={{
             position: 'absolute',
             right: 'clamp(0.75rem, 2.5vw, 2rem)',
@@ -269,12 +321,12 @@ export const HomePage: React.FC = () => {
             </p>
           </div>
 
-          {/* Mobile 2-Column Side-by-Side Visual Grid (Honey Bee Beautiful Style: No Price, Minimal, Tap for Details) */}
+          {/* Mobile 2-Column Side-by-Side Visual Grid (Honey Bee Beautiful Style: Minimal Category Tiles) */}
           <div className="mobile-services-grid">
-            {featuredServices.map((service) => (
+            {serviceCategories.map((cat) => (
               <Link
-                key={service.id}
-                to={`/services/${service.slug}`}
+                key={cat.id}
+                to={`/services?category=${encodeURIComponent(cat.categoryParam)}`}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -289,21 +341,21 @@ export const HomePage: React.FC = () => {
               >
                 <div style={{ aspectRatio: '1/1', overflow: 'hidden', position: 'relative' }}>
                   <img
-                    src={service.image}
-                    alt={service.name}
+                    src={cat.image}
+                    alt={cat.name}
                     loading="lazy"
                     decoding="async"
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: service.imagePosition || 'center center'
+                      objectPosition: cat.imagePosition || 'center center'
                     }}
                   />
                 </div>
                 <div style={{ padding: '0.75rem 0.65rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.35rem' }}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-espresso)', lineHeight: 1.25 }}>
-                    {service.name}
+                  <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-espresso)', lineHeight: 1.25 }}>
+                    {cat.name}
                   </span>
                   <span style={{ color: 'var(--color-rose)', fontSize: '0.95rem', flexShrink: 0 }}>→</span>
                 </div>
@@ -311,67 +363,71 @@ export const HomePage: React.FC = () => {
             ))}
           </div>
 
-          {/* Desktop Full Editorial Cards with Prices & Direct Booking */}
+          {/* Desktop Full Editorial Category Cards (3 columns x 2 rows) */}
           <div
             className="desktop-services-grid"
             style={{
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
               gap: 'clamp(1.5rem, 3.5vw, 2.5rem)',
               marginBottom: '3rem'
             }}
           >
-            {featuredServices.map((service) => (
-              <div key={service.id} className="editorial-card">
-                <div style={{ height: '220px', position: 'relative', overflow: 'hidden' }}>
+            {serviceCategories.map((cat) => (
+              <Link
+                key={cat.id}
+                to={`/services?category=${encodeURIComponent(cat.categoryParam)}`}
+                className="editorial-card"
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div style={{ height: '240px', position: 'relative', overflow: 'hidden' }}>
                   <img
-                    src={service.image}
-                    alt={service.name}
+                    src={cat.image}
+                    alt={cat.name}
                     loading="lazy"
                     decoding="async"
                     style={{
                       width: '100%',
                       height: '100%',
                       objectFit: 'cover',
-                      objectPosition: service.imagePosition || 'center center'
+                      objectPosition: cat.imagePosition || 'center center'
                     }}
                   />
                   <span
                     className="badge badge-rose"
                     style={{ position: 'absolute', top: '0.85rem', left: '0.85rem' }}
                   >
-                    {service.category}
+                    {cat.badge}
                   </span>
                 </div>
 
                 <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                    <h3 style={{ fontSize: '1.2rem', margin: 0 }}>
-                      <Link to={`/services/${service.slug}`} style={{ color: 'inherit' }}>
-                        {service.name}
-                      </Link>
+                    <h3 style={{ fontSize: '1.35rem', margin: 0, color: 'var(--color-espresso)' }}>
+                      {cat.name}
                     </h3>
                     <span
                       style={{
-                        fontFamily: 'var(--font-serif)',
-                        fontSize: '1.35rem',
-                        fontWeight: 700,
-                        color: 'var(--color-espresso)'
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        color: 'var(--color-rose)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em'
                       }}
                     >
-                      £{service.price}
+                      {cat.count} {cat.count === 1 ? 'Option' : 'Options'}
                     </span>
                   </div>
 
                   <p
                     style={{
-                      fontSize: '0.825rem',
+                      fontSize: '0.85rem',
                       color: 'var(--color-taupe)',
-                      lineHeight: 1.5,
+                      lineHeight: 1.55,
                       marginBottom: '1.25rem',
                       flex: 1
                     }}
                   >
-                    {service.duration} mins • £{service.deposit} deposit
+                    {cat.description}
                   </p>
 
                   <div
@@ -383,20 +439,12 @@ export const HomePage: React.FC = () => {
                       justifyContent: 'space-between'
                     }}
                   >
-                    <Link to={`/services/${service.slug}`} className="btn-link" style={{ fontSize: '0.8rem' }}>
-                      Details
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => handleBookService(service)}
-                      className="btn btn-primary"
-                      style={{ padding: '0.65rem 1.25rem', fontSize: '0.75rem' }}
-                    >
-                      Book Slot
-                    </button>
+                    <span className="btn-link" style={{ fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      Explore {cat.name} <ArrowRight size={14} />
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
